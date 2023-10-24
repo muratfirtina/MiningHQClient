@@ -1,4 +1,17 @@
-# MiningHQClient
+<h1 align="center">MiningHQ</h1>
+
+<br />
+
+<p align="center">
+  <a href="https://github.com/muratfirtina/MiningHQ/graphs/contributors"><img src="https://img.shields.io/github/contributors/muratfirtina/MiningHQ.svg?style=for-the-badge"></a>
+  <a href="https://github.com/muratfirtina/MiningHQ/network/members"><img src="https://img.shields.io/github/forks/muratfirtina/MiningHQ.svg?style=for-the-badge"></a>
+  <a href="https://github.com/muratfirtina/MiningHQ/stargazers"><img src="https://img.shields.io/github/stars/muratfirtina/MiningHQ.svg?style=for-the-badge"></a>
+  <a href="https://github.com/muratfirtina/MiningHQ/issues"><img src="https://img.shields.io/github/issues/muratfirtina/MiningHQ.svg?style=for-the-badge"></a>
+  <a href="https://github.com/kmuratfirtina/MiningHQ/blob/master/LICENSE"><img src="https://img.shields.io/github/license/muratfirtina/MiningHQ.svg?style=for-the-badge"></a>
+</p><br />
+
+## 💻 About The Project
+<h3 align="center">"This is a mining site job tracking program. It can be used to calculate the efficiency of machines and maintain records of employees."</h3>
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.6.
 
