@@ -1,0 +1,29 @@
+<div class="row" id="main">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Adı</th>
+          <th>Soyadı</th>
+          <th>Mesleği</th>
+          <th>Çalıştığı Ocak</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.firstName }}</td>
+          <td>{{ item.lastName }}</td>
+          <td>{{ item.jobName }}</td>
+          <td>{{ item.quarryName }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="items.length === 0">
+    <p>No items to display.</p>
+  </div>
+  <div class="col-md-2"></div>
+</div>

@@ -2,15 +2,30 @@
   
   <ul class="list-unstyled ps-0">
     <li class="mb-1" *ngFor="let item of items">
+      
       <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0"
               [attr.aria-expanded]="item.isCollapsed ? 'false' : 'true'"
               (click)="toggleCollapse(item)">
+              <div id="minisvg">
+                <ng-container *ngIf="item.name === 'Yetkili Kullanıcılar'">
+                  <img src="../../../../../assets/icons/authorizedPersonnel-mini.svg" >
+                </ng-container>
+              <ng-container *ngIf="item.name === 'Çalışanlar'">
+                <img src="../../../../../assets/icons/employee-mini.svg" >
+              </ng-container>
+              <ng-container *ngIf="item.name === 'Gösterge Paneli'">
+                <img src="../../../../../assets/icons/dashboard-mini.svg">
+              </ng-container><ng-container *ngIf="item.name === 'Makinalar'">
+                <img src="../../../../../assets/icons/machines-mini.svg" >
+              </ng-container>
+            </div>
         {{ item.name }}
+        
       </button>
       <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" *ngIf="!item.isCollapsed">
-        <li *ngIf="item.name === 'Kullanıcılar'"><a routerLink="users" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Kullanıcı Listesi</a></li>
-        <li *ngIf="item.name === 'Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-        <li *ngIf="item.name === 'Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
+        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="users" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Kullanıcı Listesi</a></li>
+        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
+        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
         <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">New</a></li>
         <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
         <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Shipped</a></li>
@@ -35,9 +50,9 @@
         {{ item.name }}
       </button>
       <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" *ngIf="!item.isCollapsed">
-        <li *ngIf="item.name === 'Kullanıcılar'"><a routerLink="Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
-        <li *ngIf="item.name === 'Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-        <li *ngIf="item.name === 'Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
+        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="Yetkili Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
+        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
+        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
         <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">New</a></li>
         <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
         <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Shipped</a></li>
@@ -61,9 +76,9 @@
       </button>
       <div class="collapse" *ngIf="!item.isCollapsed" [id]="item.name.toLowerCase() + '-collapse'">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li *ngIf="item.name === 'Kullanıcılar'"><a routerLink="Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
-          <li *ngIf="item.name === 'Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-          <li *ngIf="item.name === 'Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
+          <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="Yetkili Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
+          <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
+          <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
           // Diğer liste öğelerinin içeriği buraya eklenebilir
         </ul>
       </div>
@@ -85,7 +100,7 @@
       </button>
       <div class="collapse" *ngIf="!item.isCollapsed">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li><a routerLink="Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
+          <li><a routerLink="Yetkili Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
           <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
           <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
         </ul>

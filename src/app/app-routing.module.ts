@@ -8,15 +8,17 @@ const routes: Routes = [
   {
     path:'admin', component:LayoutComponent, children:[
       {path: "", component: DashboardComponent},
-      {path:'dashboard',loadChildren:()=>import('./admin/components/dashboard/dashboard.module').then(m=>m.DashboardModule)},
-      {path:'users',loadChildren:()=>import('./admin/components/users/users.module').then(m=>m.UsersModule)},
-      {path:'employees',loadChildren:()=>import('./admin/components/employees/employees.module').then(m=>m.EmployeesModule)},
-      {path:'machines',loadChildren:()=>import('./admin/components/machines/machines.module').then(m=>m.MachinesModule)},
+      {path:'dashboard',loadComponent:()=>import('./admin/components/dashboard/dashboard.component').then(m=>m.DashboardComponent)},
+      {path:'users',loadComponent:()=>import('./admin/components/users/users.component').then(m=>m.UsersComponent)},
+      {path:'employees',loadComponent:()=>import('./admin/components/employees/employees.component').then(m=>m.EmployeesComponent)},
+      {path:'employees/:pageNo',loadComponent:()=>import('./admin/components/employees/employees.component').then(m=>m.EmployeesComponent)},
+      {path:'machines',loadComponent:()=>import('./admin/components/machines/machines.component').then(m=>m.MachinesComponent)},
     ]
   },
   {path:'', component:HomeComponent},
-  {path:'employees',loadChildren:()=>import('./ui/components/employees/employees.module').then(m=>m.EmployeesModule)},
-  {path:'machines',loadChildren:()=>import('./ui/components/machines/machines.module').then(m=>m.MachinesModule)},
+  {path:'employees',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent)},
+  {path:'machines',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent)},
+  {path:'employee-list',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent)},
   
 ];
 

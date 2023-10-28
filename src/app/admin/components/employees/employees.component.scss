@@ -1,0 +1,39 @@
+.row {
+}
+.col-md-1 {
+}
+.col-md-8 {
+}
+.table {
+}
+.table-striped {
+}
+.col-md-2 {
+}
+.paginatorContainer {
+}
+.pagination {
+}
+.justify-content-center {
+}
+.page-item {
+    
+}
+.page-link {
+    background-color: #ffc107;
+    border-color: #fff;
+    color: black;
+}
+.page-item :disabled{
+    color: #fff;
+    
+}
+.active>.page-link, .page-link.active{
+    
+    border-color: #fff;
+    color: white;
+}
+.disabled>.page-link, .page-link.disabled{
+    border-color: #fff;
+    color: white;
+}

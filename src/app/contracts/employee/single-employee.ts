@@ -13,20 +13,5 @@ export class SingleEmployee {
     typeOfBlood:string;
     emergencyContact:string;
 
-    constructor(){
-        this.id = "";
-        this.firstName = "";
-        this.lastName = "";
-        this.jobName = "";
-        this.quarryName = "";
-        this.birthDate = new Date();
-        this.phone = "";
-        this.address = "";
-        this.hireDate = new Date();
-        this.departureDate = new Date();
-        this.licenseType = "";
-        this.typeOfBlood = "";
-        this.emergencyContact = "";
-    }
 }
 
