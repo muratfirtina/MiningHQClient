@@ -1,5 +1,3 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import { importProvidersFrom } from '@angular/core';
 import { AppComponent } from './app/app.component';
 import { ToastrModule } from 'ngx-toastr';
@@ -10,11 +8,12 @@ import { AppRoutingModule } from './app/app-routing.module';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { DynamicLoadComponentDirective } from './app/directives/common/dynamic-load-component.directive';
 
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule,NgxSpinnerModule,NgxPaginationModule, ToastrModule.forRoot(),RouterModule.forRoot([])),
+        importProvidersFrom(BrowserModule, AppRoutingModule,NgxSpinnerModule,NgxPaginationModule, ToastrModule.forRoot(),RouterModule.forRoot([],{bindToComponentInputs:true}),DynamicLoadComponentDirective),
         { provide: "baseUrl", useValue: "http://localhost:5278/api", multi: true },
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi())

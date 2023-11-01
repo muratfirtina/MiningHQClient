@@ -1,0 +1,20 @@
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Adı:</label>
+        <input type="text" id="firstName" name="firstName" class="form-control" #firstName required>
+    </div>
+    <div class="form-group">
+        <label for="soyad">Soyadı:</label>
+        <input type="text" id="lastName" name="lastName" class="form-control" #lastName required>
+    </div>
+    <div class="form-group">
+        <label for="meslek">Mesleği:</label>
+        <select id="jobName" name="jobName" class="form-control" #jobName required >
+            <option *ngFor="let item of items" [value]="item.name">{{item.name}}</option>
+        </select>
+    </div>
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-primary" style="margin-top: 10px;"
+            (click)="saveEmployee(firstName,lastName,jobName)">Kaydet</button>
+    </div>
+</div>

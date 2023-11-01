@@ -17,7 +17,4 @@ export class BaseComponent {
 
 export enum SpinnerType {
   BallSpinClockwise = "s1",
-  BallScaleMultiple = "s2",
-  LineSpinFade = "s3",
-
 }
