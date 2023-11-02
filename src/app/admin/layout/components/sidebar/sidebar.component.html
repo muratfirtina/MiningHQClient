@@ -10,13 +10,21 @@
                 <ng-container *ngIf="item.name === 'Yetkili Kullanıcılar'">
                   <img src="../../../../../assets/icons/authorizedPersonnel-mini.svg" >
                 </ng-container>
+
               <ng-container *ngIf="item.name === 'Çalışanlar'">
                 <img src="../../../../../assets/icons/employee-mini.svg" >
               </ng-container>
+
               <ng-container *ngIf="item.name === 'Gösterge Paneli'">
                 <img src="../../../../../assets/icons/dashboard-mini.svg">
-              </ng-container><ng-container *ngIf="item.name === 'Makinalar'">
+              </ng-container>
+
+              <ng-container *ngIf="item.name === 'Makinalar'">
                 <img src="../../../../../assets/icons/machines-mini.svg" >
+              </ng-container>
+
+              <ng-container *ngIf="item.name === 'Meslekler'">
+                 <img src="../../../../../assets/icons/machines-mini.svg" >
               </ng-container>
             </div>
         {{ item.name }}
@@ -26,15 +34,36 @@
         <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="users" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Kullanıcı Listesi</a></li>
         <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
         <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">New</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Shipped</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Returned</a></li>
+
         <li *ngIf="item.name === 'Çalışanlar'"><a routerLink="employees" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Çalışan</a></li>
+
+        <li *ngIf="item.name === 'Gösterge Paneli'"><a routerLink="dashboard" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Gösterge Paneli</a></li>
+
+        <li *ngIf="item.name === 'Makinalar'"><a routerLink="machines/machine-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Makina Listesi</a></li>
+
+        <li *ngIf="item.name === 'Meslekler'"><a routerLink="jobs/job-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Meslek Listesi</a></li>
+        <li *ngIf="item.name === 'Meslekler'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#jobAddModal" (click)="loadComponent()">Meslek Ekle</a></li>
       </ul>
     </li>
     <li class="border-top my3"></li>
   </ul>
+</div>
+
+<div class="modal fade" id="jobAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Meslek Ekle</h1>
+        
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <ng-template appDynamicLoadComponent></ng-template>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- <div class="flex-shrink-0 p-3" style="width: 280px;">

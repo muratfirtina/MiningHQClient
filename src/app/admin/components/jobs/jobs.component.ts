@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseComponent } from 'src/app/base/base.component';
+import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+
 
 @Component({
   selector: 'app-jobs',
@@ -11,14 +12,13 @@ import { NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./jobs.component.scss']
 })
 export class JobsComponent extends BaseComponent implements OnInit {
-
-  constructor(spinner: NgxSpinnerService) {
+  
+ constructor(spinner:NgxSpinnerService) {
     super(spinner);
-   }
-
-
-  ngOnInit(): void {
-    
   }
 
+  async ngOnInit() {
+
+  }
+  
 }

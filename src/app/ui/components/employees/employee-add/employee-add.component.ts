@@ -46,31 +46,29 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     await this.getJobs();
   }
   
-  saveEmployee(firstName: HTMLInputElement, lastName: HTMLInputElement, jobName:HTMLSelectElement){
-    this.showSpinner(SpinnerType.BallSpinClockwise);
+  addEmployee(firstName: HTMLInputElement, lastName: HTMLInputElement, jobName:HTMLSelectElement){
+    
     const create_employee : CreateEmployee = new CreateEmployee();
     create_employee.firstName = firstName.value;
     create_employee.lastName = lastName.value;
     create_employee.jobName = jobName.value;
-    //job name den job id bulunacak
+   
     for (let index = 0; index < this.items.length; index++) {
       if(this.items[index].name == jobName.value){
         create_employee.jobId = this.items[index].id;
       }
     }
 
-
-
+    this.showSpinner(SpinnerType.BallSpinClockwise);
     this.employeeService.add(create_employee, () => {
-      this.hideSpinner(SpinnerType.BallSpinClockwise);
+      this.showSpinner(SpinnerType.BallSpinClockwise);
       this.toastr.success( create_employee.firstName + create_employee.lastName + " Başarıyla oluşturuldu.", "Başarılı", );
       this.createdProduct.emit(create_employee);
-
-      
 
     }, errorMessage => {
       this.toastr.error("Personel kaydedilemedi", "Hata");
     });
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
 
   }
 

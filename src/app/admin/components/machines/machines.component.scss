@@ -1,0 +1,31 @@
+.btn-warning {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#main .col-md-8 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#main .col-md-8 button {
+    margin-right: 25px;
+}
+
+#main .col-md-8 button:last-child {
+    margin-right: 0; /* Son butonun sağ kenarında boşluk olmasını engeller */
+}
+
+#personellist svg {
+    margin-bottom: 5px;
+}
+
+#main {
+    margin-top: 100px;
+}
