@@ -10,6 +10,7 @@
     <div class="form-group">
         <label for="meslek">Mesleği:</label>
         <select id="jobName" name="jobName" class="form-control" #jobName required >
+            <option value="" disabled selected>Meslek Seçiniz</option>
             <option *ngFor="let item of items" [value]="item.name">{{item.name}}</option>
         </select>
     </div>

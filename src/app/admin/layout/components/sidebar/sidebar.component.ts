@@ -5,19 +5,20 @@ import { DynamicLoadComponentDirective } from 'src/app/directives/common/dynamic
 import { ComponentName, DynamicLoadComponentService } from 'src/app/services/common/dynamic-load-component.service';
 import { JobAddComponent } from 'src/app/admin/components/jobs/job-add/job-add.component';
 import { JobListComponent } from 'src/app/admin/components/jobs/job-list/job-list.component';
-import { CreateJob } from 'src/app/contracts/job/create-job';
+import { MachineAddComponent } from 'src/app/admin/components/machines/machine-add/machine-add.component';
+import { MachineTypeAddComponent } from 'src/app/admin/components/machine-types/machine-type-add/machine-type-add.component';
+import { ModelAddComponent } from 'src/app/admin/components/models/model-add/model-add.component';
+import { BrandAddComponent } from 'src/app/admin/components/brands/brand-add/brand-add.component';
+import { QuarryAddComponent } from 'src/app/admin/components/quarries/quarry-add/quarry-add.component';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
     standalone: true,
-    imports: [NgFor, NgIf, RouterLink, DynamicLoadComponentDirective,JobAddComponent]
+    imports: [NgFor, NgIf, RouterLink,JobAddComponent,MachineAddComponent,MachineTypeAddComponent,ModelAddComponent,BrandAddComponent,QuarryAddComponent]
 })
 export class SidebarComponent {
-
-  @ViewChild(DynamicLoadComponentDirective, { static: true })
-  dynamicLoadComponentDirective!: DynamicLoadComponentDirective;
 
   @ViewChild(JobListComponent)listComponents: JobListComponent;
 
@@ -29,6 +30,12 @@ export class SidebarComponent {
     { name: 'Çalışanlar', isCollapsed: true },
     { name: 'Makinalar', isCollapsed: true },
     { name: 'Meslekler', isCollapsed: true },
+    { name: 'Makina Tipleri', isCollapsed: true },
+    { name: 'Markalar', isCollapsed: true },
+    { name: 'Modeller', isCollapsed: true },
+    { name: 'Ocaklar', isCollapsed: true },
+    
+
     
   ];
 
@@ -37,10 +44,5 @@ export class SidebarComponent {
     item.isCollapsed = !item.isCollapsed;
   }
 
-  loadComponent() {
-    this.dynamicLoadComponentService.loadComponent(ComponentName.JobAddComponent, this.dynamicLoadComponentDirective.viewContainerRef);
-  }
-
-  
 }
 

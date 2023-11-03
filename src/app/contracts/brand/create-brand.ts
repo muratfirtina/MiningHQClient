@@ -1,4 +1,4 @@
-export class Job {
+export class CreateBrand {
     id: string;
     name: string;
 }

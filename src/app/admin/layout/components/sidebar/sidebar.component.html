@@ -26,6 +26,23 @@
               <ng-container *ngIf="item.name === 'Meslekler'">
                  <img src="../../../../../assets/icons/machines-mini.svg" >
               </ng-container>
+
+              <ng-container *ngIf="item.name === 'Ocaklar'">
+                <img src="../../../../../assets/icons/machines-mini.svg" >
+             </ng-container>
+
+              <ng-container *ngIf="item.name === 'Markalar'">
+                <img src="../../../../../assets/icons/machines-mini.svg" >
+             </ng-container>
+
+             <ng-container *ngIf="item.name === 'Modeller'">
+              <img src="../../../../../assets/icons/machines-mini.svg" >
+           </ng-container>
+              
+              <ng-container *ngIf="item.name === 'Makina Tipleri'">
+                <img src="../../../../../assets/icons/machines-mini.svg" >
+             </ng-container>
+              
             </div>
         {{ item.name }}
         
@@ -40,9 +57,22 @@
         <li *ngIf="item.name === 'Gösterge Paneli'"><a routerLink="dashboard" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Gösterge Paneli</a></li>
 
         <li *ngIf="item.name === 'Makinalar'"><a routerLink="machines/machine-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Makina Listesi</a></li>
+        <li *ngIf="item.name === 'Makinalar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#machineAddModal">Makina Ekle</a></li>
+
+        <li *ngIf="item.name === 'Ocaklar'"><a routerLink="quarries/quarry-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Ocak Listesi</a></li>
+        <li *ngIf="item.name === 'Ocaklar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#quarryAddModal">Ocak Ekle</a></li>
+
+        <li *ngIf="item.name === 'Markalar'"><a routerLink="brands/brand-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Marka Listesi</a></li>
+        <li *ngIf="item.name === 'Markalar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#brandAddModal">Marka Ekle</a></li>
+
+        <li *ngIf="item.name === 'Modeller'"><a routerLink="models/model-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Model Listesi</a></li>
+        <li *ngIf="item.name === 'Modeller'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#modelAddModal">Model Ekle</a></li>
+
+        <li *ngIf="item.name === 'Makina Tipleri'"><a routerLink="machine-types/machine-type-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Makina Tipi Listesi</a></li>
+        <li *ngIf="item.name === 'Makina Tipleri'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#machineTypeAddModal">Makina Tipi Ekle</a></li>
 
         <li *ngIf="item.name === 'Meslekler'"><a routerLink="jobs/job-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Meslek Listesi</a></li>
-        <li *ngIf="item.name === 'Meslekler'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#jobAddModal" (click)="loadComponent()">Meslek Ekle</a></li>
+        <li *ngIf="item.name === 'Meslekler'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#jobAddModal">Meslek Ekle</a></li>
       </ul>
     </li>
     <li class="border-top my3"></li>
@@ -54,10 +84,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Meslek Ekle</h1>
-        
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
-        <ng-template appDynamicLoadComponent></ng-template>
+        <app-job-add></app-job-add>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -66,74 +95,82 @@
   </div>
 </div>
 
-<!-- <div class="flex-shrink-0 p-3" style="width: 280px;">
-  <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-    <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-    <span class="fs-5 fw-semibold">Collapsible</span>
-  </a>
-  <ul class="list-unstyled ps-0">
-    <li class="mb-1" *ngFor="let item of items">
-      <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0"
-              [attr.aria-expanded]="item.isCollapsed ? 'false' : 'true'"
-              (click)="toggleCollapse(item)">
-        {{ item.name }}
-      </button>
-      <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" *ngIf="!item.isCollapsed">
-        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="Yetkili Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
-        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">New</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Processed</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Shipped</a></li>
-        <li *ngIf="item.name === 'Orders'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Returned</a></li>
-      </ul>
-    </li>
-  </ul>
-</div> -->
-
-<!-- <div class="flex-shrink-0 p-3" style="width: 280px;">
-  <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-    <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-    <span class="fs-5 fw-semibold">Collapsible</span>
-  </a>
-  <ul class="list-unstyled ps-0">
-    <li class="mb-1" *ngFor="let item of items">
-      <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0"
-              [attr.aria-expanded]="!item.isCollapsed"
-              (click)="toggleCollapse(item)">
-        {{ item.name }}
-      </button>
-      <div class="collapse" *ngIf="!item.isCollapsed" [id]="item.name.toLowerCase() + '-collapse'">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="Yetkili Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
-          <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-          <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
-          // Diğer liste öğelerinin içeriği buraya eklenebilir
-        </ul>
+<div class="modal fade" id="machineAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Makina Ekle</h1>
       </div>
-    </li>
-  </ul>
-</div> -->
-
-<!-- <div class="flex-shrink-0 p-3" style="width: 280px;">
-  <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-    <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-    <span class="fs-5 fw-semibold">Collapsible</span>
-  </a>
-  <ul class="list-unstyled ps-0">
-    <li class="mb-1" *ngFor="let item of items">
-      <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0"
-              [attr.aria-expanded]="!item.isCollapsed"
-              (click)="toggleCollapse(item)">
-        {{ item.name }}
-      </button>
-      <div class="collapse" *ngIf="!item.isCollapsed">
-        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          <li><a routerLink="Yetkili Kullanıcılar" class="link-body-emphasis d-inline-flex text-decoration-none rounded">User List</a></li>
-          <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-          <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
-        </ul>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-machine-add></app-machine-add>
       </div>
-    </li>
-  </ul>
-</div> -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="quarryAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Ocak Ekle</h1>
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-quarry-add></app-quarry-add>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="brandAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Marka Ekle</h1>
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-brand-add></app-brand-add>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modelAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Model Ekle</h1>
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-model-add></app-model-add>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="machineTypeAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Makina Tipi Ekle</h1>
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-machine-type-add></app-machine-type-add>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

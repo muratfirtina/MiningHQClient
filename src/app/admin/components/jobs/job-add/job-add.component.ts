@@ -4,7 +4,6 @@ import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CreateJob } from 'src/app/contracts/job/create-job';
 import { JobService } from 'src/app/services/common/models/job.service';
-import { CreateEmployee } from 'src/app/contracts/employee/create-employee';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -43,7 +42,10 @@ export class JobAddComponent extends BaseComponent implements OnInit {
       
     });
 
-    location.reload();
+    
+    setTimeout(() => {
+      location.reload();
+    }, 1500);
   }
 
 }

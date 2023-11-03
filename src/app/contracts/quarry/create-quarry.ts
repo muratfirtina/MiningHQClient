@@ -1,4 +1,4 @@
-export class Job {
+export class CreateQuarry{
     id: string;
     name: string;
 }

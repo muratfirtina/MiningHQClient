@@ -1,4 +1,4 @@
-export class Job {
+export class MachineType {
     id: string;
     name: string;
 }

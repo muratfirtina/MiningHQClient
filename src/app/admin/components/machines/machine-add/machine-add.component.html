@@ -1,1 +1,42 @@
-<p>machine-add works!</p>
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Adı:</label>
+        <input type="text" id="name" name="name" class="form-control" #name required>
+    </div>
+    <div class="form-group">
+        <label for="machineTypeName">Makina Tipi:</label>
+        <select id="machineTypeName" name="machineTypeName" class="form-control" #machineTypeName required >
+            <option value="" disabled selected>Makina Tipi Seçiniz</option>
+            <option *ngFor="let item of machineTypeItems" [value]="item.name">{{item.name}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="brandName">Marka:</label>
+        <select id="brandName" name="brandName" class="form-control" #brandName required >
+            <option value="" disabled selected>Marka Seçiniz</option>
+            <option *ngFor="let item of brandItems" [value]="item.name">{{item.name}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="modelName">Model:</label>
+        <select id="modelName" name="modelName" class="form-control" #modelName required >
+            <option value="" disabled selected>Model Seçiniz</option>
+            <option *ngFor="let item of modelItems" [value]="item.name">{{item.name}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="serialNumber">Seri Numarası:</label>
+        <input type="text" id="serialNumber" name="serialNumber" class="form-control" #serialNumber required>
+    </div>
+    <div class="form-group">
+        <label for="quarryName">Çalıştığı Ocak</label>
+        <select id="quarryName" name="quarryName" class="form-control" #quarryName required >
+            <option value="" disabled selected>Ocak Seçiniz</option>
+            <option *ngFor="let item of quarryItems" [value]="item.name">{{item.name}}</option>
+        </select>
+    </div>
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+            (click)="addMachine(name,machineTypeName,brandName,modelName,serialNumber,quarryName)">Kaydet</button>
+    </div>
+</div>

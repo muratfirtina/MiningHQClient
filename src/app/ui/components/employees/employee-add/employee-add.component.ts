@@ -28,7 +28,6 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
   
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
-  listJobs: ListJob[] = [];
   items: Job[] = [];
   filteredJobs: Job[] = [];
 
@@ -43,7 +42,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     
   }
   async ngOnInit() {
-    await this.getJobs();
+    this.getJobs();
   }
   
   addEmployee(firstName: HTMLInputElement, lastName: HTMLInputElement, jobName:HTMLSelectElement){
