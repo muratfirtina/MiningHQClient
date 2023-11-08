@@ -1,1 +1,10 @@
-<p>brand-add works!</p>
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Marka:</label>
+        <input type="text" id="brandName" name="brandName" class="form-control" #brandName required>
+    </div>
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+            (click)="addBrand(brandName)">Kaydet</button>
+    </div>
+</div>

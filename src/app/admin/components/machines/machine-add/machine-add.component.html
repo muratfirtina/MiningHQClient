@@ -5,23 +5,23 @@
     </div>
     <div class="form-group">
         <label for="machineTypeName">Makina Tipi:</label>
-        <select id="machineTypeName" name="machineTypeName" class="form-control" #machineTypeName required >
+        <select id="machineTypeName" name="machineTypeName" class="form-select" #machineTypeName required >
             <option value="" disabled selected>Makina Tipi Seçiniz</option>
-            <option *ngFor="let item of machineTypeItems" [value]="item.name">{{item.name}}</option>
+            <option *ngFor="let machineType of machineTypes" [value]="machineType.name">{{machineType.name}}</option>
         </select>
     </div>
     <div class="form-group">
         <label for="brandName">Marka:</label>
-        <select id="brandName" name="brandName" class="form-control" #brandName required >
+        <select id="brandName" name="brandName" class="form-select" #brandName required >
             <option value="" disabled selected>Marka Seçiniz</option>
-            <option *ngFor="let item of brandItems" [value]="item.name">{{item.name}}</option>
+            <option *ngFor="let brand of brands" [value]="brand.name">{{brand.name}}</option>
         </select>
     </div>
     <div class="form-group">
         <label for="modelName">Model:</label>
-        <select id="modelName" name="modelName" class="form-control" #modelName required >
+        <select id="modelName" name="modelName" class="form-select" #modelName required >
             <option value="" disabled selected>Model Seçiniz</option>
-            <option *ngFor="let item of modelItems" [value]="item.name">{{item.name}}</option>
+            <option *ngFor="let model of models" [value]="model.name">{{model.name}}</option>
         </select>
     </div>
     <div class="form-group">
@@ -30,9 +30,9 @@
     </div>
     <div class="form-group">
         <label for="quarryName">Çalıştığı Ocak</label>
-        <select id="quarryName" name="quarryName" class="form-control" #quarryName required >
+        <select id="quarryName" name="quarryName" class="form-select" #quarryName required >
             <option value="" disabled selected>Ocak Seçiniz</option>
-            <option *ngFor="let item of quarryItems" [value]="item.name">{{item.name}}</option>
+            <option *ngFor="let quarry of quarries" [value]="quarry.name">{{quarry.name}}</option>
         </select>
     </div>
     <div class="modal-footer" style="border-top: none;">

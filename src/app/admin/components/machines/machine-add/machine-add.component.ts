@@ -21,7 +21,7 @@ import { QuarryService } from 'src/app/services/common/models/quarry.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './machine-add.component.html',
-  styleUrls: ['./machine-add.component.scss']
+  styleUrls: ['./machine-add.component.scss','../../../../../styles.scss']
 })
 export class MachineAddComponent extends BaseComponent implements OnInit {
 
@@ -29,10 +29,10 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
 
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
-  quarryItems: Quarry[] = [];
-  brandItems:Brand[] = [];
-  modelItems:Model[] = [];
-  machineTypeItems:MachineType[] = [];
+  quarries: Quarry[] = [];
+  brands:Brand[] = [];
+  models:Model[] = [];
+  machineTypes:MachineType[] = [];
 
 
   constructor(spinner: NgxSpinnerService,
@@ -63,10 +63,10 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
     create_machine.serialNumber = serialNumber.value;
     create_machine.quarryName = QuarryName.value;
 
-    create_machine.machineTypeId = this.getIdFromItems(this.machineTypeItems, machineType.value);
-    create_machine.brandId = this.getIdFromItems(this.brandItems, brandName.value);
-    create_machine.modelId = this.getIdFromItems(this.modelItems, modelName.value);
-    create_machine.quarryId = this.getIdFromItems(this.quarryItems, QuarryName.value);
+    create_machine.machineTypeId = this.getIdFromItems(this.machineTypes, machineType.value);
+    create_machine.brandId = this.getIdFromItems(this.brands, brandName.value);
+    create_machine.modelId = this.getIdFromItems(this.models, modelName.value);
+    create_machine.quarryId = this.getIdFromItems(this.quarries, QuarryName.value);
     
 
     this.showSpinner(SpinnerType.BallSpinClockwise);
@@ -105,7 +105,7 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.brandService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
-    this.brandItems = response.items;
+    this.brands = response.items;
     
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);
@@ -116,7 +116,7 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.modelService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
-    this.modelItems = response.items;
+    this.models = response.items;
     
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);
@@ -126,7 +126,7 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.machinetypeService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
-    this.machineTypeItems = response.items;
+    this.machineTypes = response.items;
     
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);
@@ -136,7 +136,7 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.quarryService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
-    this.quarryItems = response.items;
+    this.quarries = response.items;
     
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);

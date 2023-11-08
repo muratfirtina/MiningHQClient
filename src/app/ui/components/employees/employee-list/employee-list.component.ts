@@ -6,14 +6,15 @@ import { EmployeeService } from 'src/app/services/common/models/employee.service
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { ListEmployee } from 'src/app/contracts/employee/list-employee';
 import { Employee } from 'src/app/contracts/employee/employee';
+import { Router, RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './employee-list.component.html',
-  styleUrls: ['./employee-list.component.scss'],
+  styleUrls: ['./employee-list.component.scss','../../../../../styles.scss'],
 })
 export class EmployeeListComponent extends BaseComponent implements OnInit {
   
@@ -25,7 +26,8 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
   
   constructor(
     spinner: NgxSpinnerService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private router:Router
   ) {
     super(spinner);
   }
@@ -41,5 +43,9 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
     this.items = response.items;
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
+
+  goToEmployeePage(id: string) {
+    this.router.navigate(['/employee', id]);
   }
 }

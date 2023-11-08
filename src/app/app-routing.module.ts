@@ -43,6 +43,7 @@ const routes: Routes = [
   {path:'employees',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent)},
   {path:'machines',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent)},
   {path:'employee-list',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent)},
+  {path:'employee/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent)},
   //{path:'employee-add',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent)},
   
 ];

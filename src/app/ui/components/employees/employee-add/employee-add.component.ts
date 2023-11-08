@@ -19,7 +19,7 @@ import { Job } from 'src/app/contracts/job/job';
   standalone: true,
   imports: [CommonModule,DynamicLoadComponentDirective],
   templateUrl: './employee-add.component.html',
-  styleUrls: ['./employee-add.component.scss']
+  styleUrls: ['./employee-add.component.scss','../../../../../styles.scss']
 })
 export class EmployeeAddComponent extends BaseComponent implements OnInit {
 
@@ -28,7 +28,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
   
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
-  items: Job[] = [];
+  jobs: Job[] = [];
   filteredJobs: Job[] = [];
 
 
@@ -52,9 +52,9 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     create_employee.lastName = lastName.value;
     create_employee.jobName = jobName.value;
    
-    for (let index = 0; index < this.items.length; index++) {
-      if(this.items[index].name == jobName.value){
-        create_employee.jobId = this.items[index].id;
+    for (let index = 0; index < this.jobs.length; index++) {
+      if(this.jobs[index].name == jobName.value){
+        create_employee.jobId = this.jobs[index].id;
       }
     }
 
@@ -75,7 +75,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.jobService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
-    this.items = response.items;
+    this.jobs = response.items;
     
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);

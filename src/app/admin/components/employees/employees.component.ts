@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-employees',
   templateUrl: './employees.component.html',
-  styleUrls: ['./employees.component.scss'],
+  styleUrls: ['./employees.component.scss','../../../../styles.scss'],
   standalone: true,
   imports: [RouterModule,CommonModule],
 })

@@ -13,7 +13,7 @@ import { JobService } from 'src/app/services/common/models/job.service';
   standalone: true,
   imports: [CommonModule,RouterModule],
   templateUrl: './job-list.component.html',
-  styleUrls: ['./job-list.component.scss']
+  styleUrls: ['./job-list.component.scss','../../../../../styles.scss']
 })
 export class JobListComponent extends BaseComponent implements OnInit {
   

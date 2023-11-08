@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { BaseComponent } from 'src/app/base/base.component';
 
 @Component({
   selector: 'app-models',
@@ -8,6 +10,15 @@ import { CommonModule } from '@angular/common';
   templateUrl: './models.component.html',
   styleUrls: ['./models.component.scss']
 })
-export class ModelsComponent {
+export class ModelsComponent extends BaseComponent implements OnInit {
+
+  constructor(spinner: NgxSpinnerService) {
+    super(spinner);
+   }
+
+
+  ngOnInit(): void {
+    
+  }
 
 }

@@ -1,1 +1,18 @@
-<p>model-add works!</p>
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Adı:</label>
+        <input type="text" id="name" name="name" class="form-control" #name required>
+    </div>
+    <div class="form-group">
+        <label for="brandName">Marka:</label>
+        <select id="brandName" name="brandName" class="form-select" #brandName required >
+            <option value="" disabled selected>Marka Seçiniz</option>
+            <option *ngFor="let item of brandItems" [value]="item.name">{{item.name}}</option>
+        </select>
+    </div>
+
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+            (click)="addModel(name,brandName)">Kaydet</button>
+    </div>
+</div>

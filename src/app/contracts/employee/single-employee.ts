@@ -1,9 +1,13 @@
+import { ListImageFile } from "../list-image-file";
+
 export class SingleEmployee {
     id:string;
     firstName:string;
     lastName:string;
     jobName:string;
+    jobId:string;
     quarryName:string;
+    quarryId:string;
     birthDate:Date;
     phone:string;
     address:string;
@@ -12,6 +16,7 @@ export class SingleEmployee {
     licenseType:string;
     typeOfBlood:string;
     emergencyContact:string;
+    employeeImageFiles:ListImageFile[];
 
 }
 

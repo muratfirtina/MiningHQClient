@@ -9,13 +9,13 @@
     </div>
     <div class="form-group">
         <label for="meslek">Mesleği:</label>
-        <select id="jobName" name="jobName" class="form-control" #jobName required >
+        <select id="jobName" name="jobName" class="form-select" #jobName required >
             <option value="" disabled selected>Meslek Seçiniz</option>
-            <option *ngFor="let item of items" [value]="item.name">{{item.name}}</option>
+            <option *ngFor="let job of jobs" [value]="job.name">{{job.name}}</option>
         </select>
     </div>
     <div class="modal-footer" style="border-top: none;">
-        <button type="button" class="btn btn-primary" style="margin-top: 10px;"
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
             (click)="addEmployee(firstName,lastName,jobName)">Kaydet</button>
     </div>
 </div>

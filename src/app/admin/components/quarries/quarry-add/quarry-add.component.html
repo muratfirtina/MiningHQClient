@@ -1,1 +1,10 @@
-<p>quarry-add works!</p>
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Ocak:</label>
+        <input type="text" id="quarryName" name="quarryName" class="form-control" #quarryName required>
+    </div>
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+            (click)="addQuarry(quarryName)">Kaydet</button>
+    </div>
+</div>

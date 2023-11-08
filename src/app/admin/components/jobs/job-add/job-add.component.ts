@@ -11,7 +11,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './job-add.component.html',
-  styleUrls: ['./job-add.component.scss']
+  styleUrls: ['./job-add.component.scss','../../../../../styles.scss']
 })
 export class JobAddComponent extends BaseComponent implements OnInit {
 

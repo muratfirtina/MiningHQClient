@@ -1,1 +1,11 @@
-<p>machine-type-add works!</p>
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Makina Tipi:</label>
+        <input type="text" id="machineTypeName" name="machineTypeName" class="form-control" #machineTypeName required>
+    </div>
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+            (click)="addMachineTypes(machineTypeName)">Kaydet</button>
+    </div>
+</div>
+

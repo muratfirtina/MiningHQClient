@@ -9,11 +9,19 @@ import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { DynamicLoadComponentDirective } from './app/directives/common/dynamic-load-component.directive';
+import { FormsModule } from '@angular/forms';
 
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule,NgxSpinnerModule,NgxPaginationModule, ToastrModule.forRoot(),RouterModule.forRoot([],{bindToComponentInputs:true}),DynamicLoadComponentDirective),
+        importProvidersFrom(BrowserModule,
+            AppRoutingModule,
+            NgxSpinnerModule,
+            NgxPaginationModule,
+            ToastrModule.forRoot(),
+            RouterModule.forRoot([],{bindToComponentInputs:true}),
+            DynamicLoadComponentDirective,
+            FormsModule),
         { provide: "baseUrl", useValue: "http://localhost:5278/api", multi: true },
         provideAnimations(),
         provideHttpClient(withInterceptorsFromDi())

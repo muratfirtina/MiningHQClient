@@ -13,7 +13,7 @@ import { PageRequest } from 'src/app/contracts/pageRequest';
   standalone: true,
   imports: [CommonModule,RouterModule],
   templateUrl: './machine-list.component.html',
-  styleUrls: ['./machine-list.component.scss']
+  styleUrls: ['./machine-list.component.scss','../../../../../styles.scss']
 })
 export class MachineListComponent extends BaseComponent implements OnInit {
   
