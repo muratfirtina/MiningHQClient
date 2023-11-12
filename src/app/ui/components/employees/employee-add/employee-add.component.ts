@@ -61,7 +61,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.employeeService.add(create_employee, () => {
       this.showSpinner(SpinnerType.BallSpinClockwise);
-      this.toastr.success( create_employee.firstName + create_employee.lastName + " Başarıyla oluşturuldu.", "Başarılı", );
+      this.toastr.success( create_employee.firstName + ' ' + create_employee.lastName + " Başarıyla oluşturuldu.", "Başarılı", );
       this.createdProduct.emit(create_employee);
 
     }, errorMessage => {

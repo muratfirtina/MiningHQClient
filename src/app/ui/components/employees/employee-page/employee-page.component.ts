@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent } from 'src/app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -12,24 +12,29 @@ import { Job } from 'src/app/contracts/job/job';
 import { Quarry } from 'src/app/contracts/quarry/quarry';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
 import { ToastrService } from 'ngx-toastr';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable'; 
+import { openSansBase64 } from 'src/assets/fonts/openSansFont';
 
 declare var $: any;
-
-
 
 @Component({
   selector: 'app-employee-page',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule,ReactiveFormsModule],
   templateUrl: './employee-page.component.html',
-  styleUrls: ['./employee-page.component.scss']
+  styleUrls: ['./employee-page.component.scss', '../../../../../styles.scss']
 })
 export class EmployeePageComponent extends BaseComponent implements OnInit {
+
+  @ViewChild('pdfContent') pdfContent: ElementRef;
+  
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
   employee: SingleEmployee;
   jobs: Job[] = [];
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
+ 
 
   constructor(
     spinner: NgxSpinnerService,
@@ -72,16 +77,29 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   loadEmployeeDetails(employeeId: string) {
     this.employeeService.getEmployeeById(employeeId, () => {}).then((response) => {
       this.employee = response;
+
+      const birthDateISO = this.employee.birthDate ?
+        new Date(this.employee.birthDate).toISOString().substring(0, 10) :
+        null;
+      
+      const hireDateISO = this.employee.hireDate ?
+        new Date(this.employee.hireDate).toISOString().substring(0, 10) :
+        null;
+      
+      const departureDateISO = this.employee.departureDate ?
+        new Date(this.employee.departureDate).toISOString().substring(0, 10) :
+        null;
+
       
       this.employeeForm = this.fB.group({
         firstName: [this.employee.firstName],
         lastName: [this.employee.lastName],
         jobName: [this.employee.jobName],
         quarryName: [this.employee.quarryName],
-        birthDate: [this.employee.birthDate],
-        departureDate: [this.employee.departureDate],
+        birthDate: [birthDateISO],
+        departureDate: [departureDateISO],
         emergencyContact: [this.employee.emergencyContact],
-        hireDate: [this.employee.hireDate],
+        hireDate: [hireDateISO],
         licenseType: [this.employee.licenseType],
         phone: [this.employee.phone],
         typeOfBlood: [this.employee.typeOfBlood],
@@ -130,10 +148,101 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       });
   }
 
+
   async getQuarries() {
     await this.quarryService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
         this.quarries = response.items;
       });
+  }
+
+  /* generatePDF() {
+    const content = this.pdfContent.nativeElement;
+
+    html2canvas(content).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('employee-details.pdf');
+    });
+  }
+  printPage() {
+    window.print();
+  } */
+
+  generatePDF2() {
+    const isConfirmed = window.confirm('Çalışan bilgilerini PDF olarak indirmek istediğinize emin misiniz?')
+    if (isConfirmed) {
+    
+    let doc = new jsPDF();
+  
+    const birthDateISO = this.employee.birthDate ?
+        new Date(this.employee.birthDate).toISOString().substring(0, 10) :
+        null;
+    const hireDateISO = this.employee.hireDate ?
+        new Date(this.employee.hireDate).toISOString().substring(0, 10) :
+        null;
+    const departureDateISO = this.employee.departureDate ?
+        new Date(this.employee.departureDate).toISOString().substring(0, 10) :
+        null;
+
+    const employeeData = {
+      name: this.employee.firstName + ' ' + this.employee.lastName,
+      job: this.employee.jobName,
+      birthDate: birthDateISO,
+      hireDate: hireDateISO,
+      quarry: this.employee.quarryName,
+      phone: this.employee.phone,
+      address: this.employee.address,
+      licenseType: this.employee.licenseType,
+      typeOfBlood: this.employee.typeOfBlood,
+      emergencyContact: this.employee.emergencyContact,
+      departureDate: departureDateISO,
+    };
+
+    doc.addFileToVFS('OpenSans-VariableFont_wdth,wght.ttf', openSansBase64);
+    doc.addFont('OpenSans-VariableFont_wdth,wght.ttf', 'openSansBase64', 'normal');
+
+    autoTable(doc,{
+      head: [[`${employeeData.name}`, '']],
+      body: [
+        ['Mesleği :', employeeData.job],
+        ['Doğum Tarihi :', birthDateISO],
+        ['İşe Giriş Tarihi :', hireDateISO],
+        ['Şantiye :', employeeData.quarry],
+        ['Telefon :', employeeData.phone],
+        ['Adres :', employeeData.address],
+        ['Ehliyet Tipi :', employeeData.licenseType],
+        ['Kan Grubu :', employeeData.typeOfBlood],
+        ['Acil Durumda İletişim :', employeeData.emergencyContact],
+        ['İşten Ayrılış Tarihi :', departureDateISO],
+      ],
+      styles: {
+        font: 'openSansBase64',
+        fontSize: 10,
+        fontStyle: 'normal',
+      },
+      headStyles: {
+        font: 'openSansBase64',
+        fontStyle: 'bold',
+        fontSize: 14,
+        halign: 'left',
+        fillColor: [255, 193, 7],
+        textColor: [0 , 0, 0], // Başlık yazı rengi (beyaz)
+      },
+      bodyStyles: {
+        fillColor: [255, 255, 255], // Satır arkaplan rengi (beyaz)
+      },
+      theme: 'grid', // Tema seçimi (opsiyonel)
+      // Diğer özelleştirmeler...
+    });
+      doc.save('employee-details.pdf');
+    }
+    else {
+      return;
+    }
   }
 }

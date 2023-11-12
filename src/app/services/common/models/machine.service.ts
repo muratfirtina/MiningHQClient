@@ -3,6 +3,7 @@ import { HttpClientService } from '../http-client.service';
 import { ListMachine } from 'src/app/contracts/machine/list-machine';
 import { Observable, firstValueFrom } from 'rxjs';
 import { CreateMachine } from 'src/app/contracts/machine/create-machine';
+import { DynamicQuery } from 'src/app/contracts/dynamic-query';
 
 @Injectable({
   providedIn: 'root'
@@ -31,4 +32,16 @@ export class MachineService {
       .catch(errorCallback);
     return await promiseData;
   }
+
+  async search(dynamicQuery: DynamicQuery, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListMachine> {
+    const observable: Observable<ListMachine> = this.httpClientService.post<any>({
+      controller: 'machines/search'
+    }, dynamicQuery);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
+  
 }

@@ -1,2 +1,46 @@
+<div>
+  <h2>Makinalar</h2>
+  <!-- Filtreleme Formu -->
+  <form #filterForm="ngForm" (ngSubmit)="searchMachines()">
+    <div>
+      <label for="field">Alan:</label>
+      <input type="text" id="field" [(ngModel)]="filter.field" name="field" required>
+    </div>
+    <div>
+      <label for="value">Değer:</label>
+      <input type="text" id="value" [(ngModel)]="filter.value" name="value" required>
+    </div>
+    <div>
+      <label for="operator">Operatör:</label>
+      <input type="text" id="operator" [(ngModel)]="filter.operator" name="operator" required>
+    </div>
+    <button type="submit" [disabled]="!filterForm.valid">Filtrele</button>
+  </form>
 
-<p>machines works!</p>
+  <!-- Makinaların Listelendiği Tablo -->
+  <table *ngIf="machines?.items.length">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Adı</th>
+        <th>Makine Tipi</th>
+        <th>Marka</th>
+        <th>Model</th>
+        <th>Seri Numarası</th>
+        <th>Ocak Adı</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let machine of machines.items">
+        <td>{{ machine.id }}</td>
+        <td>{{ machine.name }}</td>
+        <td>{{ machine.machineTypeName }}</td>
+        <td>{{ machine.brandName }}</td>
+        <td>{{ machine.modelName }}</td>
+        <td>{{ machine.serialNumber }}</td>
+        <td>{{ machine.quarryName }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p *ngIf="!machines?.items.length">Makina bulunamadı.</p>
+</div>

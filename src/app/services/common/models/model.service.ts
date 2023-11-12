@@ -31,4 +31,15 @@ export class ModelService {
       .catch(errorCallback);
     return await promiseData;
   }
+
+  async listByBrandId(brandId: string,successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListModel> {
+    const observable: Observable<ListModel> = this.httpClientService.get<ListModel>({
+      controller: 'models',
+      action: `ByBrand/${brandId}`
+    });
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
 }

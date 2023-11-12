@@ -31,4 +31,15 @@ export class MachineTypeService {
       .catch(errorCallback);
     return await promiseData;
   }
+
+  async listByBrandId(brandId: string,successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListMachineType> {
+    const observable: Observable<ListMachineType> = this.httpClientService.get<ListMachineType>({
+      controller: 'machinetypes',
+      action: `ByBrand/${brandId}`
+    });
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
 }

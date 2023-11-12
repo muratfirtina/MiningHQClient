@@ -1,20 +1,20 @@
 <div class="modal-body" style="padding-bottom: 1px;">
     <div class="form-group">
         <label for="ad">Adı:</label>
-        <input type="text" id="name" name="name" class="form-control" #name required>
+        <input type="text" id="name" name="name" class="form-control" #name required placeholder="Plaka veya Makineye verilen ad">
+    </div>
+    <div class="form-group">
+        <label for="brandName">Marka:</label>
+        <select id="brandName" name="brandName" class="form-select" #brandName (change)="onBrandChange(brandName.value)" required >
+            <option value="" disabled selected>Marka Seçiniz</option>
+            <option *ngFor="let brand of brands" [value]="brand.id">{{brand.name}}</option>
+        </select>
     </div>
     <div class="form-group">
         <label for="machineTypeName">Makina Tipi:</label>
         <select id="machineTypeName" name="machineTypeName" class="form-select" #machineTypeName required >
             <option value="" disabled selected>Makina Tipi Seçiniz</option>
             <option *ngFor="let machineType of machineTypes" [value]="machineType.name">{{machineType.name}}</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="brandName">Marka:</label>
-        <select id="brandName" name="brandName" class="form-select" #brandName required >
-            <option value="" disabled selected>Marka Seçiniz</option>
-            <option *ngFor="let brand of brands" [value]="brand.name">{{brand.name}}</option>
         </select>
     </div>
     <div class="form-group">
@@ -25,8 +25,8 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="serialNumber">Seri Numarası:</label>
-        <input type="text" id="serialNumber" name="serialNumber" class="form-control" #serialNumber required>
+        <label for="serialNumber">Seri veya Şasi Namarası :</label>
+        <input type="text" id="serialNumber" name="serialNumber" class="form-control" #serialNumber required placeholder="Seri veya Şasi Namarası">
     </div>
     <div class="form-group">
         <label for="quarryName">Çalıştığı Ocak</label>

@@ -34,6 +34,8 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
   models:Model[] = [];
   machineTypes:MachineType[] = [];
 
+  selectedBrandId: string | null = null;
+
 
   constructor(spinner: NgxSpinnerService,
     private machineService: MachineService,
@@ -90,6 +92,23 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
   private getIdFromItems(items: any[], value: string): string | null {
     const item = items.find(item => item.name === value);
     return item ? item.id : null;
+  }
+
+  async getModelsByBrandId(brandId: string) {
+    this.showSpinner(SpinnerType.BallSpinClockwise);
+    
+      const response = await this.modelService.listByBrandId(brandId, () =>
+      {},
+      (errorMessage: string) => {
+        this.toastr.error(errorMessage);
+      });
+      this.models = response.items;
+    
+  }
+
+  onBrandChange(brandId: string) {
+    this.selectedBrandId = brandId;
+    this.getModelsByBrandId(brandId);
   }
 
   /* private getIdFromItems(items: any[], value: string): number {

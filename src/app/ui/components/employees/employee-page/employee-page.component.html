@@ -1,78 +1,105 @@
 <div *ngIf="employee">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-1"></div>
-      <img src="" alt="Profil fotoğrafı">
-      <div class="col-md-4">
-        <form [formGroup]="employeeForm" (ngSubmit)="updateEmployee(employeeForm.value)">
-          <div class="form-group">
-            <label for="firstName">Adı</label>
-            <input type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Adı" >
-          </div>
-          <div class="form-group">
-            <label for="lastName">Soyadı</label>
-            <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Soyadı" >
-          </div>
-          <div class="form-group">
-            <label for="jobName">Mesleği:</label>
-            <select id="jobName" name="jobName" class="form-select" formControlName="jobName" required >
-              <option *ngFor="let job of jobs" [value]="job.name">{{job.name}}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="quarryName">Ocak:</label>
-            <select id="quarryName" name="quarryName" class="form-select" formControlName="quarryName" required >
-              <option *ngFor="let quarry of quarries" [value]="quarry.name">{{quarry.name}}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="birthDate">Doğum Tarihi: {{employee.birthDate | date: "dd/MM/yyyy"}}</label>
-            <input type="date" class="form-control" id="birthDate" formControlName="birthDate" placeholder="Doğum Tarihi">
-          </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-11">
+          <form [formGroup]="employeeForm" (ngSubmit)="updateEmployee(employeeForm.value)">
+            <div class="row form-group">
+              <label for="firstName" class="col-md-2 control-label">Adı:</label>
+              <div class="col-md-4">
+                <input type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Adı">
+              </div>
+  
+              <label for="lastName" class="col-md-2 control-label">Soyadı:</label>
+              <div class="col-md-4">
+                <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Soyadı">
+              </div>
+            </div>
+  
+            <div class="row form-group">
+              <label for="jobName" class="col-md-2 control-label">Mesleği:</label>
+              <div class="col-md-4">
+                <select id="jobName" class="form-select" formControlName="jobName" required>
+                  <option *ngFor="let job of jobs" [value]="job.name">{{ job.name }}</option>
+                </select>
+              </div>
+  
+              <label for="quarryName" class="col-md-2 control-label">Ocak:</label>
+              <div class="col-md-4">
+                <select id="quarryName" class="form-select" formControlName="quarryName" required>
+                  <option *ngFor="let quarry of quarries" [value]="quarry.name">{{ quarry.name }}</option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="row form-group">
+              <label for="birthDate" class="col-md-2 control-label">Doğum Tarihi:</label>
+              <div class="col-md-4">
+                <input type="date" class="form-control" id="birthDate" formControlName="birthDate">
+              </div>
+  
+              <label for="hireDate" class="col-md-2 control-label">İşe Giriş Tarihi:</label>
+              <div class="col-md-4">
+                <input type="date" class="form-control" id="hireDate" formControlName="hireDate">
+              </div>
+            </div>
 
-          <div class="form-group">
-            <label for="identityDate">İşe Giriş Tarihi : {{employee.hireDate | date: "dd/MM/yyyy"}}</label>
-            <input type="date" class="form-control" id="hireDate" formControlName="hireDate" placeholder="İşe Giriş Tarihi">
+            <div class="row form-group">
+              <label for="phone" class="col-md-2 control-label">Telefon:</label>
+              <div class="col-md-4">
+                <input type="text" class="form-control" id="phone" formControlName="phone" placeholder="Telefon">
+              </div>
+  
+              <label for="emergencyContact" class="col-md-2 control-label">Acil Durum İletişim:</label>              
+              <div class="col-md-4">
+                <input type="text" class="form-control" id="emergencyContact" formControlName="emergencyContact" placeholder="Telefon">
+              </div>
+            </div>
+
+            <!-- <div class="row form-group">
+              <label for="licenseType" class="col-md-2 control-label">Ehliyet Tipi:</label>
+              <div class="col-md-4">
+                <select id="licenseType" class="form-control" formControlName="licenseType" required>
+                    <option *ngFor="let licenseType of licenseTypes" [value]="licenseType.name">{{ licenseType.name }}</option>
+                  </select>
+              </div>
+  
+              <label for="typeOfBlood" class="col-md-2 control-label">Adres:</label>
+              <div class="col-md-4">
+                <select id="typeOfBlood" class="form-control" formControlName="typeOfBlood" required>
+                    <option *ngFor="let bloodType of bloodTypes" [value]="bloodType.name">{{ bloodType.name }}</option>
+                  </select>
+              </div>
+            </div> -->
+
+            <div class="row form-group">
+              <label for="departureDate" class="col-md-2 control-label">Çıkış Tarihi:</label>
+              <div class="col-md-4">
+                <input type="date" class="form-control" id="departureDate" formControlName="departureDate" placeholder="Çıkış Tarihi">
+              </div>
+            </div>
+
+            <div class="row form-group">
+              <label for="address" class="col-md-2 control-label">Ev Adresi:</label>
+              <div class="col-md-10">
+                <textarea class="form-control" id="address" formControlName="address" placeholder="Adres"></textarea>
+              </div>
+            </div>
+  
+            <!-- Diğer alanlarınızı burada ekleyin -->
+  
+            <div class="row form-group">
+              <div class="col-md-7">
+                <button type="submit" class="btn btn-warning pull-right">Güncelle</button>
+              </div>
+            </div>
+          </form>
+          <div class="row form-group">
+            <div class="col-md-10">
+              <button type="" class="btn btn-primary" (click)="generatePDF2()">Download PDF</button>
+            </div>
+          </div>
         </div>
-            <div class="form-group">
-                <label for="address">Adres</label>
-                <input type="text" class="form-control" id="address" formControlName="address" placeholder="Adres">
-            </div>
-            <div class="form-group">
-                <label for="phoneNumber">Telefon Numarası</label>
-                <input type="text" class="form-control" id="phone" formControlName="phone" placeholder="Telefon Numarası">
-            </div>
-            
-            <div class="form-group">
-                <label for="emergencyContact">Acil Durumda İletişim Kurulacak Kişi</label>
-                <input type="text" class="form-control" id="emergencyContact" formControlName="emergencyContact" placeholder="Adı Soyadı">
-            </div>
-            
-            <!-- <div class="form-group">
-                <label for="licenseType">Ehliyet Tipi</label>
-                <select id="licenseType" name="licenseType" class="form-select" formControlName="licenseType" required>
-                    <option *ngFor="let licenseType of licenseTypes" [value]="licenseType.name">{{licenseType.name}}</option>
-                </select>
-            </div> -->
-            
-            <!-- <div class="form-group">
-                <label for="bloodType">Kan Grubu</label>
-                <select id="bloodType" name="bloodType" class="form-select" formControlName="bloodType" required>
-                    <option *ngFor="let bloodType of bloodTypes" [value]="bloodType.name">{{bloodType.name}}</option>
-                </select>
-            </div> -->
-            
-            <div class="form-group">
-                <label for="fireDate">İşten Ayrılış Tarihi</label>
-                <input type="date" class="form-control" id="fireDate" formControlName="fireDate" placeholder="İşten Ayrılış Tarihi">
-            </div>
-
-
-            
-
-          <button type="submit" class="btn btn-primary">Güncelle</button>
-        </form>
       </div>
     </div>
   </div>
-</div>
+  

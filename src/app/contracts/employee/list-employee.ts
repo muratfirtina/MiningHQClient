@@ -1,4 +1,5 @@
 import { Employee } from "./employee";
+import { SingleEmployee } from "./single-employee";
 
 export class ListEmployee {
     index: number;
@@ -7,6 +8,6 @@ export class ListEmployee {
     pages: number;
     hasPrevious: boolean;
     hasNext: boolean;
-    items: Employee[];
+    items: SingleEmployee[];
     
 }
