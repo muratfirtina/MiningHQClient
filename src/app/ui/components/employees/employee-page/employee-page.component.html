@@ -1,8 +1,11 @@
 <div *ngIf="employee">
     <div class="container">
       <div class="row">
+        <div class="col-md-12" style="display: grid;">
+          <h2 style="align-self: center; justify-self: center; margin-bottom: 50px;">{{employee.firstName + " " + employee.lastName}}</h2>
+        </div>
         <div class="col-md-11">
-          <form [formGroup]="employeeForm" (ngSubmit)="updateEmployee(employeeForm.value)">
+          <form [formGroup]="employeeForm">
             <div class="row form-group">
               <label for="firstName" class="col-md-2 control-label">Adı:</label>
               <div class="col-md-4">
@@ -80,24 +83,18 @@
 
             <div class="row form-group">
               <label for="address" class="col-md-2 control-label">Ev Adresi:</label>
-              <div class="col-md-10">
+              <div class="col-md-4">
                 <textarea class="form-control" id="address" formControlName="address" placeholder="Adres"></textarea>
               </div>
             </div>
-  
-            <!-- Diğer alanlarınızı burada ekleyin -->
-  
+
             <div class="row form-group">
-              <div class="col-md-7">
-                <button type="submit" class="btn btn-warning pull-right">Güncelle</button>
+              <div class="col-md-8" style="margin-top: 75px;">
+                <button type="submit" class="btn btn-warning" (click)="updateEmployee(employeeForm.value)">Güncelle</button>
+                <button type="" style="margin-left: 30px; color: white;" class="btn btn-primary" (click)="generatePDF()">Download PDF</button>
               </div>
             </div>
           </form>
-          <div class="row form-group">
-            <div class="col-md-10">
-              <button type="" class="btn btn-primary" (click)="generatePDF2()">Download PDF</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

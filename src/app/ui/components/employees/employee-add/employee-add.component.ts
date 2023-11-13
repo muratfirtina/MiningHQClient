@@ -11,13 +11,17 @@ import { JobService } from 'src/app/services/common/models/job.service';
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { ListJob } from 'src/app/contracts/job/list-job';
 import { Job } from 'src/app/contracts/job/job';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Quarry } from 'src/app/contracts/quarry/quarry';
+import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
+import { QuarryService } from 'src/app/services/common/models/quarry.service';
 
 
 
 @Component({
   selector: 'app-employee-add',
   standalone: true,
-  imports: [CommonModule,DynamicLoadComponentDirective],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule],
   templateUrl: './employee-add.component.html',
   styleUrls: ['./employee-add.component.scss','../../../../../styles.scss']
 })
@@ -29,6 +33,8 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
   jobs: Job[] = [];
+  quarries: Quarry[] = [];
+  employeeForm: FormGroup;
   filteredJobs: Job[] = [];
 
 
@@ -36,39 +42,64 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
      private employeeService: EmployeeService,
      private toastr: ToastrService,
      private router: Router,
-     private jobService: JobService
+     private jobService: JobService,
+     private quarryService: QuarryService,
+     private fB: FormBuilder
        ) {
     super(spinner);
     
+    this.employeeForm = this.fB.group({
+      firstName: [''],
+      lastName: [''],
+      jobName: [''],
+      quarryName: [''],
+      birthDate: [''],
+      departureDate: [''],
+      emergencyContact: [''],
+      hireDate: [''],
+      licenseType: [''],
+      phone: [''],
+      typeOfBlood: [''],
+      address: ['']
+    });
   }
   async ngOnInit() {
-    this.getJobs();
+    await this.getJobs();
+    await this.getQuarries();
   }
   
-  addEmployee(firstName: HTMLInputElement, lastName: HTMLInputElement, jobName:HTMLSelectElement){
+  addEmployee(formValue:any){
     
-    const create_employee : CreateEmployee = new CreateEmployee();
-    create_employee.firstName = firstName.value;
-    create_employee.lastName = lastName.value;
-    create_employee.jobName = jobName.value;
-   
-    for (let index = 0; index < this.jobs.length; index++) {
-      if(this.jobs[index].name == jobName.value){
-        create_employee.jobId = this.jobs[index].id;
-      }
-    }
+    const create_employee : CreateEmployee = {
+      firstName: formValue.firstName,
+      lastName: formValue.lastName,
+      jobName: formValue.jobName,
+      quarryName: formValue.quarryName,
+      birthDate: new Date(formValue.birthDate),
+      departureDate: new Date(formValue.departureDate),
+      emergencyContact: formValue.emergencyContact,
+      address: formValue.address,
+      hireDate: new Date(formValue.hireDate),
+      licenseType: formValue.licenseType,
+      phone: formValue.phone,
+      typeOfBlood: formValue.typeOfBlood,
+      jobId: this.getIdFromItems(this.jobs, formValue.jobName),
+      quarryId: this.getIdFromItems(this.quarries, formValue.quarryName),
+    };
 
-    this.showSpinner(SpinnerType.BallSpinClockwise);
     this.employeeService.add(create_employee, () => {
-      this.showSpinner(SpinnerType.BallSpinClockwise);
-      this.toastr.success( create_employee.firstName + ' ' + create_employee.lastName + " Başarıyla oluşturuldu.", "Başarılı", );
-      this.createdProduct.emit(create_employee);
-
-    }, errorMessage => {
-      this.toastr.error("Personel kaydedilemedi", "Hata");
+      this.toastr.success(create_employee.firstName + ' ' + create_employee.lastName + 'Başarıyla Eklendi');
+      setTimeout(() => {
+        this.router.navigate(['/employees']);
+      }, 1500);
+    }, (errorMessage: string) => {
+      this.toastr.error("Kayıt Başarısız");
     });
-    this.hideSpinner(SpinnerType.BallSpinClockwise);
 
+  }
+  private getIdFromItems(items: any[], value: string): string | null {
+    const item = items.find(item => item.name === value);
+    return item ? item.id : null;
   }
 
   getJobs(){
@@ -79,6 +110,13 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
+
+  getQuarries() {
+    this.quarryService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
+      .then((response) => {
+        this.quarries = response.items;
+      });
   }
 
 }

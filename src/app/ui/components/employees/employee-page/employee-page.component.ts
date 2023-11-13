@@ -173,12 +173,12 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     window.print();
   } */
 
-  generatePDF2() {
+  generatePDF() {
     const isConfirmed = window.confirm('Çalışan bilgilerini PDF olarak indirmek istediğinize emin misiniz?')
     if (isConfirmed) {
     
     let doc = new jsPDF();
-  
+
     const birthDateISO = this.employee.birthDate ?
         new Date(this.employee.birthDate).toISOString().substring(0, 10) :
         null;
@@ -238,8 +238,14 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       },
       theme: 'grid', // Tema seçimi (opsiyonel)
       // Diğer özelleştirmeler...
-    });
-      doc.save('employee-details.pdf');
+    })
+    const pdfBlob = doc.output('blob');
+
+    // Blob için bir URL oluştur
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+
+    // Yeni sekmede PDF'i aç
+    window.open(pdfUrl, '_blank');
     }
     else {
       return;

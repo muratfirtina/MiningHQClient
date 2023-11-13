@@ -57,8 +57,6 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
   searchEmployees(event: Event) {
     const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
   
-    console.log('Arama Terimi:', searchTerm); // Debug için
-  
     if (!searchTerm) {
       this.items = [...this.originalItems];
     } else {

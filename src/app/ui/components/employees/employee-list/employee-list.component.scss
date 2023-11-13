@@ -1,11 +1,27 @@
 #main .col-md-8 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
 }
 table.table-striped tbody tr:hover td {
-    color: #ffc107;
-    cursor: pointer;
-  }
+  color: #ffc107;
+  cursor: pointer;
+}
+
+.input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.input-container input {
+  padding-right: 24px; /* İkonun üstüne yazı yazılmasını önlemek için */
+}
+
+.input-container svg {
+  position: absolute;
+  right: 10px; /* Sağ kenardan boşluk */
+  top: 50%; /* Dikey olarak ortala */
+  transform: translateY(-50%); /* Dikey olarak tam ortaya getir */
+}
