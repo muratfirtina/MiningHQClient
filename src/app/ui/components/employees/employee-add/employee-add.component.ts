@@ -27,15 +27,14 @@ import { QuarryService } from 'src/app/services/common/models/quarry.service';
 })
 export class EmployeeAddComponent extends BaseComponent implements OnInit {
 
-  
+
   @Output() createdProduct : EventEmitter<CreateEmployee>= new EventEmitter();
-  
+
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
   jobs: Job[] = [];
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
-  filteredJobs: Job[] = [];
 
 
   constructor(spinner: NgxSpinnerService,
@@ -47,7 +46,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
      private fB: FormBuilder
        ) {
     super(spinner);
-    
+
     this.employeeForm = this.fB.group({
       firstName: [''],
       lastName: [''],
@@ -67,9 +66,9 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     await this.getJobs();
     await this.getQuarries();
   }
-  
+
   addEmployee(formValue:any){
-    
+
     const create_employee : CreateEmployee = {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
@@ -107,7 +106,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     this.jobService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
       .then((response) => {
     this.jobs = response.items;
-    
+
     })
     this.hideSpinner(SpinnerType.BallSpinClockwise);
   }

@@ -14,8 +14,12 @@
 
 .container{
     max-width: 100%;
-    background-color: #003353;
+    background: linear-gradient(90deg, #2c6173, #003353);
     //background-color: RGBA(var(--bs-dark-rgb),var(--bs-bg-opacity,1))!important;
+}
+#navbarheader{
+    background: linear-gradient(90deg, #2c6173, #003353);
+    height: 90px;
 }
 .b-example-divider {
   width: 100%;
@@ -85,3 +89,4 @@
 .bd-mode-toggle .dropdown-menu .active .bi {
   display: block !important;
 }
+
