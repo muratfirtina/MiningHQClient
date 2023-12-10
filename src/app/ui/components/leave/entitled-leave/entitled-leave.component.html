@@ -1,0 +1,75 @@
+<div class="container justify-content-center align-items-center">
+  <div class="row justify-content-center">
+    <div class="col-md-12"> <h2 class="text-center mb-4">İzin Hakediş Girişi</h2>
+
+      <form [formGroup]="entitledLeaveForm" (ngSubmit)="addEntitledLeave()">
+        
+          <div class="col-md-3">
+            <label for="employeeSelect" class="form-label">Personel</label>
+            <select formControlName="employeeId" class="form-select" id="employeeSelect" (change)="listByEmployeeIdFunc()">
+              <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}} {{employee.lastName}}</option>
+            </select>
+          </div>
+        
+          <div class="col-md-3">
+            <label for="leaveTypeSelect" class="form-label">İzin Tipi</label>
+            <select formControlName="leaveTypeId" class="form-select" id="leaveTypeSelect">
+              <option value="" selected>İzin Tipi Seçiniz</option>
+              <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
+            </select>
+          </div>
+        
+
+        
+          <div class="col-md-3">
+            <label for="entitledDays" class="form-label">Gün</label>
+            <input type="number" formControlName="entitledDays" class="form-control" id="entitledDays" placeholder="Enter entitled days">
+          </div>
+        
+          <div class="col-md-3">
+            <label for="entitledDate" class="form-label">Hakediş Tarihi</label>
+            <input type="date" formControlName="entitledDate" class="form-control" id="entitledDate">
+          </div>
+
+         
+          <div class="col-md-3">
+            <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+            <input type="date" formControlName="startDate" class="form-control" id="startDate">
+          </div>
+          <div class="col-md-3">
+            <label for="endDate" class="form-label">Bitiş Tarihi</label>
+            <input type="date" formControlName="endDate" class="form-control" id="endDate">
+          </div>
+         
+        
+        <div class="text-center">
+          <button type="submit" class="btn btn-warning">Onayla</button>
+        </div>
+
+        <div class="mt-5" *ngIf="entitledLeaves.length > 0">
+          <h2>Hakediş Listesi</h2>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>İzin Türü</th>
+                <th>Gün Sayısı</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let leave of entitledLeaves">
+                <td>{{ leave.entitledDate | date:'dd/MM/yyyy' }}</td>
+                <td>{{ leave.leaveTypeName}}</td>
+                <td>{{ leave.entitledDays }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </form>
+
+      
+
+    </div>
+  </div>
+</div>

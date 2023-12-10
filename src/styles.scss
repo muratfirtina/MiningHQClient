@@ -1,3 +1,6 @@
+.input{
+  background-color: rgba(224, 201, 103, 0.33);
+}
 .form-control:focus {
   color: var(--bs-body-color);
   background-color: var(--bs-body-bg);
@@ -13,9 +16,11 @@
   outline: 0;
   box-shadow: 0 0 0 0.25rem #ffc1074a;
 }
+.dropdown-item{
+  color: #003353 ;
+}
 
 .dropdown-item:active {
-  color: #fff;
   text-decoration: none;
   background-color: #ffc107;
 }
@@ -27,10 +32,16 @@
   margin: 0px;
   transform: translate3d(5px, 38px, 0px) !important;
   background-color: #ffcd39;
+  color: #003353;
+}
+.dropdown-item:hover{
+  background-color: #dea702;
+  color: #003353;
 }
 .btn{
     color: #003353;
 }
+
 .btn-outline-success {
     --bs-btn-color: #198754;
     --bs-btn-bg: #198754;
@@ -61,4 +72,3 @@
 .link-secondary:hover{
     color: #ffc107 !important;
 }
-

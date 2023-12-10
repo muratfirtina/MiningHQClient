@@ -8,9 +8,11 @@
 table.table-striped tbody tr:hover td {
   color: #ffc107;
   cursor: pointer;
+  
 }
 
 .input-container {
+  margin-top: 50px;
   position: relative;
   display: inline-block;
 }
@@ -25,3 +27,7 @@ table.table-striped tbody tr:hover td {
   top: 50%; /* Dikey olarak ortala */
   transform: translateY(-50%); /* Dikey olarak tam ortaya getir */
 }
+
+
+
+

@@ -26,4 +26,8 @@ export class HomeComponent extends BaseComponent{
   gottoEmployeeAdd() {
     this.router.navigate(['/employee-add']);
   }
+
+  navigateToLeave() {
+    this.router.navigate(['/leave']);
+  }
  }

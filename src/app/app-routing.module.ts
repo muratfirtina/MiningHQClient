@@ -46,6 +46,9 @@ const routes: Routes = [
   {path:'employee/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent)},
   {path:'employee-add',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent)},
   {path:'machines/search',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent)},
+  {path:'leave',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent)},
+  {path:'entitledleave',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent)},
+  {path:'leaveusage',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent)},
   
 ];
 

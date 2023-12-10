@@ -1,6 +1,18 @@
+.container{
+    margin-top: 50px;
+}
 .form-group {
     margin-bottom: 10px;
     text-align: end;
     display: flex;
     align-items: center;
+}
+
+.btn-warning {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
+        rgba(245, 201, 2, 0.5) 5px 5px 15px;
+}
+.btn-warning:hover{
+    box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
+        rgba(253, 253, 253, 0.5) 5px 10px 15px;
 }
