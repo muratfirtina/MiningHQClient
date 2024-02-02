@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-md-8">
+<div class="puantaj-container">
+    <h2>Personel Puantaj</h2>
+    <input type="text" [(ngModel)]="arananPersonel" placeholder="Personel Ara...">
+    <select [(ngModel)]="secilenAy" (change)="ayYilDegistir()">
+        <option *ngFor="let ay of aylar" [value]="ay">{{ ay + 1 }}</option>
+      </select>
+      
+      <!-- Yıl seçimi -->
+      <select [(ngModel)]="secilenYil" (change)="ayYilDegistir()">
+        <option *ngFor="let yil of yillar" [value]="yil">{{ yil }}</option>
+      </select>
+    <table>
+        <tr>
+        <th>Personel Listesi</th>
+        <th *ngFor="let gun of gunler; let i = index">
+            Gün {{ gun }} <input type="checkbox" (click)="tumunuIsaretle(i)">
+          </th>
+      </tr>
+      <tr *ngFor="let personel of filtrelenmisPersonelListesi">
+        <td>{{ personel.adi }}</td>
+        <td *ngFor="let gun of gunler; let i = index">
+            <span class="puantaj"
+                  (click)="togglePuantaj(personel.adi, i)"
+                  [ngClass]="{
+                    'checked': puantajDurumu[personel.adi][i] === true,
+                    'crossed': puantajDurumu[personel.adi][i] === false,
+                    'null': puantajDurumu[personel.adi][i] === null
+                  }">
+              {{ puantajDurumu[personel.adi][i] === true ? '✓' : 
+                 puantajDurumu[personel.adi][i] === false ? '✗' : 
+                 puantajDurumu[personel.adi][i] === null ? '-' : '' }}
+            </span>
+          </td>
+      </tr>
+    </table>
+    <button (click)="kaydet()">Kaydet</button>
+  </div>
+</div>
+</div>

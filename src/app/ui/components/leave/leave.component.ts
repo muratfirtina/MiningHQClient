@@ -30,6 +30,6 @@ export class LeaveComponent extends BaseComponent{
   }
 
   navigateToEntitledLeave() {
-    this.router.navigate(['/entitledleave']);
+    this.router.navigate(['leave/entitledleave']);
   }
 }

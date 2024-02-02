@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { LeaveEntitledService } from 'src/app/services/common/models/leave-entitled.service';
@@ -11,31 +11,40 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { LeaveEntitled } from 'src/app/contracts/leave/leaveEntitled';
 import { LeaveType } from 'src/app/contracts/leave/leaveType';
 import { listLeaveType } from 'src/app/contracts/leave/listLeaveType';
-import { EntitledLeavelistByEmployeeId } from 'src/app/contracts/leave/listByEmployeId';
+import { EntitledLeaveListByEmployeeId } from 'src/app/contracts/leave/entitledLeaveListByEmployeeId';
 import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-entitled-leave',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,RouterModule],
   templateUrl: './entitled-leave.component.html',
   styleUrls: ['./entitled-leave.component.scss','../../../../../styles.scss']
 })
 export class EntitledLeaveComponent extends BaseComponent implements OnInit {
 
-  pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
+  
   employees: Employee[] = [];
   leaveTypes: LeaveType[] = [];
   entitledLeaveForm: FormGroup;
-  entitledLeaves: LeaveEntitled[] = [];
+  items: LeaveEntitled[] = [];
+  pagedEntitledLeave: LeaveEntitled[] = [];
+  currentPageNo: number;
+  totalItems: number = 0;
+  pageSize: number = 10;
+  count: number;
+  pages: number;
+  pageList: number[] = [];
   listByEmployeeIdForm: FormGroup;
-  listByEmployeeId: EntitledLeavelistByEmployeeId[] = [];
+  listByEmployeeId: EntitledLeaveListByEmployeeId;
 
   constructor(spinner:NgxSpinnerService,
     private toastrService:ToastrService,
     private router: Router,
     private employeeService: EmployeeService,
     private leaveEntitledService: LeaveEntitledService,
-    private fB: FormBuilder,private cdr: ChangeDetectorRef) {
+    private fB: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    ) {
     super(spinner);
     
     this.entitledLeaveForm = this.fB.group({
@@ -43,34 +52,38 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       leaveTypeId: [''],
       entitledDate: [''],
       entitledDays: [''],
+      
+    });
+
+    this.listByEmployeeIdForm = this.fB.group({
+      employeeId: [''],
+      leaveTypeId: [''],
       startDate: [''],
       endDate: ['']
     });
+    
   }
 
   async ngOnInit() {
     await this.getEmployee();
     await this.getLeaveType();
 
-    this.entitledLeaveForm.valueChanges.subscribe(() => {
-      this.listByEmployeeIdFunc();
-    });
   }
 
   async addEntitledLeave() {
     const formValue = this.entitledLeaveForm.value;
-    // Sunucuya gönderme işlemi
     this.leaveEntitledService.add(formValue).then(() => {
       this.toastrService.success('İzin tanımlandı.');
     },
     (errorMessage: string) => {
       this.toastrService.error(errorMessage);
     });
+    this.router.navigate(['entitledleave', this.currentPageNo]);
   }
 
   getEmployee() {
     this.showSpinner(SpinnerType.BallSpinClockwise);
-    this.employeeService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
+    this.employeeService.list(-1,-1, () => {}, (errorMessage: string) => {})
       .then((response) => {
     this.employees = response.items;
     
@@ -80,7 +93,7 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
 
   getLeaveType() {
     this.showSpinner(SpinnerType.BallSpinClockwise);
-    this.leaveEntitledService.listLeaveType(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
+    this.leaveEntitledService.listLeaveType(-1, -1, () => {}, (errorMessage: string) => {})
     .then((response:listLeaveType) => {
       this.leaveTypes = response.items;
     })
@@ -89,21 +102,54 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       });
   }
 
-  listByEmployeeIdFunc() {
-    const formValue = this.entitledLeaveForm.value;
+  async listByEmployeeIdFunc() {
+    const formValue = this.listByEmployeeIdForm.value;
     this.showSpinner(SpinnerType.BallSpinClockwise);
-    this.leaveEntitledService.listByEmployeeId(formValue.employeeId, formValue.leaveTypeId, formValue.startDate, formValue.endDate)
-      .then((response) => {
-        this.entitledLeaves = response.entitledLeaves;
-        this.cdr.detectChanges();
-        this.hideSpinner(SpinnerType.BallSpinClockwise);
-      })
-      .catch((error: string) => {
-        this.toastrService.error(error);
-        this.hideSpinner(SpinnerType.BallSpinClockwise);
-      });
-  }
+    this.items = [];
+    
+    this.activatedRoute.params.subscribe(async (params) => {
+      this.currentPageNo = parseInt(params['pageNo'] ?? 1)
 
+      const data: EntitledLeaveListByEmployeeId = await this.leaveEntitledService.listByEmployeeId(
+        formValue.employeeId,
+        formValue.leaveTypeId,
+        formValue.startDate,
+        formValue.endDate,
+        this.currentPageNo - 1, // Sayfa indeksi hesaplama
+        this.pageSize,
+        () => {},
+        (errorMessage) => {}
+      );
+      
+      this.listByEmployeeId = data;
+      this.items = data.items;
+
+      this.count = data.count;
+      this.pages = Math.ceil(this.count / this.pageSize);
+
+      this.pageList = [];
+      if (this.pages >= 7) {
+        if (this.currentPageNo - 3 <= 0) {
+          for (let i = 1; i <= 7; i++) {
+            this.pageList.push(i);
+          }
+        } else if (this.currentPageNo + 3 > this.pages) {
+          for (let i = this.pages - 6; i <= this.pages; i++) {
+            this.pageList.push(i);
+          }
+        } else {
+          for (let i = this.currentPageNo - 3; i <= this.currentPageNo + 3; i++) {
+            this.pageList.push(i);
+          }
+        }
+      } else {
+        for (let i = 1; i <= this.pages; i++) {
+          this.pageList.push(i);
+        }
+      }
+    });
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
 }
 
 

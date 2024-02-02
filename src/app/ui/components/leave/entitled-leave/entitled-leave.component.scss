@@ -20,3 +20,23 @@
     box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
         rgba(253, 253, 253, 0.5) 5px 10px 15px;
 }
+
+.page-link {
+    cursor: pointer;
+    background-color: #ffc107;
+    border-color: #fff;
+    color: #fff;
+}
+.page-item :disabled{
+    color: #fff;
+    
+}
+.active>.page-link, .page-link.active{
+    cursor: default;
+    border-color: #fff;
+    color: #000000;
+}
+.disabled>.page-link, .page-link.disabled{
+    border-color: #fff;
+    color: #000000;
+}

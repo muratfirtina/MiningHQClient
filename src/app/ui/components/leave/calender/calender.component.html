@@ -1,0 +1,44 @@
+<div class="row justify-content-center">
+<div class="col-md-8">
+<div class="calendar-container">
+  <div class="row">
+    <div class="col-md-3">
+      <div class>
+        
+      </div>
+    <div class="calendar-header">
+      <select class="form-select" [(ngModel)]="selectedMonth" (change)="generateCalendar()">
+        <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+      </select>
+      <select class="form-select" [(ngModel)]="selectedYear" (change)="generateCalendar()">
+        <option *ngFor="let year of getYears()" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+  </div>
+  </div>
+  
+    <table class="calendar">
+      <thead>
+        <tr>
+          <th *ngFor="let day of weekDays">{{ day }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let week of calendar">
+          <td *ngFor="let day of week" [ngClass]="{'present': day.status === 'present', 'absent': day.status === 'absent' && day.reason !== 'none'}">
+            <div>
+              <span>{{ day.date }}</span>
+              <select class="form-select" *ngIf="day.date" [(ngModel)]="day.status" (ngModelChange)="selectStatus(day, $event)">
+                <option value="none">Seçiniz</option>
+                <option value="present">✅</option>
+                <option *ngFor="let reason of absenceReasons" ngValue="absent">{{ reason }}</option>
+              </select>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+  

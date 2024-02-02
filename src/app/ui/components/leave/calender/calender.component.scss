@@ -1,0 +1,63 @@
+/* calendar.component.scss */
+.calendar-container {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+    
+      th, td {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 8px;
+      }
+    
+      th {
+        background-color: #f2f2f2;
+      }
+    
+      .today {
+        background-color: #f9ecec;
+        color: #d9534f;
+      }
+    
+      .holiday {
+        background-color: #f9f2ec;
+        color: #f0ad4e;
+      }
+      
+      select {
+        margin-top: 5px;
+      }
+    
+      .present {
+        background-color: #acf3bd; // Yeşil arka plan rengi
+      }
+      
+      .absent {
+        background-color: #e6707a; // Kırmızı arka plan rengi
+      }
+  }
+  
+  .calendar-header {
+    // Ay ve yıl seçimi için stiller buraya
+  }
+  
+  .calendar {
+    // Takvim tablosu için stiller buraya
+    th {
+      // Haftanın günleri için stiller buraya
+    }
+    td {
+      // Takvim günleri için stiller buraya
+      &:hover {
+        background-color: lightgrey;
+      }
+    }
+    .present {
+      color: green;
+    }
+    
+    .absent {
+      color: red;
+    }
+  }
