@@ -4,6 +4,7 @@ import { ListEmployee } from 'src/app/contracts/employee/list-employee';
 import { Observable, firstValueFrom } from 'rxjs';
 import { CreateEmployee } from 'src/app/contracts/employee/create-employee';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
+import { GetListResponse } from 'src/app/contracts/getListResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,8 @@ export class EmployeeService {
 
   constructor(private httpClientService: HttpClientService) { }
 
-  async list(pageIndex: number = 0, pageSize: number = 10, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListEmployee> {
-    const observable: Observable<ListEmployee> = this.httpClientService.get<ListEmployee>({
+  async list(pageIndex: number = 0, pageSize: number = 10, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<SingleEmployee>> {
+    const observable: Observable<GetListResponse<SingleEmployee>> = this.httpClientService.get<GetListResponse<SingleEmployee>>({
       controller: 'employees',
       queryString: `pageIndex=${pageIndex}&pageSize=${pageSize}`
     });

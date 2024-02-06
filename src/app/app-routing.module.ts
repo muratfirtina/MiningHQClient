@@ -49,8 +49,8 @@ const routes: Routes = [
   {path:'leave',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent)},
   {path:'leave/entitledleave',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent)},
   {path:'leave/entitledleave/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent)},
-  {path:'leave/calender',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent)},
   {path:'leave/timekeeping',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent)},
+  {path:'leave/timekeeping/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent)},
   
 
   

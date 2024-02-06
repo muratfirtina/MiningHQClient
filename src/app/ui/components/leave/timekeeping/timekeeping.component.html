@@ -2,40 +2,40 @@
     <div class="col-md-8">
 <div class="puantaj-container">
     <h2>Personel Puantaj</h2>
-    <input type="text" [(ngModel)]="arananPersonel" placeholder="Personel Ara...">
-    <select [(ngModel)]="secilenAy" (change)="ayYilDegistir()">
-        <option *ngFor="let ay of aylar" [value]="ay">{{ ay + 1 }}</option>
+    <input type="text" [(ngModel)]="employeeSearch" placeholder="Personel Ara...">
+    <select [(ngModel)]="selectedMonth" (change)="changeMonthOrYear(selectedYear,selectedMonth)">
+        <option *ngFor="let month of months" [value]="month">{{ month }}</option>
       </select>
       
       <!-- Yıl seçimi -->
-      <select [(ngModel)]="secilenYil" (change)="ayYilDegistir()">
-        <option *ngFor="let yil of yillar" [value]="yil">{{ yil }}</option>
+      <select [(ngModel)]="selectedYear" (change)="changeMonthOrYear(selectedYear, selectedMonth)">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
       </select>
     <table>
         <tr>
-        <th>Personel Listesi</th>
-        <th *ngFor="let gun of gunler; let i = index">
-            Gün {{ gun }} <input type="checkbox" (click)="tumunuIsaretle(i)">
+        <th style=" padding-left: 40px; padding-right: 40px;">Personel Listesi</th>
+        <th *ngFor="let day of days; let i = index">
+            Gün {{ day }} <input type="checkbox" (click)="selectAll(i)">
           </th>
       </tr>
-      <tr *ngFor="let personel of filtrelenmisPersonelListesi">
-        <td>{{ personel.adi }}</td>
-        <td *ngFor="let gun of gunler; let i = index">
-            <span class="puantaj"
-                  (click)="togglePuantaj(personel.adi, i)"
-                  [ngClass]="{
-                    'checked': puantajDurumu[personel.adi][i] === true,
-                    'crossed': puantajDurumu[personel.adi][i] === false,
-                    'null': puantajDurumu[personel.adi][i] === null
-                  }">
-              {{ puantajDurumu[personel.adi][i] === true ? '✓' : 
-                 puantajDurumu[personel.adi][i] === false ? '✗' : 
-                 puantajDurumu[personel.adi][i] === null ? '-' : '' }}
-            </span>
-          </td>
+      <tr *ngFor="let personel of items">
+        <td>{{ personel.firstName }} {{ personel.lastName }}</td>
+        <td *ngFor="let day of days; let i = index">
+          <span class="puantaj"
+                (click)="toggleTimekeeping(personel.employeeId, i)"
+                [ngClass]="{
+                  'crossed': timekeepingStatus[personel.employeeId][i] === false,
+                  'checked': timekeepingStatus[personel.employeeId][i] === true,
+                  'null': timekeepingStatus[personel.employeeId][i] === null
+                }">
+            {{ timekeepingStatus[personel.employeeId][i] === true ? '✓' : 
+               timekeepingStatus[personel.employeeId][i] === false ? '✗' : 
+               '-' }}
+          </span>
+        </td>
       </tr>
     </table>
-    <button (click)="kaydet()">Kaydet</button>
+    <button (click)="create()">Kaydet</button>
   </div>
 </div>
 </div>

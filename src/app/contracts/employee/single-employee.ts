@@ -17,6 +17,7 @@ export class SingleEmployee {
     typeOfBlood:string;
     emergencyContact:string;
     employeeImageFiles:ListImageFile[];
+    puantajDurumu:Map<string,boolean>;
 
 }
 

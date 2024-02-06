@@ -9,6 +9,8 @@ import { GetTimekeepingListResponse } from 'src/app/contracts/leave/getTimekeepi
 import { TimekeepingList } from 'src/app/contracts/leave/timekeepingList';
 import { CreateTimekeeping } from 'src/app/contracts/leave/createTimekeeping';
 import { CreatedTimekeepingResponse } from 'src/app/contracts/leave/createTimekeepingResponse';
+import { GetListResponse } from 'src/app/contracts/getListResponse';
+import { Timekeeping } from 'src/app/contracts/leave/timekeeping';
 
 
 @Injectable({
@@ -57,15 +59,14 @@ export class LeaveEntitledService {
   }
 
 
-  async getTimekeepings(employeeId: string, month?: number, year?: number, pageIndex: number = 0, pageSize: number = 10, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetTimekeepingListResponse<TimekeepingList>> {
-    let queryString = `pageIndex=${pageIndex}&pageSize=${pageSize}`;
-    if (month !== undefined) queryString += `&month=${month}`;
-    if (year !== undefined) queryString += `&year=${year}`;
+  async getTimekeepings(year: number, month: number, pageIndex: number = 0, pageSize: number = 10, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<TimekeepingList>> {
+    const pageRequest = `pageIndex=${pageIndex}&pageSize=${pageSize}`;
   
-    const observable: Observable<GetTimekeepingListResponse<TimekeepingList>> = this.httpClientService.get<GetTimekeepingListResponse<TimekeepingList>>({
-      controller: 'timekeepings',
-      queryString: queryString
+    const observable: Observable<GetListResponse<TimekeepingList>> = this.httpClientService.get<GetListResponse<TimekeepingList>>({
+      controller: `timekeepings/${year}/${month}`,
+      queryString: pageRequest
     });
+  
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
       .catch(errorCallback);

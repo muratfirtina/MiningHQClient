@@ -1,8 +1,8 @@
-export interface TimekeepingList {
-    id: string;
-    date: Date;
+import { Timekeeping } from "./timekeeping";
+
+export class TimekeepingList{
     employeeId: string;
     firstName: string;
     lastName: string;
-    status: boolean;
+    timekeepings: Timekeeping[];
 }

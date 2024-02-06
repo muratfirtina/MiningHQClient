@@ -9,6 +9,7 @@ import { Employee } from 'src/app/contracts/employee/employee';
 import { Router, RouterModule } from '@angular/router';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
 import { FormsModule } from '@angular/forms';
+import { GetListResponse } from 'src/app/contracts/getListResponse';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
   
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
-  listEmployees: ListEmployee[] = [];
+  listEmployees: GetListResponse<SingleEmployee>[] = [];
   items: SingleEmployee[] = [];
   originalItems: SingleEmployee[] = [];
 

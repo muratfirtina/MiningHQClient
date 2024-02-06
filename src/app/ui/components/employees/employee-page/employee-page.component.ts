@@ -126,6 +126,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       typeOfBlood: formValue.typeOfBlood,
       jobId: this.getIdFromItems(this.jobs, formValue.jobName),
       quarryId: this.getIdFromItems(this.quarries, formValue.quarryName),
+      puantajDurumu: this.employee.puantajDurumu
     };
 
     await this.employeeService.update(update_employee, () => {
