@@ -32,4 +32,8 @@ export class LeaveComponent extends BaseComponent{
   navigateToEntitledLeave() {
     this.router.navigate(['leave/entitledleave']);
   }
+
+  navigateToTimekeeping() {
+    this.router.navigate(['leave/timekeeping']);
+  }
 }

@@ -8,12 +8,15 @@ import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { TimekeepingList } from 'src/app/contracts/leave/timekeepingList';
 import { ActivatedRoute, Router } from '@angular/router';
 
+declare var bootstrap: any;
+
+
 @Component({
   selector: 'app-timekeeping',
   standalone: true,
   imports: [CommonModule ,FormsModule],
   templateUrl: './timekeeping.component.html',
-  styleUrls: ['./timekeeping.component.scss']
+  styleUrls: ['./timekeeping.component.scss', '../../../../../styles.scss']
 })
 export class TimekeepingComponent implements OnInit {
 
@@ -25,19 +28,32 @@ export class TimekeepingComponent implements OnInit {
 
   employeeList: GetListResponse<TimekeepingList>[] = [];
   items: TimekeepingList[] = [];
+  originalItems: TimekeepingList[] = [];
   timekeepingStatus: { [employeeId: string]: boolean[] } = {};
 
   days: number[];
-  months = Array.from({ length: 12 }, (_, index) => index +1);
-  years = [2022, 2023, 2024]; // Örnek olarak 3 yıl eklenmiştir.
+  months = [
+    { value: 1, name: 'Ocak' },
+    { value: 2, name: 'Şubat' },
+    { value: 3, name: 'Mart' },
+    { value: 4, name: 'Nisan' },
+    { value: 5, name: 'Mayıs' },
+    { value: 6, name: 'Haziran' },
+    { value: 7, name: 'Temmuz' },
+    { value: 8, name: 'Ağustos' },
+    { value: 9, name: 'Eylül' },
+    { value: 10, name: 'Ekim' },
+    { value: 11, name: 'Kasım' },
+    { value: 12, name: 'Aralık' }
+    // ... diğer aylar
+  ];
+  years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() + i);
   
   selectedMonth: number = new Date().getMonth();
   selectedYear: number = new Date().getFullYear();
 
   currentMonth: number
   currentYear: number
-  
-  employeeSearch: string = '';
 
   async ngOnInit() {
     const currentDate = new Date();
@@ -53,13 +69,15 @@ export class TimekeepingComponent implements OnInit {
       
       this.loadTimekeepings(year, month);
     });
-    
+    this.originalItems = [...this.items];
   }
+
   
   async loadTimekeepings(year: number, month: number) {
     try {
         const response = await this.leaveEntitledService.getTimekeepings(year , month);
         this.items = response.items;
+        this.originalItems = [...this.items];
         this.initializeTimekeepingStatus();
     } catch (error) {
         console.error('Puantaj listesi yüklenirken bir hata oluştu', error);
@@ -81,21 +99,6 @@ export class TimekeepingComponent implements OnInit {
   }
 
 
-  toggleTimekeeping(employeeId: string, day: number) {
-    const currentStatus = this.timekeepingStatus[employeeId][day];
-    
-    if (currentStatus === true) {
-      // İşe gelmedi olarak işaretle
-      this.timekeepingStatus[employeeId][day] = false;
-    } else if (currentStatus === false) {
-      // Veri yok olarak işaretle
-      this.timekeepingStatus[employeeId][day] = null;
-    } else {
-      // İşe geldi olarak işaretle
-      this.timekeepingStatus[employeeId][day] = true;
-    }
-  }
-
   selectAll(gun: number) {
     // O gün için bütün personellerin durumları kontrol edilir
     const hepsiIsaretli = this.items.every(employee => 
@@ -105,36 +108,54 @@ export class TimekeepingComponent implements OnInit {
     // Eğer tüm personeller işaretliyse, hepsini null yap, değilse hepsini true yap
     this.items.forEach(employee => {
       this.timekeepingStatus[employee.employeeId][gun] = hepsiIsaretli ? null : true;
+
+      // Değişiklik yapıldığını işaretle
+      const changeKey = `${employee.employeeId}-${gun}`;
+      this.changedTimekeepings.add(changeKey);
     });
 
     // Değişiklikleri manuel olarak bildir
     this.timekeepingStatus = { ...this.timekeepingStatus };
   }
 
-  
+  openConfirmModal() {
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    confirmModal.show();
+  }
 
-create() {
+  saveChanges() {
     const timekeepingData: CreateTimekeeping[] = [];
+  
     this.items.forEach(employee => {
-      this.timekeepingStatus[employee.employeeId].forEach((status, index) => {
-        if (status !== null) {
-          const timekeepingData: CreateTimekeeping = {
+      this.timekeepingStatus[employee.employeeId].forEach((status, dayIndex) => {
+        const changeKey = `${employee.employeeId}-${dayIndex}`;
+        if (this.changedTimekeepings.has(changeKey)) {
+          // Sadece değişiklik yapılanları kaydet
+          const timekeeping: CreateTimekeeping = {
             employeeId: employee.employeeId,
-            date: new Date(this.selectedYear, this.selectedMonth -1, index + 2),
+            date: new Date(this.selectedYear, this.selectedMonth - 1, dayIndex + 2),
             status: status
           };
-          this.leaveEntitledService.create(timekeepingData)
-            .then(() => {
-              alert('Puantaj kayıtları başarıyla kaydedildi');
-            })
-            .catch(error => {
-              console.error('Puantaj kayıtları kaydedilirken bir hata oluştu', error);
-              alert('Puantaj kayıtları kaydedilirken bir hata oluştu');
-            });
+          timekeepingData.push(timekeeping);
         }
       });
     });
+  
+    // API çağrısı yap ve `changedTimekeepings` setini temizle
+    // In your component file
+    Promise.all(timekeepingData.map(timekeeping => this.leaveEntitledService.create(timekeeping)))
+      .then(() => {
+        this.changedTimekeepings.clear(); // Clear changes after successful save
+        alert('Timekeeping records successfully saved');
+      })
+      .catch(error => {
+        console.error('An error occurred while saving timekeeping records', error);
+        alert('An error occurred while saving timekeeping records');
+      });
+    const confirmModal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
+    confirmModal.hide();
   }
+  
   
   // Ay ve yıl değiştiğinde günleri ve puantaj durumunu güncelle
   
@@ -157,7 +178,41 @@ create() {
       this.timekeepingStatus[employee.employeeId] = Array(lastDayOfMonth).fill(null);
     });
   }
+
+  changedTimekeepings: Set<string> = new Set();
+
+  toggleTimekeeping(employeeId: string, dayIndex: number) {
+  const currentStatus = this.timekeepingStatus[employeeId][dayIndex];
+  const newStatus = currentStatus === true ? false : (currentStatus === false ? null : true);
+
+  this.timekeepingStatus[employeeId][dayIndex] = newStatus;
+
+  // Değişiklik yapıldığını işaretle
+  const changeKey = `${employeeId}-${dayIndex}`;
+  this.changedTimekeepings.add(changeKey);
+}
+
+getAttendedDays(employeeId: string): number {
+  return this.timekeepingStatus[employeeId].filter(status => status === true).length;
+}
+
+getNotAttendedDays(employeeId: string): number {
+  return this.timekeepingStatus[employeeId].filter(status => status === false).length;
+}
+
+
+searchEmployees(event: Event) {
+  const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+  if (!searchTerm) {
+    this.items = [...this.originalItems];
+  } else {
+    this.items = this.originalItems.filter(employee =>
+      employee.firstName?.toLocaleLowerCase().includes(searchTerm) ||
+      employee.lastName?.toLocaleLowerCase().includes(searchTerm) 
+    );
+  }
+}
+openModal(){
   
- 
-  
+}
 }

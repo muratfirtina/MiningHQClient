@@ -1,41 +1,74 @@
 <div class="row">
-    <div class="col-md-8">
-<div class="puantaj-container">
-    <h2>Personel Puantaj</h2>
-    <input type="text" [(ngModel)]="employeeSearch" placeholder="Personel Ara...">
-    <select [(ngModel)]="selectedMonth" (change)="changeMonthOrYear(selectedYear,selectedMonth)">
-        <option *ngFor="let month of months" [value]="month">{{ month }}</option>
-      </select>
-      
-      <!-- Yıl seçimi -->
-      <select [(ngModel)]="selectedYear" (change)="changeMonthOrYear(selectedYear, selectedMonth)">
-        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-      </select>
-    <table>
+  <div class="col-md-12">
+    <div style="text-align: center; margin-top: 50px;">
+      <h2>Personel Puantaj</h2>
+    </div>
+    <div class="puantaj-container">
+      <div class="header-container">
+        <div class="input-container" style="margin-bottom: 20px; width: 300px;">
+          <input type="text" class="form-control" placeholder="Ara..." (input)="searchEmployees($event)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+            viewBox="0 0 16 16">
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+          </svg>
+        </div>
+        <select class="form-select" style="width: 100px; margin-bottom: 20px; margin-top: 0px; margin-left: 0px;" [(ngModel)]="selectedMonth"
+          (change)="changeMonthOrYear(selectedYear,selectedMonth)">
+          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+        </select>
+
+        <!-- Yıl seçimi -->
+        <select class="form-select" style="width: 100px; margin-bottom: 20px; margin-top: 0px; margin-left: -40px;" [(ngModel)]="selectedYear"
+          (change)="changeMonthOrYear(selectedYear, selectedMonth)">
+          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+        </select>
+      </div>
+      <div class="col-md-12" style="width: max-content; overflow-x: auto; font-size: 0.9em;">
+      <table style="width: min-content;">
         <tr>
-        <th style=" padding-left: 40px; padding-right: 40px;">Personel Listesi</th>
-        <th *ngFor="let day of days; let i = index">
+          <th style=" padding-left: 40px; padding-right: 40px;">Personel Listesi</th>
+          <th *ngFor="let day of days; let i = index">
             Gün {{ day }} <input type="checkbox" (click)="selectAll(i)">
           </th>
-      </tr>
-      <tr *ngFor="let personel of items">
-        <td>{{ personel.firstName }} {{ personel.lastName }}</td>
-        <td *ngFor="let day of days; let i = index">
-          <span class="puantaj"
-                (click)="toggleTimekeeping(personel.employeeId, i)"
-                [ngClass]="{
+        </tr>
+        <tr *ngFor="let personel of items">
+          <td>{{ personel.firstName }} {{ personel.lastName }}</td>
+          <td *ngFor="let day of days; let i = index">
+            <span class="puantaj" (click)="toggleTimekeeping(personel.employeeId, i)" [ngClass]="{
                   'crossed': timekeepingStatus[personel.employeeId][i] === false,
                   'checked': timekeepingStatus[personel.employeeId][i] === true,
                   'null': timekeepingStatus[personel.employeeId][i] === null
                 }">
-            {{ timekeepingStatus[personel.employeeId][i] === true ? '✓' : 
-               timekeepingStatus[personel.employeeId][i] === false ? '✗' : 
-               '-' }}
-          </span>
-        </td>
-      </tr>
-    </table>
-    <button (click)="create()">Kaydet</button>
+              {{ timekeepingStatus[personel.employeeId][i] === true ? '✓' :
+              timekeepingStatus[personel.employeeId][i] === false ? '✗' :
+              '-' }}
+            </span>
+          </td>
+          <td style="color: green;">✓ {{ getAttendedDays(personel.employeeId) }}</td>
+          <td style="color: red;">✗ {{ getNotAttendedDays(personel.employeeId) }}</td>
+        </tr>
+      </table>
+    </div>
+      <button class="btn btn-success" (click)="openConfirmModal()">Kaydet</button>
+    </div>
   </div>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalLabel">Puantaj Kaydedilsin mi?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Bu işlemi onaylıyor musunuz?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Hayır</button>
+        <button type="button" class="btn btn-success" (click)="saveChanges()">Evet</button>
+      </div>
+    </div>
+  </div>
 </div>
