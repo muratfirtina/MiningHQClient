@@ -17,4 +17,3 @@ export interface Filter {
   filters?: Filter[]; // İç içe filtreler için
 }
 
-// DynamicQuery için bir interface

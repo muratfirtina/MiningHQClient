@@ -2,54 +2,85 @@
   <div class="col-md-12">
     <div style="text-align: center; margin-top: 50px;">
       <h2>Personel Puantaj</h2>
+      <div *ngIf="anniversaries.length > 0" class="alert alert-warning" role="alert" style="margin-top: 30px;">
+        <h3>Dikkat</h3>
+        <ul>
+          <li *ngFor="let anniversary of anniversaries">
+            {{anniversary.message}}
+          </li>
+          Yıllık İzin Girişi Yapayı Unutmayın! Yıllık İzin Girişi yapmak için <a
+            [routerLink]="['/leave/entitledleave']">tıklayınız</a>
+        </ul>
+      </div>
+    </div>
+
+    <div class="header-container">
+      <div class="input-container" style="margin-bottom: 20px; width: 300px;">
+        <input type="text" class="form-control" placeholder="Ara..." (input)="searchEmployees($event)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+          viewBox="0 0 16 16">
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+        </svg>
+      </div>
+      <select class="form-select" style="width: 120px; margin-bottom: 20px; margin-left: 20px;"
+        [(ngModel)]="selectedMonth" (change)="changeMonthOrYear(selectedYear,selectedMonth)">
+        <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+      </select>
+
+      <!-- Yıl seçimi -->
+      <select class="form-select" style="width: 100px; margin-bottom: 20px; margin-left: 10px; "
+        [(ngModel)]="selectedYear" (change)="changeMonthOrYear(selectedYear, selectedMonth)">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
     </div>
     <div class="puantaj-container">
-      <div class="header-container">
-        <div class="input-container" style="margin-bottom: 20px; width: 300px;">
-          <input type="text" class="form-control" placeholder="Ara..." (input)="searchEmployees($event)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
-            viewBox="0 0 16 16">
-            <path
-              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-          </svg>
-        </div>
-        <select class="form-select" style="width: 100px; margin-bottom: 20px; margin-top: 0px; margin-left: 0px;" [(ngModel)]="selectedMonth"
-          (change)="changeMonthOrYear(selectedYear,selectedMonth)">
-          <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
-        </select>
-
-        <!-- Yıl seçimi -->
-        <select class="form-select" style="width: 100px; margin-bottom: 20px; margin-top: 0px; margin-left: -40px;" [(ngModel)]="selectedYear"
-          (change)="changeMonthOrYear(selectedYear, selectedMonth)">
-          <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-        </select>
+      
+      <div class="col-md-12" style="width: max-content; overflow-x:auto; font-size: 0.8em;">
+        <table style="width: min-content;">
+          <tr>
+            <th style=" padding-left: 40px; padding-right: 40px;">Personel Listesi</th>
+            <th *ngFor="let day of days; let i = index">
+              Gün {{ day }} <input type="checkbox" (click)="selectAll(i)">
+            </th>
+            <th>Geldi</th>
+            <th>İzinli</th>
+            <th>Raporlu</th>
+            <th>Mevcut İzin Hakkı</th>
+            <th>İzin Hakediş Girişi</th>
+          </tr>
+          <tr *ngFor="let personel of items" style="background-color: white;">
+            <td>{{ personel.firstName }} {{ personel.lastName }}</td>
+            <td *ngFor="let day of days; let i = index">
+              <span style="font-size: 20px;" class="puantaj" (click)="toggleTimekeeping(personel.employeeId, i)"
+                [ngClass]="{
+                'crossed': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Absent,
+                'checked': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Attended,
+                'sick': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.OnSickLeave,
+                'null': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.NotSet
+                 }">
+                {{ timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Attended ? '✓' :
+                timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Absent ? '✗' :
+                timekeepingStatus[personel.employeeId][i] === timekeepingStatus.OnSickLeave ? '🤒' : '-' }}
+              </span>
+            </td>
+            <td style="color: green; font-size: 14px;">✓ {{ getAttendedDays(personel.employeeId) }}</td>
+            <td style="color: red; font-size: 14px;">✗ {{ getNotAttendedDays(personel.employeeId) }}</td>
+            <td style="color: #ffc107; font-size: 14px;">🤒 {{ getSickDays(personel.employeeId) }}</td>
+            <td style="color: #5507ff; font-size: 14px;">
+              {{ personel.totalRemainingDays }} gün
+            </td>
+            <td>
+              <input type="number" [(ngModel)]="entitledDaysInput[personel.employeeId]" style="width: 50px;">
+            </td>
+            <td>
+              <button class="btn btn-success"
+                style="width: 40px; height: 30px; padding: 0 !important;; margin: 0 !important; "
+                (click)="addEntitledLeave(personel.employeeId)">Ekle</button>
+            </td>
+          </tr>
+        </table>
       </div>
-      <div class="col-md-12" style="width: max-content; overflow-x: auto; font-size: 0.9em;">
-      <table style="width: min-content;">
-        <tr>
-          <th style=" padding-left: 40px; padding-right: 40px;">Personel Listesi</th>
-          <th *ngFor="let day of days; let i = index">
-            Gün {{ day }} <input type="checkbox" (click)="selectAll(i)">
-          </th>
-        </tr>
-        <tr *ngFor="let personel of items">
-          <td>{{ personel.firstName }} {{ personel.lastName }}</td>
-          <td *ngFor="let day of days; let i = index">
-            <span class="puantaj" (click)="toggleTimekeeping(personel.employeeId, i)" [ngClass]="{
-                  'crossed': timekeepingStatus[personel.employeeId][i] === false,
-                  'checked': timekeepingStatus[personel.employeeId][i] === true,
-                  'null': timekeepingStatus[personel.employeeId][i] === null
-                }">
-              {{ timekeepingStatus[personel.employeeId][i] === true ? '✓' :
-              timekeepingStatus[personel.employeeId][i] === false ? '✗' :
-              '-' }}
-            </span>
-          </td>
-          <td style="color: green;">✓ {{ getAttendedDays(personel.employeeId) }}</td>
-          <td style="color: red;">✗ {{ getNotAttendedDays(personel.employeeId) }}</td>
-        </tr>
-      </table>
-    </div>
       <button class="btn btn-success" (click)="openConfirmModal()">Kaydet</button>
     </div>
   </div>

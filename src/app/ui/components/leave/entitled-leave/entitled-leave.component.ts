@@ -8,11 +8,13 @@ import { LeaveEntitledService } from 'src/app/services/common/models/leave-entit
 import { EmployeeService } from 'src/app/services/common/models/employee.service';
 import { Employee } from 'src/app/contracts/employee/employee';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LeaveEntitled } from 'src/app/contracts/leave/leaveEntitled';
 import { LeaveType } from 'src/app/contracts/leave/leaveType';
 import { listLeaveType } from 'src/app/contracts/leave/listLeaveType';
-import { EntitledLeaveListByEmployeeId } from 'src/app/contracts/leave/entitledLeaveListByEmployeeId';
 import { ToastrService } from 'ngx-toastr';
+import { GetListResponse } from 'src/app/contracts/getListResponse';
+import { LeaveEntitledUsage } from 'src/app/contracts/leave/leaveEntitledUsage';
+import { LeaveEntitledAdd } from 'src/app/contracts/leave/leaveEntitledAdd';
+
 @Component({
   selector: 'app-entitled-leave',
   standalone: true,
@@ -26,8 +28,8 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
   employees: Employee[] = [];
   leaveTypes: LeaveType[] = [];
   entitledLeaveForm: FormGroup;
-  items: LeaveEntitled[] = [];
-  pagedEntitledLeave: LeaveEntitled[] = [];
+  items: LeaveEntitledAdd[] = [];
+  pagedEntitledLeave: LeaveEntitledUsage[] = [];
   currentPageNo: number;
   totalItems: number = 0;
   pageSize: number = 10;
@@ -35,7 +37,7 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
   pages: number;
   pageList: number[] = [];
   listByEmployeeIdForm: FormGroup;
-  listByEmployeeId: EntitledLeaveListByEmployeeId;
+  listByEmployeeId: GetListResponse<LeaveEntitledAdd>;
 
   constructor(spinner:NgxSpinnerService,
     private toastrService:ToastrService,
@@ -106,11 +108,13 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     const formValue = this.listByEmployeeIdForm.value;
     this.showSpinner(SpinnerType.BallSpinClockwise);
     this.items = [];
+
+    
     
     this.activatedRoute.params.subscribe(async (params) => {
       this.currentPageNo = parseInt(params['pageNo'] ?? 1)
 
-      const data: EntitledLeaveListByEmployeeId = await this.leaveEntitledService.listByEmployeeId(
+      const data: GetListResponse<LeaveEntitledAdd> = await this.leaveEntitledService.listByEmployeeId(
         formValue.employeeId,
         formValue.leaveTypeId,
         formValue.startDate,
@@ -150,6 +154,7 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     });
     this.hideSpinner(SpinnerType.BallSpinClockwise);
   }
+
 }
 
 

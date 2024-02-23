@@ -1,10 +1,11 @@
-export class LeaveEntitled{
+export class LeaveEntitledUsage{
     id: string;
     employeeId: string;
-    employeeFirstName: string;
-    employeeLastName: string;
+    firstName: string;
+    lastName: string;
     leaveTypeId: string;
     leaveTypeName: string;
+    totalRemainingDays: number;
     entitledDate: Date;
     entitledDays: number;
     startDate: Date;

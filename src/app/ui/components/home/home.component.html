@@ -17,3 +17,43 @@
     </div>
     <div class="col-md-2"></div>
 </div>
+
+<!-- employees.component.html -->
+
+<div class="container">
+  <form [formGroup]="searchForm" (ngSubmit)="searchEmployees()">
+    <div class="form-group">
+      <label for="jobName">Job Name</label>
+      <select type="text" id="jobName" formControlName="jobName" class="form-control">
+        <option value="">All</option>
+        <option *ngFor="let job of jobs" [value]="job.name">{{ job.name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="jobName">Quarry Name</label>
+      <select type="text" id="quarryName" formControlName="quarryName" class="form-control">
+        <option value="">All</option>
+        <option *ngFor="let quarry of quarries" [value]="quarry.name">{{ quarry.name }}</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+
+  <table class="table mt-3">
+    <thead>
+      <tr>
+        <th>Employee Name</th>
+        <th>Quarry Name</th>
+        <!-- Diğer kolon başlıkları -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of employees">
+        <td>{{ employee.firstName }} {{ employee.lastName }}</td>
+        <td>{{ employee.quarryName }}</td>
+        <!-- Diğer kolon değerleri -->
+      </tr>
+    </tbody>
+  </table>
+</div>

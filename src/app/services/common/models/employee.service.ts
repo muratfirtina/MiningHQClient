@@ -54,4 +54,16 @@ export class EmployeeService {
     
   }
 
+  async getEmployeesByDynamicQuery(dynamicQuery: any, pageRequest: any, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<SingleEmployee>> {
+    const observable: Observable<GetListResponse<SingleEmployee>> = this.httpClientService.post<GetListResponse<SingleEmployee>>({
+      controller: 'employees',
+      action: 'GetList/ByDynamic',
+      queryString: `pageIndex=${pageRequest.pageIndex}&pageSize=${pageRequest.pageSize}`
+    }, dynamicQuery);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
 }

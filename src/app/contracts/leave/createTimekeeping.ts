@@ -1,5 +1,7 @@
+import { TimekeepingStatus } from "./timekeepingStatusEnum";
+
 export interface CreateTimekeeping{
     date: Date;
     employeeId: string;
-    status: boolean;
+    status: TimekeepingStatus
   }
