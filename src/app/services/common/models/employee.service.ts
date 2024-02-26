@@ -5,6 +5,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { CreateEmployee } from 'src/app/contracts/employee/create-employee';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
+import { EmployeefilterByDynamic } from 'src/app/contracts/employee/EmployeefilterByDynamic';
 
 @Injectable({
   providedIn: 'root'
@@ -54,8 +55,8 @@ export class EmployeeService {
     
   }
 
-  async getEmployeesByDynamicQuery(dynamicQuery: any, pageRequest: any, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<SingleEmployee>> {
-    const observable: Observable<GetListResponse<SingleEmployee>> = this.httpClientService.post<GetListResponse<SingleEmployee>>({
+  async getEmployeesByDynamicQuery(dynamicQuery: any, pageRequest: any, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<EmployeefilterByDynamic>> {
+    const observable: Observable<GetListResponse<EmployeefilterByDynamic>> = this.httpClientService.post<GetListResponse<EmployeefilterByDynamic>>({
       controller: 'employees',
       action: 'GetList/ByDynamic',
       queryString: `pageIndex=${pageRequest.pageIndex}&pageSize=${pageRequest.pageSize}`

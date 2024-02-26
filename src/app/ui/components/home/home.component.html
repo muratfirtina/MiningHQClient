@@ -36,6 +36,13 @@
         <option *ngFor="let quarry of quarries" [value]="quarry.name">{{ quarry.name }}</option>
       </select>
     </div>
+    <div class="form-group">
+      <label for="typeOfBlood">Kan Grubu</label>
+      <select id="typeOfBlood" formControlName="typeOfBlood" class="form-control">
+        <option value="">Tümü</option>
+        <option *ngFor="let bloodType of typeOfBlood" [value]="bloodType">{{ bloodType }}</option>
+      </select>
+    </div>
 
     <button type="submit" class="btn btn-primary">Search</button>
   </form>

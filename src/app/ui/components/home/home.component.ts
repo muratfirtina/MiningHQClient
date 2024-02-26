@@ -5,10 +5,12 @@ import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BaseComponent } from 'src/app/base/base.component';
 import { DynamicQuery, Filter } from 'src/app/contracts/dynamic-query';
+import { EmployeefilterByDynamic } from 'src/app/contracts/employee/EmployeefilterByDynamic';
 import { Employee } from 'src/app/contracts/employee/employee';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
 import { Job } from 'src/app/contracts/job/job';
 import { Quarry } from 'src/app/contracts/quarry/quarry';
+import { TypeOfBlood } from 'src/app/contracts/typeOfBlood';
 import { EmployeeService } from 'src/app/services/common/models/employee.service';
 import { JobService } from 'src/app/services/common/models/job.service';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
@@ -23,9 +25,10 @@ import { QuarryService } from 'src/app/services/common/models/quarry.service';
 export class HomeComponent extends BaseComponent implements OnInit{
 
   searchForm: FormGroup;
-  employees: Employee[] = [];
+  employees: EmployeefilterByDynamic[] = [];
   quarries: Quarry[] = [];
   jobs:Job[] = [];
+  typeOfBlood = Object.values(TypeOfBlood).filter(value => typeof value === 'string');
   
 
   
@@ -36,7 +39,8 @@ export class HomeComponent extends BaseComponent implements OnInit{
     this.searchForm = this.fb.group({
       quarryName: [''],
       sortDirection: ['asc'],
-      jobName: ['']
+      jobName: [''],
+      typeOfBlood: ['']
     });
     
   }
@@ -46,6 +50,7 @@ export class HomeComponent extends BaseComponent implements OnInit{
   
   this.getQuarries();
   this.getJobs();
+  this.typeOfBlood
   
 }
   
@@ -76,116 +81,76 @@ export class HomeComponent extends BaseComponent implements OnInit{
 
   searchEmployees() {
     const formValue = this.searchForm.value;
+    const employeeFilterByDynamic: EmployeefilterByDynamic = {
+      id: 'Employee.Id',
+      firstName: "Employee.FirstName",
+      lastName: "Employee.LastName",
+      jobName: "Job.Name",
+      quarryName: "Quarry.Name",
+      typeOfBlood: "TypeOfBlood"
+    };
+
   
     const dynamicQuery: DynamicQuery = {
       sort: [{
-        field: "Job.Name",
+        field: employeeFilterByDynamic.jobName ,
         dir: formValue.sortDirection
       }],
       filter: {
-        field: "Job.Name",
+        field: employeeFilterByDynamic.jobName,
         operator: "eq",
         value: formValue.jobName,
-        logic: "and",
+        logic: "or",
         filters: [
-          {
-            field: "Quarry.Name",
-            operator: "eq",
-            value: formValue.quarryName
-          }
+          
         ]
       }
     };
-    if (formValue.jobName == "" && formValue.quarryName != "") {
+    
+    if (formValue.jobName == "" && formValue.quarryName != "" && formValue.typeOfBlood != "") {
       dynamicQuery.filter = {
-        field: "Quarry.Name",
+        field: employeeFilterByDynamic.quarryName,
         operator: "eq",
         value: formValue.quarryName,
         logic: "and",
         filters: [
+          {
+            field: employeeFilterByDynamic.typeOfBlood,
+            operator: "eq",
+            value: formValue.typeOfBlood
+          }
           
         ]
       };
     }
-    else if (formValue.quarryName == "" && formValue.jobName != "") {
+    else if (formValue.quarryName == "" && formValue.jobName != "" && formValue.typeOfBlood != "") {
       dynamicQuery.filter = {
-        field: "Job.Name",
-        operator: "eq",
-        value: formValue.jobName,
-        logic: "and",
-        filters: [
-          
-        ]
-      };
-    }
-    else if (formValue.jobName == "" && formValue.quarryName == "") {
-      dynamicQuery.filter = {
-        field: "",
-        operator: "",
-        value: "",
-        logic: "",
-        filters: [
-          
-        ]
-      };
-    }
-
-  
-    const pageRequest = {
-      pageIndex: 0,
-      pageSize: 10
-    };
-  
-    this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest).then((response) => {
-      this.employees = response.items;
-    });
-  }
-
-
-
-  searchEmployees2() {
-    const formValue = this.searchForm.value;
-    const dynamicQuery = {
-      filter: {
-        field: "Job.Name",
+        field: employeeFilterByDynamic.jobName,
         operator: "eq",
         value: formValue.jobName,
         logic: "and",
         filters: [
           {
-            field: "Quarry.Name",
+            field: employeeFilterByDynamic.typeOfBlood,
             operator: "eq",
-            value: formValue.quarryName
+            value: formValue.typeOfBlood
           }
+          
         ]
-      },
-      sort: [{
-        field: "Job.Name",
-        dir: formValue.sortDirection
-      }],
-    };
-
-    if (formValue.jobName == "" && formValue.quarryName != "") {
+      };
+    }
+    else if (formValue.jobName == "" && formValue.quarryName == "" && formValue.typeOfBlood != "") {
       dynamicQuery.filter = {
-        field: "Quarry.Name",
+        field: employeeFilterByDynamic.typeOfBlood,
         operator: "eq",
-        value: formValue.quarryName,
+        value: formValue.typeOfBlood,
         logic: "and",
         filters: [
           
         ]
       };
-    } else if (formValue.quarryName == "" && formValue.jobName != "") {
-      dynamicQuery.filter = {
-        field: "Job.Name",
-        operator: "eq",
-        value: formValue.jobName,
-        logic: "and",
-        filters: [
-          
-        ]
-      };
-    } else if (formValue.jobName == "" && formValue.quarryName == "") {
+    }
+    else if (formValue.jobName == "" && formValue.quarryName == "" && formValue.typeOfBlood == "") {
       dynamicQuery.filter = {
         field: "",
         operator: "",
@@ -193,31 +158,45 @@ export class HomeComponent extends BaseComponent implements OnInit{
         logic: "",
         filters: [
           
+          
+        ]
+      };
+    }
+    else if (formValue.jobName != "" && formValue.quarryName != "" && formValue.typeOfBlood != "") {
+      dynamicQuery.filter = {
+        field: employeeFilterByDynamic.jobName,
+        operator: "eq",
+        value: formValue.jobName,
+        logic: "and",
+        filters: [
+          {
+            field: employeeFilterByDynamic.quarryName,
+            operator: "eq",
+            value: formValue.quarryName,
+            logic: "and",
+            filters: [
+              {
+                field: employeeFilterByDynamic.typeOfBlood,
+                operator: "eq",
+                value: formValue.typeOfBlood
+              }
+            ]
+          }
         ]
       };
     }
 
+
+  
     const pageRequest = {
       pageIndex: 0,
       pageSize: 10
     };
-
+  
     this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest).then((response) => {
       this.employees = response.items;
     });
- }
-
- getBackendFieldName(model: Employee, fieldName: string) {
-  const modelKeys = Object.keys(model);
-  const index = modelKeys.indexOf(fieldName);
-  if (index !== -1) {
-    // Assuming the backend field names follow a specific pattern
-    return fieldName.charAt(0).toUpperCase() + fieldName.slice(1); // e.g., "quarryName" -> "Quarry.Name"
-  } else {
-    // Handle invalid field name
-    throw new Error(`Invalid field name: ${fieldName}`);
   }
-}
 
 
 }

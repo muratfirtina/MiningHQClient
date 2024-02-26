@@ -1,3 +1,5 @@
+import { TypeOfBlood } from "../typeOfBlood";
+
 export class CreateEmployee {
     firstName:string;
     lastName:string;
@@ -11,6 +13,6 @@ export class CreateEmployee {
     hireDate:Date;
     departureDate:Date;
     licenseType:string;
-    typeOfBlood:string;
+    typeOfBlood:TypeOfBlood;
     emergencyContact:string;
 }

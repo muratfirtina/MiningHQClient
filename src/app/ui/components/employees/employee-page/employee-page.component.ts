@@ -15,13 +15,15 @@ import { ToastrService } from 'ngx-toastr';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable'; 
 import { openSansBase64 } from 'src/assets/fonts/openSansFont';
+import { TypeOfBlood } from 'src/app/contracts/typeOfBlood';
+import { BloodTypeDisplayPipe } from 'src/app/pipes/bloodTypeDisplay.pipe';
 
 declare var $: any;
 
 @Component({
   selector: 'app-employee-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule,ReactiveFormsModule, BloodTypeDisplayPipe],
   templateUrl: './employee-page.component.html',
   styleUrls: ['./employee-page.component.scss', '../../../../../styles.scss']
 })
@@ -34,6 +36,9 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   jobs: Job[] = [];
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
+  typeOfBlood: TypeOfBlood[] = Object.values(TypeOfBlood).filter(value => typeof value === 'string').map(value => value as TypeOfBlood);
+  
+  
  
 
   constructor(
@@ -61,6 +66,11 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       typeOfBlood: [''],
       address: ['']
     });
+
+    /* this.bloodTypeOptions = Object.entries(TypeOfBlood)
+      .filter(([key, value]) => typeof value === 'number') // Filter to only include the enum members, not reverse mappings
+      .map(([key, value]) => ({ name: key, value: value as TypeOfBlood })); */
+  
   }
 
   ngOnInit(): void {
@@ -72,6 +82,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     });
     this.getJobs();
     this.getQuarries();
+    this.typeOfBlood
   }
 
   loadEmployeeDetails(employeeId: string) {

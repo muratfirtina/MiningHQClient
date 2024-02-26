@@ -1,4 +1,5 @@
 import { ListImageFile } from "../list-image-file";
+import { TypeOfBlood } from "../typeOfBlood";
 
 export class SingleEmployee {
     id:string;

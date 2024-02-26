@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { DynamicLoadComponentDirective } from './app/directives/common/dynamic-load-component.directive';
 import { FormsModule } from '@angular/forms';
+import { BloodTypeDisplayPipe } from './app/pipes/bloodTypeDisplay.pipe';
 
 
 bootstrapApplication(AppComponent, {

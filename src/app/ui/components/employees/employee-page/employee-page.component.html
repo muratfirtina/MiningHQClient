@@ -58,21 +58,21 @@
               </div>
             </div>
 
-            <!-- <div class="row form-group">
-              <label for="licenseType" class="col-md-2 control-label">Ehliyet Tipi:</label>
+            <div class="row form-group">
+              <!-- <label for="licenseType" class="col-md-2 control-label">Ehliyet Tipi:</label>
               <div class="col-md-4">
                 <select id="licenseType" class="form-control" formControlName="licenseType" required>
                     <option *ngFor="let licenseType of licenseTypes" [value]="licenseType.name">{{ licenseType.name }}</option>
                   </select>
-              </div>
+              </div> -->
   
-              <label for="typeOfBlood" class="col-md-2 control-label">Adres:</label>
+              <label for="typeOfBlood" class="col-md-2 control-label">Kan Grubu:</label>
               <div class="col-md-4">
                 <select id="typeOfBlood" class="form-control" formControlName="typeOfBlood" required>
-                    <option *ngFor="let bloodType of bloodTypes" [value]="bloodType.name">{{ bloodType.name }}</option>
-                  </select>
+                  <option *ngFor="let type of typeOfBlood" [value]="type">{{ type }}</option>
+                </select>
               </div>
-            </div> -->
+            </div>
 
             <div class="row form-group">
               <label for="departureDate" class="col-md-2 control-label">Çıkış Tarihi:</label>
