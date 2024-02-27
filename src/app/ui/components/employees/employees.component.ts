@@ -62,19 +62,19 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
 }
   
   gotoEmployeeList(){
-    this.router.navigate(['/employee-list']);
+    this.router.navigate(['personeller/personel-listesi']);
   }
 
   gottoEmployeeAdd() {
-    this.router.navigate(['/employee-add']);
+    this.router.navigate(['personeller/personel-ekle']);
   }
 
   goToEmployeePage(id: string) {
-    this.router.navigate(['/employee', id]);
+    this.router.navigate(['personeller/personel', id]);
   }
 
   navigateToLeave() {
-    this.router.navigate(['/leave']);
+    this.router.navigate(['personeller/izinler']);
   }
 
   getQuarries() {

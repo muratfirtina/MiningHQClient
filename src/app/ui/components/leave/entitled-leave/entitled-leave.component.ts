@@ -80,7 +80,7 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     (errorMessage: string) => {
       this.toastrService.error(errorMessage);
     });
-    this.router.navigate(['entitledleave', this.currentPageNo]);
+    this.router.navigate(['hakedilenizinler', this.currentPageNo]);
   }
 
   getEmployee() {

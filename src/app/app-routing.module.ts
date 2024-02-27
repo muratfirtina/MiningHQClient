@@ -39,23 +39,24 @@ const routes: Routes = [
       
     ]
   },
-  {path:'', component:HomeComponent},
-  {path:'employees',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent)},
-  {path:'machines',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent)},
-  {path:'employee-list',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent)},
-  {path:'employee/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent)},
-  {path:'employee-add',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent)},
-  {path:'machines/search',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent)},
-  {path:'leave',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent)},
-  {path:'leave/entitledleave',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent)},
-  {path:'leave/entitledleave/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent)},
-  {path:'leave/calender',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent)},
-  {path:'leave/timekeeping',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent)},
-  {path:'leave/timekeeping/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent)},
+  {path:'', component:HomeComponent,data:{breadcrumb:'Anasayfa'}},
+  {path:'personeller',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent),data:{breadcrumb:'Personeller'}},
+  {path:'makinalar',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makinalar'}},
+  {path:'personeller/personel-listesi',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent),data:{breadcrumb:'Personel Listesi'}},
+  {path:'personeller/personel-listesi/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
+  {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
+  {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),data:{breadcrumb:'Personel Ekle'}},
+  {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makina Arama'}},
+  {path:'personeller/izinler',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent),data:{breadcrumb:'İzinler'}},
+  {path:'personeller/izinler/hakedilenizinler',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler'}},
+  {path:'personeller/izinler/hakedilenizinler/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler :pageNo'}},
+  {path:'personeller/izinler/takvim',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent),data:{breadcrumb:'İzin Takvimi'}},
+  {path:'personeller/izinler/puantaj',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj'}},
+  {path:'personeller/izinler/puantaj/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj :year :month'}},
   
 
   
-  {path:'leaveusage',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent)},
+  {path:'personeller/izinler/izinkullanimi',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent),data:{breadcrumb:'İzin Kullanımı'}},
   
 ];
 

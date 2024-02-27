@@ -1,0 +1,36 @@
+<!-- breadcrumb.component.html -->
+<div class="nav-scroller py-1 mb-2">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-chevron p-1 bg-body-tertiary rounded-pill" style="background-color: #ffc107 !important; color: #003353 !important;">
+        <li class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbs; let isLast = last">
+          <a *ngIf="!isLast; else lastBreadcrumb" [routerLink]="breadcrumb.url" class="link-body-emphasis fw-semibold text-decoration-none"  style="color: #003353 !important;">
+            {{ breadcrumb.label }}
+          </a>
+          <ng-template #lastBreadcrumb style="color: #003353 !important;">
+            {{ breadcrumb.label }}
+          </ng-template>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  
+
+<!-- <div class="nav-scroller py-1 mb-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb breadcrumb-chevron p-1 bg-body-tertiary rounded-pill"
+            style="background-color: #ffc107 !important; color: #003353 !important;">
+            <li class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbs; let isLast = last">
+          <a *ngIf="!isLast; else lastBreadcrumb" [routerLink]="[breadcrumb.url]" class="link-body-emphasis" style="color: #003353 !important;">
+            {{ breadcrumb.label }}
+          </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a class="link-body-emphasis fw-semibold text-decoration-none" href="#"
+                    style="color: #003353 !important;">Library</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" style="color: #003353 !important;">
+                Data
+            </li>
+        </ol>
+    </nav>
+</div> -->

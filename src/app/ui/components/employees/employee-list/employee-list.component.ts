@@ -52,7 +52,7 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
   }
 
   goToEmployeePage(id: string) {
-    this.router.navigate(['/employee', id]);
+    this.router.navigate(['personeller/personel-listesi/personel', id]);
   }
 
   searchEmployees(event: Event) {

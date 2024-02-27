@@ -35,11 +35,11 @@ export class HomeComponent extends BaseComponent implements OnInit{
 }
   
   gotoEmployees(){
-    this.router.navigate(['/employees']);
+    this.router.navigate(['/personeller']);
   }
 
   gottoMachines() {
-    this.router.navigate(['/machines']);
+    this.router.navigate(['/makinalar']);
   }
 
 }

@@ -22,18 +22,18 @@ export class LeaveComponent extends BaseComponent{
   }
   
   navigateToLeaveUsage(){
-    this.router.navigate(['/leaveusage']);
+    this.router.navigate(['personeller/izinler/izinkullanimi']);
   }
 
   gottoEmployeeAdd() {
-    this.router.navigate(['/employee-add']);
+    this.router.navigate(['personeller/personel-ekle']);
   }
 
   navigateToEntitledLeave() {
-    this.router.navigate(['leave/entitledleave']);
+    this.router.navigate(['personeller/izinler/hakedilenizinler']);
   }
 
   navigateToTimekeeping() {
-    this.router.navigate(['leave/timekeeping']);
+    this.router.navigate(['personeller/izinler/puantaj']);
   }
 }
