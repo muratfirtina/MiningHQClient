@@ -1,35 +1,64 @@
 .btn-warning {
-    width: 150px;
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 #main .col-md-8 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #main .col-md-8 button {
-    margin-right: 25px;
+  margin-right: 25px;
 }
 
 #main .col-md-8 button:last-child {
-    margin-right: 0; /* Son butonun sağ kenarında boşluk olmasını engeller */
+  margin-right: 0; /* Son butonun sağ kenarında boşluk olmasını engeller */
 }
 
 #personellist svg {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 #main {
-    margin-top: 100px;
+  margin-top: 100px;
 }
 
-.btn{
-    color: #003353;
+.btn-warning {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+    rgba(245, 201, 2, 0.5) 5px 10px 15px;
+}
+.btn-warning:hover {
+  box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
+    rgba(253, 253, 253, 0.5) 5px 10px 15px;
+}
+.btn {
+  color: #003353;
+  background-color: #ffc107;
+  border-color: #ffc107;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+    rgba(245, 201, 2, 0.5) 5px 10px 15px;
+}
+
+.col-md-12{
+    display: -webkit-flex;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+table.table-striped tbody tr:hover td {
+    color: #ffc107;
+    cursor: pointer;
+    
   }

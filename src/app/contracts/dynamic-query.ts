@@ -10,8 +10,8 @@ export interface Sort {
 
 // Filter sınıfı için bir interface
 export interface Filter {
-  field: string; // Hangi alanın filtrelenmek istendiği
-  operator: string; // Hangi operatörün kullanılacağı, örneğin: 'eq', 'neq', 'contains' vb.
+  field?: string; // Hangi alanın filtrelenmek istendiği
+  operator?: string; // Hangi operatörün kullanılacağı, örneğin: 'eq', 'neq', 'contains' vb.
   value?: string; // Filtre değeri
   logic?: string; // Mantıksal operatör, örneğin: 'and', 'or'
   filters?: Filter[]; // İç içe filtreler için

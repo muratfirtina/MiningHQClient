@@ -1,8 +1,8 @@
-export class EmployeefilterByDynamic {
-    id: 'Employee.Id';
-    firstName: "Employee.FirstName";
-    lastName: "Employee.LastName";
-    jobName: "Job.Name";
-    quarryName: "Quarry.Name";
-    typeOfBlood: "TypeOfBlood";
+export enum EmployeefilterByDynamic {
+    id= 'Id',
+    firstName= "FirstName",
+    lastName="LastName",
+    jobName= "Job.Name",
+    quarryName= "Quarry.Name",
+    typeOfBlood="TypeOfBlood"
 }
