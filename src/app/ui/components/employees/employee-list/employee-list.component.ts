@@ -23,9 +23,9 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
   
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
-  listEmployees: GetListResponse<SingleEmployee>[] = [];
-  items: SingleEmployee[] = [];
-  originalItems: SingleEmployee[] = [];
+  listEmployees: GetListResponse<Employee>[] = [];
+  items: Employee[] = [];
+  originalItems: Employee[] = [];
 
   
   constructor(
@@ -43,7 +43,7 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
 
   async getAllEmployees() {
     this.showSpinner(SpinnerType.BallSpinClockwise);
-    await this.employeeService.list(this.pageRequest.pageIndex, this.pageRequest.pageSize, () => {}, (errorMessage: string) => {})
+    await this.employeeService.shortList(this.pageRequest, () => {}, (errorMessage: string) => {})
       .then((response) => {
     this.items = response.items;
     this.originalItems = [...this.items];

@@ -14,6 +14,10 @@ import { ToastrService } from 'ngx-toastr';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { LeaveEntitledUsage } from 'src/app/contracts/leave/leaveEntitledUsage';
 import { LeaveEntitledAdd } from 'src/app/contracts/leave/leaveEntitledAdd';
+import { Filter, DynamicQuery } from 'src/app/contracts/dynamic-query';
+import { EntitledLeaveListByDynamicEnum } from 'src/app/contracts/leave/entitledLeaveDynamic';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { RemainingDays } from 'src/app/contracts/leave/remainingDays';
 
 @Component({
   selector: 'app-entitled-leave',
@@ -25,19 +29,19 @@ import { LeaveEntitledAdd } from 'src/app/contracts/leave/leaveEntitledAdd';
 export class EntitledLeaveComponent extends BaseComponent implements OnInit {
 
   
-  employees: Employee[] = [];
-  leaveTypes: LeaveType[] = [];
-  entitledLeaveForm: FormGroup;
-  items: LeaveEntitledAdd[] = [];
-  pagedEntitledLeave: LeaveEntitledUsage[] = [];
-  currentPageNo: number;
-  totalItems: number = 0;
-  pageSize: number = 10;
-  count: number;
-  pages: number;
-  pageList: number[] = [];
-  listByEmployeeIdForm: FormGroup;
-  listByEmployeeId: GetListResponse<LeaveEntitledAdd>;
+    employees: Employee[] = [];
+    selectedEmployeeId: string | null;
+    pagedEntitledLeave: LeaveEntitledAdd[] = [];
+    currentPageNo: number = 1;
+    pageSize: number = 10;
+    pages: number;
+    pageList: number[] = [];
+    leaveTypes: LeaveType[] = [];
+    listByEmployeeIdForm: FormGroup;
+    listByEmployeeId: GetListResponse<LeaveEntitledAdd>;
+    entitledLeaveAddForm: FormGroup;
+    remainingDays: RemainingDays [] = [];
+    remainingDaysForSelectedEmployee: number = 0;
 
   constructor(spinner:NgxSpinnerService,
     private toastrService:ToastrService,
@@ -48,20 +52,19 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     ) {
     super(spinner);
-    
-    this.entitledLeaveForm = this.fB.group({
-      employeeId: [''],
-      leaveTypeId: [''],
-      entitledDate: [''],
-      entitledDays: [''],
-      
-    });
-
     this.listByEmployeeIdForm = this.fB.group({
       employeeId: [''],
       leaveTypeId: [''],
       startDate: [''],
-      endDate: ['']
+      endDate: [''],
+      sortDirection: ['desc']
+    });
+
+    this.entitledLeaveAddForm = this.fB.group({
+      employeeId: [''],
+      leaveTypeId: [''],
+      entitledDate: [''],
+      entitledDays: ['']
     });
     
   }
@@ -70,22 +73,18 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     await this.getEmployee();
     await this.getLeaveType();
 
+    this.listByEmployeeIdForm.valueChanges.subscribe(() => {
+      this.currentPageNo = 1; // Form değiştiğinde sayfayı sıfırla
+      this.entitledListDynamicByEmployeeId();
+    });
+
   }
 
-  async addEntitledLeave() {
-    const formValue = this.entitledLeaveForm.value;
-    this.leaveEntitledService.add(formValue).then(() => {
-      this.toastrService.success('İzin tanımlandı.');
-    },
-    (errorMessage: string) => {
-      this.toastrService.error(errorMessage);
-    });
-    this.router.navigate(['hakedilenizinler', this.currentPageNo]);
-  }
 
   getEmployee() {
     this.showSpinner(SpinnerType.BallSpinClockwise);
-    this.employeeService.list(-1,-1, () => {}, (errorMessage: string) => {})
+    const pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
+    this.employeeService.shortList(pageRequest, () => {}, (errorMessage: string) => {})
       .then((response) => {
     this.employees = response.items;
     
@@ -104,34 +103,54 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       });
   }
 
-  async listByEmployeeIdFunc() {
-    const formValue = this.listByEmployeeIdForm.value;
-    this.showSpinner(SpinnerType.BallSpinClockwise);
-    this.items = [];
+  entitledListDynamicByEmployeeId() {
+    const formValue = this.listByEmployeeIdForm.value
+    let filters : Filter []=[]
+    const id = EntitledLeaveListByDynamicEnum.id
+    const employeeId = EntitledLeaveListByDynamicEnum.employeeId
+    const leaveTypeId = EntitledLeaveListByDynamicEnum.leaveTypeId
+    const leaveTypeName = EntitledLeaveListByDynamicEnum.leaveTypeName
+    const entitledDate = EntitledLeaveListByDynamicEnum.entitledDate
+    const entitledDays = EntitledLeaveListByDynamicEnum.entitledDays
 
-    
-    
+    const addFilter = (field: string, value: string) => {
+      if (value) { // Eğer değer boş değilse filtreye ekle
+        filters.push({ field: field, operator: "eq", value: value });
+      }
+    };
+
+    addFilter(employeeId, formValue.employeeId)
+    addFilter(leaveTypeId, formValue.leaveTypeId)
+    addFilter(entitledDate, formValue.entitledDate)
+
+    let dynamicFilter: Filter | undefined;
+    if (filters.length > 0) {
+      dynamicFilter = filters.length === 1 ? filters[0] : {
+        field: "",
+        operator: "",
+        logic: "and",
+        filters: filters
+      };
+    }
+
+    const dynamicQuery: DynamicQuery = {
+      sort: [{ field: entitledDate, dir: formValue.sortDirection }],
+      filter: dynamicFilter
+    };
+
+    const pageRequest = {
+      pageIndex: this.currentPageNo - 1, // Angular front-end'de sayfa 1'den başlar, ancak API'de 0'dan başlar
+      pageSize: this.pageSize
+    };
+
     this.activatedRoute.params.subscribe(async (params) => {
-      this.currentPageNo = parseInt(params['pageNo'] ?? 1)
-
-      const data: GetListResponse<LeaveEntitledAdd> = await this.leaveEntitledService.listByEmployeeId(
-        formValue.employeeId,
-        formValue.leaveTypeId,
-        formValue.startDate,
-        formValue.endDate,
-        this.currentPageNo - 1, // Sayfa indeksi hesaplama
-        this.pageSize,
-        () => {},
-        (errorMessage) => {}
-      );
-      
-      this.listByEmployeeId = data;
-      this.items = data.items;
-
-      this.count = data.count;
-      this.pages = Math.ceil(this.count / this.pageSize);
-
-      this.pageList = [];
+      this.leaveEntitledService.getEntitledLeavesByDynamicQuery(dynamicQuery, pageRequest, () => {}, (errorMessage: string) => {})
+      .then((response: GetListResponse<LeaveEntitledUsage>) => {
+        this.getRemainingDays2(formValue.employeeId);
+        this.listByEmployeeId = response;
+        this.pagedEntitledLeave = response.items;
+        this.pages = response.pages;
+        this.pageList = [];
       if (this.pages >= 7) {
         if (this.currentPageNo - 3 <= 0) {
           for (let i = 1; i <= 7; i++) {
@@ -151,10 +170,54 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
           this.pageList.push(i);
         }
       }
+      });
+
+    
+
     });
-    this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
+
+  changePage(pageNo: number) {
+    this.currentPageNo = pageNo;
+    this.entitledListDynamicByEmployeeId(); // Yeni sayfa numarasıyla listeleme yap
+  }
+
+  entitledLeaveAdd() {
+    const formValue = this.entitledLeaveAddForm.value;
+
+    const selectedEmployee = this.employees.find(e => e.id === formValue.employeeId);
+    const selectedLeaveType = this.leaveTypes.find(lt => lt.id === formValue.leaveTypeId);
+
+    this.leaveEntitledService.add(formValue, () => {}, (errorMessage: string) => {})
+    .then(() => {
+      const message = `${selectedEmployee?.firstName} ${selectedEmployee?.lastName}, ${selectedLeaveType?.name} izni tanımlandı.`;
+      this.toastrService.success(message);
+      this.router.navigate(['/hakedilenizinler', this.currentPageNo]);
+    })
+    .finally(() => {
+      
+    });
+  }
+
+  getRemainingDays(employeeId: string, remainingDaysForSelectedEmployee: number = 0) {
+    const formValue = this.listByEmployeeIdForm.value;
+  
+    employeeId = formValue.employeeId;
+  
+    this.leaveEntitledService.getRemainingDays(employeeId , () => {}, (errorMessage: string) => {})
+      .then(response => {
+        remainingDaysForSelectedEmployee = response.totalRemainingDays; 
+        employeeId = response.employeeId;
+        console.log(employeeId);
+      });
+  }
+
+  getRemainingDays2(employeeId: string) {
+    let formValue = this.listByEmployeeIdForm.value;
+    this.leaveEntitledService.getRemainingDays(formValue.employeeId)
+      .then(response => {
+        this.remainingDaysForSelectedEmployee = response.totalRemainingDays; // Servisten dönen değeri saklayın
+      })
   }
 
 }
-
-

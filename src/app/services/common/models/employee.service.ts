@@ -5,6 +5,8 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { CreateEmployee } from 'src/app/contracts/employee/create-employee';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
+import { PageRequest } from 'src/app/contracts/pageRequest';
+import { Employee } from 'src/app/contracts/employee/employee';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,18 @@ export class EmployeeService {
     const observable: Observable<GetListResponse<SingleEmployee>> = this.httpClientService.get<GetListResponse<SingleEmployee>>({
       controller: 'employees',
       queryString: `pageIndex=${pageIndex}&pageSize=${pageSize}`
+    });
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
+  async shortList(pageRequest: PageRequest, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<Employee>> {
+    const observable: Observable<GetListResponse<Employee>> = this.httpClientService.get<GetListResponse<Employee>>({
+      controller: 'employees',
+      action: 'GetList/ShortDetail',
+      queryString: `pageIndex=${pageRequest.pageIndex}&pageSize=${pageRequest.pageSize}`
     });
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)

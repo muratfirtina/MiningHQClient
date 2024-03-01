@@ -9,7 +9,7 @@
             {{anniversary.message}}
           </li>
           Yıllık İzin Girişi Yapayı Unutmayın! Yıllık İzin Girişi yapmak için <a
-            [routerLink]="['/leave/entitledleave']">tıklayınız</a>
+            [routerLink]="['/personeller/izinler/hakedilenizinler']">tıklayınız</a>
         </ul>
       </div>
     </div>
@@ -50,7 +50,7 @@
             <th>İzin Hakediş Girişi</th>
           </tr>
           <tr *ngFor="let personel of items" style="background-color: white;">
-            <td>{{ personel.firstName }} {{ personel.lastName }}</td>
+            <td (click)="goToEmployeePage(personel.employeeId)" class="personellist">{{ personel.firstName }} {{ personel.lastName }}</td>
             <td *ngFor="let day of days; let i = index">
               <span style="font-size: 20px;" class="puantaj" (click)="toggleTimekeeping(personel.employeeId, i)"
                 [ngClass]="{

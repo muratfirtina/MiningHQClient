@@ -1,128 +1,135 @@
-<div class="container justify-content-center align-items-center">
-  <div class="row justify-content-center">
-    <div class="col-md-12">
-      <h2 class="text-center mb-4">İzin Hakediş Girişi</h2>
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
 
-      <form [formGroup]="entitledLeaveForm" (ngSubmit)="addEntitledLeave()">
-        <div class="row">
-          <div class="col-md-3">
-            <label for="employeeSelect" class="form-label">Personel</label>
-            <select formControlName="employeeId" class="form-select" id="employeeSelect">
-              <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-                {{employee.lastName}}</option>
-            </select>
-          </div>
+    <H2 style="display:flex; justify-content: center; margin: 50px;">Yıllık İzin Girişi</H2>
 
-          <div class="col-md-3">
-            <label for="leaveTypeSelect" class="form-label">İzin Tipi</label>
-            <select formControlName="leaveTypeId" class="form-select" id="leaveTypeSelect">
-              <option value="" selected>İzin Tipi Seçiniz</option>
-              <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label for="entitledDays" class="form-label">Gün</label>
-            <input type="number" formControlName="entitledDays" class="form-control" id="entitledDays"
-              placeholder="Enter entitled days">
-          </div>
-
-          <div class="col-md-3">
-            <label for="entitledDate" class="form-label">Hakediş Tarihi</label>
-            <input type="date" formControlName="entitledDate" class="form-control" id="entitledDate">
-          </div>
-
-
-        </div>
-
-        <div class="text-center mt-3">
-          <button type="submit" class="btn btn-warning">Onayla</button>
-        </div>
-      </form>
-
-      <hr style="margin-top: 40px; margin-bottom: 30px; ">
-
-      <h3 class="text-center mb-4">Hakedilen İzinler</h3>
-
-      <form [formGroup]="listByEmployeeIdForm" (change)="listByEmployeeIdFunc()">
-
-        <div class="row">
-
-          <div class="col-md-3">
-            <label for="employeeSelect" class="form-label">Personel</label>
-            <select formControlName="employeeId" class="form-select" id="employeeSelect">
-              <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-                {{employee.lastName}}</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label for="leaveTypeSelect" class="form-label">İzin Tipi</label>
-            <select formControlName="leaveTypeId" class="form-select" id="leaveTypeSelect"
-              >
-              <option value="" selected>İzin Tipi Seçiniz</option>
-              <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label for="startDate" class="form-label">Başlangıç Tarihi</label>
-            <input type="date" formControlName="startDate" class="form-control" id="startDate">
-          </div>
-
-          <div class="col-md-3">
-            <label for="endDate" class="form-label">Bitiş Tarihi</label>
-            <input type="date" formControlName="endDate" class="form-control" id="endDate" >
-          </div>
-        </div>
-      </form>
-
-      <div class="mt-5" *ngIf="items.length > 0">
-        <h2>Hakediş Listesi</h2>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Tarih</th>
-              <th>İzin Türü</th>
-              <th>Gün Sayısı</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let leave of items">
-              <td>{{ leave.entitledDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ leave.leaveTypeName}}</td>
-              <td>{{ leave.entitledDays }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-center">
-            <li class="page-item" [class.disabled]="currentPageNo <= 1">
-              <a class="page-link" [routerLink]="['/leave/entitledleave',1]">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo <= 1">
-              <a class="page-link" [routerLink]="['/leave/entitledleave', currentPageNo - 1 <= 0 ? 1 : currentPageNo - 1]">Previous</a>
-            </li>
-            <li class="page-item" *ngFor="let pageNo of pageList" routerLinkActive="active">
-              <a class="page-link" [routerLink]="['/leave/entitledleave', pageNo]">{{ pageNo }}</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo >= pages">
-              <a class="page-link" [routerLink]="['/leave/entitledleave', currentPageNo + 1 >= pages ? pages : currentPageNo + 1]">Next</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo >= pages">
-              <a class="page-link" [routerLink]="['/leave/entitledleave', pages]">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" style="cursor: default;">{{ currentPageNo }}/{{ pages }}</a>
-            </li>
-          </ul>
-        </nav>
+    <form [formGroup]="entitledLeaveAddForm" (ngSubmit)="entitledLeaveAdd()">
+  
+      <div class="labelsadd" style="display: flex;">
+      <div class="col-md-3">
+        <label for="employeeId">Personel</label>
+      </div>
+      
+      <div class="col-md-3">
+        <label for="leaveTypeId">İzin Tipi</label>
+      </div>
+    
+      <div class="col-md-3">
+        <label for="entitledDays">Hakedilen Gün Sayısı</label>
+      </div>
+    
+      <div class="col-md-3">
+        <label for="entitledDate">Hakediş Tarihi</label>
       </div>
     </div>
+
+    <div class="formAdd" style="display: flex;">
+      <div class="col-md-3">
+        <select formControlName="employeeId" id="employeeId" class="form-select">
+          <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}} {{employee.lastName}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
+          <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
+        </select>
+      </div>
+      
+      <div class="col-md-3">
+        <input type="number" formControlName="entitledDays" id="entitledDays" class="form-control">
+      </div>
+
+      <div class="col-md-3">
+        <input type="date" formControlName="entitledDate" id="entitledDate" class="form-control">
+      </div>
+
+      <button type="submit" class="btn btn-success" style="height: min-content;">Kaydet</button>
+
+    </div>
+    </form>
+    
+
+    <H2 style="display:flex; justify-content: center; margin: 50px;">Hakediş Listesi</H2>
+
+    <form [formGroup]="listByEmployeeIdForm" style="display: -webkit-flex;">
+
+
+      <div class="col-md-3">
+        <label for="employeeSelect" class="form-label">Personel</label>
+        <select formControlName="employeeId" class="form-select" id="employeeSelect">
+          <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
+            {{employee.lastName}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label for="leaveTypeSelect" class="form-label">İzin Tipi</label>
+        <select formControlName="leaveTypeId" class="form-select" id="leaveTypeSelect">
+          <option value="" selected>İzin Tipi Seçiniz</option>
+          <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+        <input type="date" formControlName="startDate" class="form-control" id="startDate">
+      </div>
+
+      <div class="col-md-3">
+        <label for="endDate" class="form-label">Bitiş Tarihi</label>
+        <input type="date" formControlName="endDate" class="form-control" id="endDate">
+      </div>
+
+      <div >
+        <label for="sortDirection" class="form-label">Sıralama</label>
+        <select formControlName="sortDirection" class="form-select" id="sortDirection">
+          <option value="asc" selected>Eskiden Yeniye</option>
+          <option value="desc">Yeniden Eskiye</option>
+        </select>
+      </div>
+    </form>
+
+    <div class="mt-5" *ngIf="pagedEntitledLeave.length > 0">
+      <h2>Hakediş Listesi</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Tarih</th>
+            <th>İzin Türü</th>
+            <th>Gün Sayısı</th>
+            <th *ngIf="remainingDaysForSelectedEmployee >= 0" style="width: 150px;">Mevcut İzin Hakkı: {{remainingDaysForSelectedEmployee}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let leave of pagedEntitledLeave">
+            <td>{{ leave.entitledDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ leave.leaveTypeName}}</td>
+            <td>{{ leave.entitledDays }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPageNo <= 1">
+            <a class="page-link" (click)="changePage(1)">&laquo;</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPageNo <= 1">
+            <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
+          </li>
+          <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
+            <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPageNo >= pages">
+            <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPageNo >= pages">
+            <a class="page-link" (click)="changePage(pages)">&raquo;</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
-</div>
+  <div>

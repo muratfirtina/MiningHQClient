@@ -34,7 +34,6 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   employees: SingleEmployee[] = [];
   quarries: Quarry[] = [];
   jobs:Job[] = [];
-  filterlist: EmployeeFilterList[] = [];
   typeOfBlood = Object.values(TypeOfBlood).filter(value => typeof value === 'string');
   
 

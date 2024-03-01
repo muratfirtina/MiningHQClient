@@ -10,6 +10,8 @@ import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { LeaveEntitledUsage } from 'src/app/contracts/leave/leaveEntitledUsage';
 import { LeaveEntitledAdd } from 'src/app/contracts/leave/leaveEntitledAdd';
 import { Employee } from 'src/app/contracts/employee/employee';
+import { PageRequest } from 'src/app/contracts/pageRequest';
+import { RemainingDays } from 'src/app/contracts/leave/remainingDays';
 
 
 @Injectable({
@@ -82,4 +84,27 @@ export class LeaveEntitledService {
       .catch(errorCallback);
     return await promiseData;
   }
+
+  async getEntitledLeavesByDynamicQuery(dynamicQuery: any, pageRequest: PageRequest, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<LeaveEntitledUsage>> {
+    const observable: Observable<GetListResponse<LeaveEntitledUsage>> = this.httpClientService.post<GetListResponse<LeaveEntitledUsage>>({
+      controller: 'entitledleaves',
+      action: 'GetList/ByDynamic',
+      queryString: `pageIndex=${pageRequest.pageIndex}&pageSize=${pageRequest.pageSize}`
+    }, dynamicQuery);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback).catch(errorCallback);
+    return await promiseData;
+  }
+
+  async getRemainingDays(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<RemainingDays> {
+    const observable: Observable<RemainingDays> = this.httpClientService.post<RemainingDays>({
+      controller: 'entitledleaves',
+      action: 'GetRemainingDays'
+    }, {employeeId: employeeId});
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback).catch(errorCallback);
+    return await promiseData;
+    
+  }
+
 }

@@ -64,7 +64,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       licenseType: [''],
       phone: [''],
       typeOfBlood: [''],
-      address: ['']
+      address: [''],
     });
 
     /* this.bloodTypeOptions = Object.entries(TypeOfBlood)
@@ -114,7 +114,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
         licenseType: [this.employee.licenseType],
         phone: [this.employee.phone],
         typeOfBlood: [this.employee.typeOfBlood],
-        address: [this.employee.address]
+        address: [this.employee.address],
       });
     });
   }
@@ -137,7 +137,8 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       typeOfBlood: formValue.typeOfBlood,
       jobId: this.getIdFromItems(this.jobs, formValue.jobName),
       quarryId: this.getIdFromItems(this.quarries, formValue.quarryName),
-      puantajDurumu: this.employee.puantajDurumu
+      puantajDurumu: this.employee.puantajDurumu,
+      
     };
 
     await this.employeeService.update(update_employee, () => {

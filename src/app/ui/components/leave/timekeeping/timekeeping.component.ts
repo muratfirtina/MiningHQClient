@@ -103,14 +103,12 @@ export class TimekeepingComponent implements OnInit {
   }
   
   async loadTimekeepings(year: number, month: number): Promise<void> {
-    try {
+    
       const response = await this.leaveEntitledService.getTimekeepings(year, month);
       this.items = response.items;
       this.originalItems = [...this.items];
       this.initializeTimekeepingStatus();
-    } catch (error) {
-      console.error('Puantaj listesi yüklenirken bir hata oluştu', error);
-    }
+    
   }
 
   checkAnniversariesForMonthAndYear(month: number, year: number) {
@@ -311,6 +309,10 @@ async addEntitledLeave(employeeId: string) {
   }).catch(error => {
     console.error('Hata:', error);
   });
+}
+
+goToEmployeePage(id: string) {
+  this.router.navigate(['personeller/personel-listesi/personel', id]);
 }
 
 
