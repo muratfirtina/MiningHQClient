@@ -18,6 +18,9 @@ import { Filter, DynamicQuery } from 'src/app/contracts/dynamic-query';
 import { EntitledLeaveListByDynamicEnum } from 'src/app/contracts/leave/entitledLeaveDynamic';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RemainingDays } from 'src/app/contracts/leave/remainingDays';
+import { LeaveEntitleds } from 'src/app/contracts/leave/leaveEntitleds';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-entitled-leave',
@@ -31,14 +34,14 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
   
     employees: Employee[] = [];
     selectedEmployeeId: string | null;
-    pagedEntitledLeave: LeaveEntitledAdd[] = [];
+    pagedEntitledLeave: LeaveEntitleds[] = [];
     currentPageNo: number = 1;
     pageSize: number = 10;
     pages: number;
     pageList: number[] = [];
     leaveTypes: LeaveType[] = [];
     listByEmployeeIdForm: FormGroup;
-    listByEmployeeId: GetListResponse<LeaveEntitledAdd>;
+    listByEmployeeId: GetListResponse<LeaveEntitleds>;
     entitledLeaveAddForm: FormGroup;
     remainingDays: RemainingDays [] = [];
     remainingDaysForSelectedEmployee: number = 0;
@@ -57,7 +60,10 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       leaveTypeId: [''],
       startDate: [''],
       endDate: [''],
-      sortDirection: ['desc']
+      entitledDays: [''],
+      sortDirection: ['desc'],
+      entitledDaysCondition: [''],
+      operator: ['eq']
     });
 
     this.entitledLeaveAddForm = this.fB.group({
@@ -104,6 +110,8 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
   }
 
   entitledListDynamicByEmployeeId() {
+
+    this.showSpinner(SpinnerType.BallSpinClockwise);
     const formValue = this.listByEmployeeIdForm.value
     let filters : Filter []=[]
     const id = EntitledLeaveListByDynamicEnum.id
@@ -113,15 +121,15 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     const entitledDate = EntitledLeaveListByDynamicEnum.entitledDate
     const entitledDays = EntitledLeaveListByDynamicEnum.entitledDays
 
-    const addFilter = (field: string, value: string) => {
+    const addFilter = (field: string, value: string, operator:string) => {
       if (value) { // Eğer değer boş değilse filtreye ekle
-        filters.push({ field: field, operator: "eq", value: value });
+        filters.push({ field: field, operator: operator, value: value });
       }
     };
 
-    addFilter(employeeId, formValue.employeeId)
-    addFilter(leaveTypeId, formValue.leaveTypeId)
-    addFilter(entitledDate, formValue.entitledDate)
+    addFilter(employeeId, formValue.employeeId, formValue.operator)
+    addFilter(leaveTypeId, formValue.leaveTypeId, formValue.operator)
+    addFilter(entitledDate, formValue.entitledDate, formValue.operator)
 
     let dynamicFilter: Filter | undefined;
     if (filters.length > 0) {
@@ -143,10 +151,12 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       pageSize: this.pageSize
     };
 
+   
+
     this.activatedRoute.params.subscribe(async (params) => {
       this.leaveEntitledService.getEntitledLeavesByDynamicQuery(dynamicQuery, pageRequest, () => {}, (errorMessage: string) => {})
       .then((response: GetListResponse<LeaveEntitledUsage>) => {
-        this.getRemainingDays2(formValue.employeeId);
+        this.getRemainingDays();
         this.listByEmployeeId = response;
         this.pagedEntitledLeave = response.items;
         this.pages = response.pages;
@@ -170,16 +180,44 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
           this.pageList.push(i);
         }
       }
-      });
 
-    
-
+      //eğer html de entitledDaysCondition 0 dan büyük seçilmişse backend tarafında entitledDays 0 dan büyük olanlar getirilir.
+      if(formValue.entitledDaysCondition == "gt")
+      this.pagedEntitledLeave = this.pagedEntitledLeave.filter(x => x.entitledDays > 0);
+      //eğer html de entitledDaysCondition 0 dan küçük seçilmişse backend tarafında entitledDays 0 dan küçük olanlar getirilir.
+      else if(formValue.entitledDaysCondition == "lt")
+      this.pagedEntitledLeave = this.pagedEntitledLeave.filter(x => x.entitledDays < 0);
+      //eğer html de entitledDaysCondition seçilmemiş ise seçilmişse backend tarafında entitledDays tümünü getirilir.
+      else if(formValue.entitledDaysCondition == "")
+      this.pagedEntitledLeave = this.pagedEntitledLeave;
+      
+      })
     });
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
   }
 
   changePage(pageNo: number) {
     this.currentPageNo = pageNo;
     this.entitledListDynamicByEmployeeId(); // Yeni sayfa numarasıyla listeleme yap
+  }
+
+  deleteEntitledLeave(id: string) {
+    this.showSpinner(SpinnerType.BallSpinClockwise);
+    this.openConfirmModal();
+    document.getElementById('confirmYes')?.addEventListener('click', () => {
+      this.leaveEntitledService.deleteEntidledLeave(id, () => {}, (errorMessage: string) => {})
+      .then(() => {
+        this.toastrService.success('İzin tanımı silindi.');
+        this.entitledListDynamicByEmployeeId();
+      })
+    });
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
+    
+  }
+
+  openConfirmModal() {
+    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    confirmModal.show();
   }
 
   entitledLeaveAdd() {
@@ -199,20 +237,7 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     });
   }
 
-  getRemainingDays(employeeId: string, remainingDaysForSelectedEmployee: number = 0) {
-    const formValue = this.listByEmployeeIdForm.value;
-  
-    employeeId = formValue.employeeId;
-  
-    this.leaveEntitledService.getRemainingDays(employeeId , () => {}, (errorMessage: string) => {})
-      .then(response => {
-        remainingDaysForSelectedEmployee = response.totalRemainingDays; 
-        employeeId = response.employeeId;
-        console.log(employeeId);
-      });
-  }
-
-  getRemainingDays2(employeeId: string) {
+  getRemainingDays() {
     let formValue = this.listByEmployeeIdForm.value;
     this.leaveEntitledService.getRemainingDays(formValue.employeeId)
       .then(response => {

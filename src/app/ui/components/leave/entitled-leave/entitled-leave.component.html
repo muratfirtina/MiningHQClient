@@ -5,51 +5,52 @@
     <H2 style="display:flex; justify-content: center; margin: 50px;">Yıllık İzin Girişi</H2>
 
     <form [formGroup]="entitledLeaveAddForm" (ngSubmit)="entitledLeaveAdd()">
-  
+
       <div class="labelsadd" style="display: flex;">
-      <div class="col-md-3">
-        <label for="employeeId">Personel</label>
-      </div>
-      
-      <div class="col-md-3">
-        <label for="leaveTypeId">İzin Tipi</label>
-      </div>
-    
-      <div class="col-md-3">
-        <label for="entitledDays">Hakedilen Gün Sayısı</label>
-      </div>
-    
-      <div class="col-md-3">
-        <label for="entitledDate">Hakediş Tarihi</label>
-      </div>
-    </div>
+        <div class="col-md-3">
+          <label for="employeeId">Personel</label>
+        </div>
 
-    <div class="formAdd" style="display: flex;">
-      <div class="col-md-3">
-        <select formControlName="employeeId" id="employeeId" class="form-select">
-          <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}} {{employee.lastName}}</option>
-        </select>
+        <div class="col-md-3">
+          <label for="leaveTypeId">İzin Tipi</label>
+        </div>
+
+        <div class="col-md-3">
+          <label for="entitledDays">Hakedilen Gün Sayısı</label>
+        </div>
+
+        <div class="col-md-3">
+          <label for="entitledDate">Hakediş Tarihi</label>
+        </div>
       </div>
 
-      <div class="col-md-3">
-        <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
-          <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
-        </select>
-      </div>
-      
-      <div class="col-md-3">
-        <input type="number" formControlName="entitledDays" id="entitledDays" class="form-control">
-      </div>
+      <div class="formAdd" style="display: flex;">
+        <div class="col-md-3">
+          <select formControlName="employeeId" id="employeeId" class="form-select">
+            <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
+              {{employee.lastName}}</option>
+          </select>
+        </div>
 
-      <div class="col-md-3">
-        <input type="date" formControlName="entitledDate" id="entitledDate" class="form-control">
+        <div class="col-md-3">
+          <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
+            <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <input type="number" formControlName="entitledDays" id="entitledDays" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+          <input type="date" formControlName="entitledDate" id="entitledDate" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-success" style="height: min-content;">Kaydet</button>
+
       </div>
-
-      <button type="submit" class="btn btn-success" style="height: min-content;">Kaydet</button>
-
-    </div>
     </form>
-    
+
 
     <H2 style="display:flex; justify-content: center; margin: 50px;">Hakediş Listesi</H2>
 
@@ -82,13 +83,24 @@
         <input type="date" formControlName="endDate" class="form-control" id="endDate">
       </div>
 
-      <div >
+      <div>
+        <label for="entitledDaysCondition">İ-H</label>
+        <select formControlName="entitledDaysCondition" id="entitledDaysCondition" class="form-select"
+          style="margin-top: 8px;">
+          <option value="">Seçiniz</option>
+          <option value="gt">Hakedilen</option>
+          <option value="lt">İzinli</option>
+        </select>
+      </div>
+
+      <div>
         <label for="sortDirection" class="form-label">Sıralama</label>
         <select formControlName="sortDirection" class="form-select" id="sortDirection">
           <option value="asc" selected>Eskiden Yeniye</option>
           <option value="desc">Yeniden Eskiye</option>
         </select>
       </div>
+
     </form>
 
     <div class="mt-5" *ngIf="pagedEntitledLeave.length > 0">
@@ -99,7 +111,8 @@
             <th>Tarih</th>
             <th>İzin Türü</th>
             <th>Gün Sayısı</th>
-            <th *ngIf="remainingDaysForSelectedEmployee >= 0" style="width: 150px;">Mevcut İzin Hakkı: {{remainingDaysForSelectedEmployee}}</th>
+            <th *ngIf="remainingDaysForSelectedEmployee >= 0" style="width: 150px;">Mevcut İzin Hakkı:
+              {{remainingDaysForSelectedEmployee}}</th>
           </tr>
         </thead>
         <tbody>
@@ -107,6 +120,8 @@
             <td>{{ leave.entitledDate | date:'dd/MM/yyyy' }}</td>
             <td>{{ leave.leaveTypeName}}</td>
             <td>{{ leave.entitledDays }}</td>
+            <td>
+              <button class="btn btn-danger" (click)="deleteEntitledLeave(leave.id)">Sil</button>
           </tr>
         </tbody>
       </table>
@@ -133,3 +148,23 @@
     </div>
   </div>
   <div>
+
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">İzin Silinsin mi?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Bu işlemi onaylıyor musunuz?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hayır</button>
+            <button id="confirmYes" type="button" class="btn btn-success" data-bs-dismiss="modal">Evet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

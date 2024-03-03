@@ -12,6 +12,7 @@ import { LeaveEntitledAdd } from 'src/app/contracts/leave/leaveEntitledAdd';
 import { Employee } from 'src/app/contracts/employee/employee';
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { RemainingDays } from 'src/app/contracts/leave/remainingDays';
+import { LeaveEntitleds } from 'src/app/contracts/leave/leaveEntitleds';
 
 
 @Injectable({
@@ -105,6 +106,15 @@ export class LeaveEntitledService {
     promiseData.then(successCallback).catch(errorCallback);
     return await promiseData;
     
+  }
+
+  async deleteEntidledLeave(id: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<LeaveEntitleds> {
+    const observable: Observable<LeaveEntitleds> = this.httpClientService.delete<LeaveEntitleds>({
+      controller: 'entitledleaves'
+    }, id);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback).catch(errorCallback);
+    return await promiseData;
   }
 
 }
