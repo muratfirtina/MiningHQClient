@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -19,6 +19,9 @@ import { EntitledLeaveListByDynamicEnum } from 'src/app/contracts/leave/entitled
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RemainingDays } from 'src/app/contracts/leave/remainingDays';
 import { LeaveEntitleds } from 'src/app/contracts/leave/leaveEntitleds';
+import { LeaveUsageService } from 'src/app/services/common/models/leave-usage.service';
+import { LeaveUsage } from 'src/app/contracts/leave/leaveUsage/leaveUsage';
+import { LeaveUsageListByDynamicEnum } from 'src/app/contracts/leave/leaveUsage/leaveUsageListByDynamicEnum';
 
 declare var bootstrap: any;
 
@@ -46,11 +49,18 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     remainingDays: RemainingDays [] = [];
     remainingDaysForSelectedEmployee: number = 0;
 
+    selectionForm: FormGroup;
+
+    leaveUsageListByEmplooyeIdForm: FormGroup;
+    pageLeaveUsage: LeaveUsage[] = [];
+    leaveUsageListByEmployeeId: GetListResponse<LeaveUsage>;
+
   constructor(spinner:NgxSpinnerService,
     private toastrService:ToastrService,
     private router: Router,
     private employeeService: EmployeeService,
     private leaveEntitledService: LeaveEntitledService,
+    private leaveUsageService: LeaveUsageService,
     private fB: FormBuilder,
     private activatedRoute: ActivatedRoute,
     ) {
@@ -72,6 +82,21 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       entitledDate: [''],
       entitledDays: ['']
     });
+
+    this.selectionForm = this.fB.group({
+      selection: [''], // Default selection
+    });
+
+    this.leaveUsageListByEmplooyeIdForm = this.fB.group({
+      employeeId: [''],
+      leaveTypeId: [''],
+      usageDate: [''],
+      returnDate: [''],
+      usedDays: [''],
+      sortDirection: ['desc'],
+      usedDaysCondition: [''],
+      operator: ['eq']
+    });
     
   }
 
@@ -79,9 +104,16 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     await this.getEmployee();
     await this.getLeaveType();
 
+    
+
     this.listByEmployeeIdForm.valueChanges.subscribe(() => {
       this.currentPageNo = 1; // Form değiştiğinde sayfayı sıfırla
       this.entitledListDynamicByEmployeeId();
+    });
+
+    this.leaveUsageListByEmplooyeIdForm.valueChanges.subscribe(() => {
+      this.currentPageNo = 1; // Form değiştiğinde sayfayı sıfırla
+      this.leaveUsageListDynamicByEmployeeId();
     });
 
   }
@@ -113,6 +145,10 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
 
     this.showSpinner(SpinnerType.BallSpinClockwise);
     const formValue = this.listByEmployeeIdForm.value
+    if (!formValue.employeeId) {
+      this.hideSpinner(SpinnerType.BallSpinClockwise);
+      return; // Don't fetch data if no employee is selected
+    }
     let filters : Filter []=[]
     const id = EntitledLeaveListByDynamicEnum.id
     const employeeId = EntitledLeaveListByDynamicEnum.employeeId
@@ -181,15 +217,6 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
         }
       }
 
-      //eğer html de entitledDaysCondition 0 dan büyük seçilmişse backend tarafında entitledDays 0 dan büyük olanlar getirilir.
-      if(formValue.entitledDaysCondition == "gt")
-      this.pagedEntitledLeave = this.pagedEntitledLeave.filter(x => x.entitledDays > 0);
-      //eğer html de entitledDaysCondition 0 dan küçük seçilmişse backend tarafında entitledDays 0 dan küçük olanlar getirilir.
-      else if(formValue.entitledDaysCondition == "lt")
-      this.pagedEntitledLeave = this.pagedEntitledLeave.filter(x => x.entitledDays < 0);
-      //eğer html de entitledDaysCondition seçilmemiş ise seçilmişse backend tarafında entitledDays tümünü getirilir.
-      else if(formValue.entitledDaysCondition == "")
-      this.pagedEntitledLeave = this.pagedEntitledLeave;
       
       })
     });
@@ -245,4 +272,105 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       })
   }
 
+
+  leaveUsageListDynamicByEmployeeId() {
+    this.showSpinner(SpinnerType.BallSpinClockwise);
+    const formValue = this.leaveUsageListByEmplooyeIdForm.value
+    if (!formValue.employeeId) {
+      this.hideSpinner(SpinnerType.BallSpinClockwise);
+      return; // Don't fetch data if no employee is selected
+    }
+    let filters : Filter []=[]
+    const id = LeaveUsageListByDynamicEnum.id
+    const employeeId = LeaveUsageListByDynamicEnum.employeeId
+    const leaveTypeId = LeaveUsageListByDynamicEnum.leaveTypeId
+    const leaveTypeName = LeaveUsageListByDynamicEnum.leaveTypeName
+    const usageDate = LeaveUsageListByDynamicEnum.usageDate
+    const returnDate = LeaveUsageListByDynamicEnum.returnDate
+    const usedDays = LeaveUsageListByDynamicEnum.usedDays
+
+    const addFilter = (field: string, value: string, operator:string) => {
+      if (value) { // Eğer değer boş değilse filtreye ekle
+        filters.push({ field: field, operator: operator, value: value });
+      }
+    };
+
+    addFilter(employeeId, formValue.employeeId, formValue.operator)
+    addFilter(leaveTypeId, formValue.leaveTypeId, formValue.operator)
+    addFilter(returnDate, formValue.returnDate, formValue.operator)
+    
+    if (formValue.usageDate) {
+      // Tarihi "YYYY-MM-DD" formatına dönüştür
+      const date = new Date(formValue.usageDate);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ay 0'dan başladığı için 1 ekliyoruz ve iki basamaklı yapmak için padStart kullanıyoruz
+      const day = date.getDate().toString().padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`; // "2024-02-15" formatında bir string oluşturur
+  
+      addFilter(usageDate, formattedDate, "gte");
+      console.log(formattedDate);
+  }
+
+    let dynamicFilter: Filter | undefined;
+    if (filters.length > 0) {
+      dynamicFilter = filters.length === 1 ? filters[0] : {
+        field: "",
+        operator: "",
+        logic: "and",
+        filters: filters
+      };
+    }
+    
+
+    const dynamicQuery: DynamicQuery = {
+      sort: [{ field: usageDate, dir: formValue.sortDirection }],
+      filter: dynamicFilter
+    };
+
+    const pageRequest = {
+      pageIndex: this.currentPageNo - 1, // Angular front-end'de sayfa 1'den başlar, ancak API'de 0'dan başlar
+      pageSize: this.pageSize
+    };
+
+   
+
+    this.activatedRoute.params.subscribe(async (params) => {
+      this.leaveUsageService.getLeaveUsagesByDynamicQuery(dynamicQuery, pageRequest, () => {}, (errorMessage: string) => {})
+      .then((response: GetListResponse<LeaveUsage>) => {
+        this.leaveUsageListByEmployeeId = response;
+        this.pageLeaveUsage = response.items;
+        this.pages = response.pages;
+        this.pageList = [];
+      if (this.pages >= 7) {
+        if (this.currentPageNo - 3 <= 0) {
+          for (let i = 1; i <= 7; i++) {
+            this.pageList.push(i);
+          }
+        } else if (this.currentPageNo + 3 > this.pages) {
+          for (let i = this.pages - 6; i <= this.pages; i++) {
+            this.pageList.push(i);
+          }
+        } else {
+          for (let i = this.currentPageNo - 3; i <= this.currentPageNo + 3; i++) {
+            this.pageList.push(i);
+          }
+        }
+      } else {
+        for (let i = 1; i <= this.pages; i++) {
+          this.pageList.push(i);
+          }
+        }
+      })
+    });
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
+
+  onSelectionChange() {
+    const selection = this.selectionForm.get('selection').value;
+    if (selection === 'entitledLeaves') {
+      this.entitledListDynamicByEmployeeId();
+    } else if (selection === 'usedLeaves') {
+      this.leaveUsageListDynamicByEmployeeId();
+    }
+  }
 }
