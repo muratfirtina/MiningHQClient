@@ -4,22 +4,22 @@
 
     <H2 style="display:flex; justify-content: center; margin: 50px;">Hakedilen İzin Girişi</H2>
 
-    <form [formGroup]="entitledLeaveAddForm" (ngSubmit)="entitledLeaveAdd()">
+    <form [formGroup]="entitledLeaveAddForm">
 
       <div class="labelsadd" style="display: flex;">
         <div class="col-md-3">
           <label for="employeeId">Personel</label>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="leaveTypeId">İzin Tipi</label>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="entitledDays">Hakedilen Gün Sayısı</label>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label for="entitledDate">Hakediş Tarihi</label>
         </div>
       </div>
@@ -32,21 +32,81 @@
           </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
             <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
           </select>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <input type="number" formControlName="entitledDays" id="entitledDays" class="form-control">
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
           <input type="date" formControlName="entitledDate" id="entitledDate" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-success" style="height: min-content;">Kaydet</button>
+        <button class="btn btn-success" style="height: min-content;" (click)="openEntitledLeaveAddModal()">Kaydet</button>
+
+
+      </div>
+    </form>
+
+    <H2 style="display:flex; justify-content: center; margin: 50px;">İzin Kullanımı</H2>
+
+    <form [formGroup]="leaveUsageAddForm">
+
+      <div class="labelsadd" style="display: flex;">
+        <div class="col-md-3">
+          <label for="employeeId">Personel</label>
+        </div>
+
+        <div class="col-md-2">
+          <label for="leaveTypeId">İzin Tipi</label>
+        </div>
+
+        <div class="col-md-2">
+          <label for="usageDate">Başlangıç Tarihi</label>
+        </div>
+
+        <div class="col-md-2">
+          <label for="returnDate">İşbaşı Tarihi</label>
+        </div>
+
+        <div class="col-md-1">
+          <label for="usedDays">Kullanılan Gün</label>
+        </div>
+      </div>
+
+      <div class="formUsageAdd" style="display: flex;">
+        <div class="col-md-3">
+          <select formControlName="employeeId" id="employeeId" class="form-select">
+            <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
+              {{employee.lastName}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
+            <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <input type="date" formControlName="usageDate" id="usageDate" class="form-control"
+            (change)="calculateUsedDays()">
+        </div>
+
+        <div class="col-md-2">
+          <input type="date" formControlName="returnDate" id="returnDate" class="form-control"
+            (change)="calculateUsedDays()">
+        </div>
+
+        <div class="col-md-1">
+          <input type="number" formControlName="usedDays" id="usedDays" class="form-control">
+        </div>
+
+        <button class="btn btn-success" style="height: min-content;" (click)="openLeaveUsageAddModal()">Kaydet</button>
 
       </div>
     </form>
@@ -69,13 +129,16 @@
             </select>
           </div>
         </form>
-    
-        <div [formGroup]="selectionForm.get('selection').value === 'entitledLeaves' ? listByEmployeeIdForm : leaveUsageListByEmplooyeIdForm" class="row">
+
+        <div
+          [formGroup]="selectionForm.get('selection').value === 'entitledLeaves' ? listByEmployeeIdForm : leaveUsageListByEmplooyeIdForm"
+          class="row">
           <div class="col-md-3">
             <label for="employeeSelect" class="form-label">Personel</label>
             <select formControlName="employeeId" class="form-select" id="employeeSelect">
               <option value="">Personel Seçin</option>
-              <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}} {{employee.lastName}}</option>
+              <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
+                {{employee.lastName}}</option>
             </select>
           </div>
           <div class="col-md-3">
@@ -85,12 +148,12 @@
               <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
             </select>
           </div>
-    
+
           <div class="col-md-3" *ngIf="selectionForm.get('selection').value === 'usedLeaves'">
             <label for="usageDate" class="form-label">Başlangıç Tarihi</label>
             <input type="date" formControlName="usageDate" class="form-control" id="usageDate">
           </div>
-    
+
           <div class="col-md-2">
             <label for="sortDirection" class="form-label">Sıralama</label>
             <select formControlName="sortDirection" class="form-select" id="sortDirection">
@@ -101,7 +164,7 @@
         </div>
       </div>
     </div>
-    
+
     <div>
 
       <div *ngIf="selectionForm.get('selection').value === 'entitledLeaves' && pagedEntitledLeave.length > 0"
@@ -123,7 +186,7 @@
               <td>{{ leave.leaveTypeName }}</td>
               <td>{{ leave.entitledDays }}</td>
               <td>
-                  <button class="btn btn-danger" (click)="deleteEntitledLeave(leave.id)">Sil</button>
+                <button class="btn btn-danger" (click)="deleteEntitledLeave(leave.id)">Sil</button>
               </td>
             </tr>
           </tbody>
@@ -214,5 +277,49 @@
         </div>
       </div>
     </div>
+
+    <!-- Hakedilen İzin Ekleme Modalı -->
+    <div class="modal fade" id="entitledLeaveAddModal" tabindex="-1" aria-labelledby="entitledLeaveAddModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="entitledLeaveAddModalLabel">Hakedilen İzin Ekle</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Hakedilen izin eklemek istediğinize emin misiniz?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+              (click)="onEntitledLeaveAddConfirm()">Evet, Ekle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- İzin Kullanımı Ekleme Modalı -->
+    <div class="modal fade" id="leaveUsageAddModal" tabindex="-1" aria-labelledby="leaveUsageAddModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="leaveUsageAddModalLabel">İzin Kullanımı Ekle</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            İzin kullanımı eklemek istediğinize emin misiniz?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+              (click)="onLeaveUsageAddConfirm()">Evet, Ekle</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </div>

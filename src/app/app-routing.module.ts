@@ -47,12 +47,13 @@ const routes: Routes = [
   {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
   {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),data:{breadcrumb:'Personel Ekle'}},
   {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makina Arama'}},
-  {path:'personeller/izinler',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent),data:{breadcrumb:'İzinler'}},
-  {path:'personeller/izinler/hakedilenizinler',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler'}},
-  {path:'personeller/izinler/hakedilenizinler/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler :pageNo'}},
-  {path:'personeller/izinler/takvim',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent),data:{breadcrumb:'İzin Takvimi'}},
-  {path:'personeller/izinler/puantaj',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj'}},
-  {path:'personeller/izinler/puantaj/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj :year :month'}},
+  {path:'personeller/puantaj',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent),data:{breadcrumb:'İzinler'}},
+  {path:'personeller/puantaj/izinislemleri',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler'}},
+  {path:'personeller/puantaj/izinislemleri/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler :pageNo'}},
+  {path:'personeller/puantaj/takvim',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent),data:{breadcrumb:'İzin Takvimi'}},
+  {path:'personeller/puantaj/puantaj-tablosu',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj'}},
+  {path:'personeller/puantaj/puantaj/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj :year :month'}},
+  {path:'personeller/puantaj/mesai-takip',loadComponent:()=>import('./ui/components/overtime/overtime.component').then(m=>m.OvertimeComponent),data:{breadcrumb:'Mesailer'}},
   
 
   

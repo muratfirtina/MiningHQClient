@@ -208,7 +208,7 @@ export class TimekeepingComponent implements OnInit {
   
   changeMonthOrYear(year: number, month: number) {
     // URL'i güncelleyerek yeni ay ve yıl ile sayfayı yeniden yükle
-    this.router.navigate(['personeller/izinler/puantaj'], { queryParams: { year, month } });
+    this.router.navigate(['personeller/puantaj/puantaj-tablosu'], { queryParams: { year, month } });
   
     // Seçilen yıl ve ayı güncelle
     this.selectedYear = year;
@@ -305,7 +305,7 @@ async addEntitledLeave(employeeId: string) {
   await this.leaveEntitledService.add(formValue).then(() => {
     console.log('Başarıyla eklendi');
     //sayfayı yenile
-    this.router.navigate(['personeller/izinler/puantaj']);
+    this.router.navigate(['personeller/puantaj/puantaj-tablosu']);
   }).catch(error => {
     console.error('Hata:', error);
   });

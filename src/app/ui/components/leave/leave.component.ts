@@ -22,7 +22,7 @@ export class LeaveComponent extends BaseComponent{
   }
   
   navigateToLeaveUsage(){
-    this.router.navigate(['personeller/izinler/izinkullanimi']);
+    this.router.navigate(['personeller/puantaj/mesai-takip']);
   }
 
   gottoEmployeeAdd() {
@@ -30,10 +30,10 @@ export class LeaveComponent extends BaseComponent{
   }
 
   navigateToEntitledLeave() {
-    this.router.navigate(['personeller/izinler/hakedilenizinler']);
+    this.router.navigate(['personeller/puantaj/izinislemleri']);
   }
 
   navigateToTimekeeping() {
-    this.router.navigate(['personeller/izinler/puantaj']);
+    this.router.navigate(['personeller/puantaj/puantaj-tablosu']);
   }
 }

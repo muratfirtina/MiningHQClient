@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { CommonModule, formatDate } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -13,10 +13,8 @@ import { listLeaveType } from 'src/app/contracts/leave/listLeaveType';
 import { ToastrService } from 'ngx-toastr';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { LeaveEntitledUsage } from 'src/app/contracts/leave/leaveEntitledUsage';
-import { LeaveEntitledAdd } from 'src/app/contracts/leave/leaveEntitledAdd';
 import { Filter, DynamicQuery } from 'src/app/contracts/dynamic-query';
 import { EntitledLeaveListByDynamicEnum } from 'src/app/contracts/leave/entitledLeaveDynamic';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { RemainingDays } from 'src/app/contracts/leave/remainingDays';
 import { LeaveEntitleds } from 'src/app/contracts/leave/leaveEntitleds';
 import { LeaveUsageService } from 'src/app/services/common/models/leave-usage.service';
@@ -54,6 +52,7 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     leaveUsageListByEmplooyeIdForm: FormGroup;
     pageLeaveUsage: LeaveUsage[] = [];
     leaveUsageListByEmployeeId: GetListResponse<LeaveUsage>;
+    leaveUsageAddForm: FormGroup;
 
   constructor(spinner:NgxSpinnerService,
     private toastrService:ToastrService,
@@ -81,6 +80,14 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
       leaveTypeId: [''],
       entitledDate: [''],
       entitledDays: ['']
+    });
+
+    this.leaveUsageAddForm = this.fB.group({
+      employeeId: [''],
+      leaveTypeId: [''],
+      usageDate: [''],
+      returnDate: [''],
+      usedDays: [{value: '', disabled: true}]
     });
 
     this.selectionForm = this.fB.group({
@@ -247,9 +254,26 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     confirmModal.show();
   }
 
+  openEntitledLeaveAddModal() {
+    const modal = new bootstrap.Modal(document.getElementById('entitledLeaveAddModal'));
+    modal.show();
+  }
+  
+  onEntitledLeaveAddConfirm() {
+    this.entitledLeaveAdd();
+  }
+  
+  openLeaveUsageAddModal() {
+    const modal = new bootstrap.Modal(document.getElementById('leaveUsageAddModal'));
+    modal.show();
+  }
+  
+  onLeaveUsageAddConfirm() {
+    this.leaveUsageAdd();
+  }
+
   entitledLeaveAdd() {
     const formValue = this.entitledLeaveAddForm.value;
-
     const selectedEmployee = this.employees.find(e => e.id === formValue.employeeId);
     const selectedLeaveType = this.leaveTypes.find(lt => lt.id === formValue.leaveTypeId);
 
@@ -257,12 +281,52 @@ export class EntitledLeaveComponent extends BaseComponent implements OnInit {
     .then(() => {
       const message = `${selectedEmployee?.firstName} ${selectedEmployee?.lastName}, ${selectedLeaveType?.name} izni tanımlandı.`;
       this.toastrService.success(message);
-      this.router.navigate(['/hakedilenizinler', this.currentPageNo]);
     })
     .finally(() => {
       
     });
   }
+
+  leaveUsageAdd() {
+    const formValue = this.leaveUsageAddForm.getRawValue(); // formValue'de disabled alanları da dahil etmek için getRawValue kullanılır.
+  
+    const selectedEmployee = this.employees.find(e => e.id === formValue.employeeId);
+    const selectedLeaveType = this.leaveTypes.find(lt => lt.id === formValue.leaveTypeId);
+
+    this.leaveUsageService.addLeaveUsage(formValue, () => {}, (errorMessage: string) => {})
+    .then(() => {
+      const message = `${selectedEmployee?.firstName} ${selectedEmployee?.lastName}, ${selectedLeaveType?.name} izni kullandı.`;
+      this.toastrService.success(message);
+    })
+    .finally(() => {
+    
+    });
+  
+  }
+
+  calculateUsedDays() {
+    const usageDate = this.leaveUsageAddForm.get('usageDate').value;
+    const returnDate = this.leaveUsageAddForm.get('returnDate').value;
+
+    if (usageDate && returnDate) {
+        const startDate = new Date(usageDate);
+        const endDate = new Date(returnDate);
+
+        // Ensure the return date is after the start date
+        if (endDate < startDate) {
+            this.leaveUsageAddForm.get('returnDate').setErrors({ invalidDate: true });
+            return; 
+        }
+
+        const timeDifference = endDate.getTime() - startDate.getTime();
+        const daysDifference = timeDifference / (1000 * 3600 * 24); // +1 to include both start and end days
+
+        this.leaveUsageAddForm.get('usedDays').setValue(daysDifference);
+    } else {
+        this.leaveUsageAddForm.get('usedDays').setValue('');
+    }
+}
+  
 
   getRemainingDays() {
     let formValue = this.listByEmployeeIdForm.value;

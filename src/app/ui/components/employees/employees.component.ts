@@ -73,7 +73,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   }
 
   navigateToLeave() {
-    this.router.navigate(['personeller/izinler']);
+    this.router.navigate(['personeller/puantaj']);
   }
 
   getQuarries() {
