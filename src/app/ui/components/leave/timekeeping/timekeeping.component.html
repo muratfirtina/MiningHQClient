@@ -9,7 +9,7 @@
             {{anniversary.message}}
           </li>
           Yıllık İzin Girişi Yapayı Unutmayın! Yıllık İzin Girişi yapmak için <a
-            [routerLink]="['/personeller/izinler/hakedilenizinler']">tıklayınız</a>
+            [routerLink]="['/personeller/puantaj/izinislemleri']">tıklayınız</a>
         </ul>
       </div>
     </div>
@@ -47,7 +47,7 @@
             <th>İzinli</th>
             <th>Raporlu</th>
             <th>Mevcut İzin Hakkı</th>
-            <th>İzin Hakediş Girişi</th>
+           <!--  <th>İzin Hakediş Girişi</th> -->
           </tr>
           <tr *ngFor="let personel of items" style="background-color: white;">
             <td (click)="goToEmployeePage(personel.employeeId)" class="personellist">{{ personel.firstName }} {{ personel.lastName }}</td>
@@ -70,14 +70,14 @@
             <td style="color: #5507ff; font-size: 14px;">
               {{ personel.totalRemainingDays }} gün
             </td>
-            <td>
+            <!-- <td>
               <input type="number" [(ngModel)]="entitledDaysInput[personel.employeeId]" style="width: 50px;">
             </td>
             <td>
               <button class="btn btn-success"
                 style="width: 40px; height: 30px; padding: 0 !important;; margin: 0 !important; "
                 (click)="addEntitledLeave(personel.employeeId)">Ekle</button>
-            </td>
+            </td> -->
           </tr>
         </table>
       </div>

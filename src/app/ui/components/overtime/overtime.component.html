@@ -1,69 +1,178 @@
 <div class="row">
+    <div class=" col-md-2"></div>
     <div class="col-md-8">
 
-        <H2>Mesai Listesi</H2>
-     
-        <form [formGroup]="listOvertimeForm" (ngSubmit)="getOvertimeListByEmployeeId()">
+        <H2 style="display:flex; justify-content: center; margin: 50px;">Mesai Ekle</H2>
+
+        <form [formGroup]="addOvertimeForm">
             <!-- Mevcut form elemanları -->
-            <div class="col-md-3">
-                <label for="employeeSelect" class="form-label">Personel</label>
-                <select formControlName="employeeId" class="form-select" id="employeeSelect">
-                    <option value="">Personel Seçin</option>
-                    <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-                        {{employee.lastName}}</option>
-                </select>
+
+            <div class="labelClass" style="display: flex; justify-content: center;">
+                
+                <div class="col-md-3"></div>
+                <div class="col-md-3">
+                    <label for="overtimeDate" class="form-label">Mesai Tarihi</label>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="overtimeHours" class="form-label">Mesai Süresi</label>
+                </div>
             </div>
-    
-            <div class="col-md-3">
-                <label for="startDate" class="form-label">Başlangıç Tarihi</label>
-                <input type="date" formControlName="startDate" class="form-control" id="startDate">
+
+            <div class="inputClass" style="display: flex; justify-content: center;">
+                <div class="col-md-3">
+                    <select formControlName="employeeId" class="form-select" id="employeeSelect">
+                        <option value="">Personel Seçin</option>
+                        <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
+                            {{employee.lastName}}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <input type="date" formControlName="overtimeDate" class="form-control" id="overtimeDate">
+                </div>
+
+                <div class="col-md-3">
+                    <input type="number" formControlName="overtimeHours" class="form-control" id="overtimeHours">
+                </div>
+
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-success" (click)="openOvertimeAddModal()">Ekle</button>
+                </div>
             </div>
-    
-            <div class="col-md-3">
-                <label for="endDate" class="form-label">Bitiş Tarihi</label>
-                <input type="date" formControlName="endDate" class="form-control" id="endDate">
+        </form>
+
+
+        <H2 style="display:flex; justify-content: center; margin: 50px;">Mesai Listesi</H2>
+
+        <form [formGroup]="listOvertimeForm">
+            <!-- Mevcut form elemanları -->
+
+            <div class="labelClass" style="display: flex; justify-content: center;">
+
+                <div class="col-md-3"></div>
+                <div class="col-md-3">
+                    <label for="startDate" class="form-label">Başlangıç Tarihi</label>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="endDate" class="form-label">Bitiş Tarihi</label>
+                </div>
+
             </div>
-    
-            <div class="mb-3">
-              <button type="submit" class="btn btn-primary">Sorgula</button>
+
+            <div class="inputClass" style="display: flex; justify-content: center;">
+
+                <div class="col-md-3">
+                    <select formControlName="employeeId" class="form-select" id="employeeSelect">
+                        <option value="">Personel Seçin</option>
+                        <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
+                            {{employee.lastName}}</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+
+                    <input type="date" formControlName="startDate" class="form-control" id="startDate">
+                </div>
+
+                <div class="col-md-3">
+
+                    <input type="date" formControlName="endDate" class="form-control" id="endDate">
+                </div>
+
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-warning"
+                        (click)="getOvertimeListByEmployeeId()">Listele</button>
+                </div>
             </div>
-          </form>
-          
-          <!-- Sonuçları göstermek için tablo -->
-          <table class="table" *ngIf="pageOvertime && pageOvertime.length">
-            <thead>
-              <tr>
-                <th>Mesai Tarihi</th>
-                <th>Mesai Süresi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let overtime of pageOvertime">
-                <td>{{ overtime.overtimeDate | date: 'dd/MM/yyyy' }}</td>
-                <td>{{ overtime.overtimeHours }}</td>
-              </tr>
-            </tbody>
-          </table>
-          
-        <!-- Pagination for Entitled Leaves could go here -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                    <a class="page-link" (click)="changePage(1)">&laquo;</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                    <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
-                </li>
-                <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
-                    <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                    <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                    <a class="page-link" (click)="changePage(pages)">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
+        </form>
+
+        <div style="margin-top: 30px; display: flex; justify-content: center;">
+
+            <!-- Sonuçları göstermek için tablo -->
+            <table class="table" *ngIf="pageOvertime && pageOvertime.length"
+                style="max-width: 300px; min-width: 300px; text-align: center;">
+                <thead>
+                    <tr>
+                        <th>Mesai Tarihi</th>
+                        <th>Mesai Süresi</th>
+                        <th>Toplam Mesai Süresi: {{totalOvertimeHours}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let overtime of pageOvertime">
+                        <td>{{ overtime.overtimeDate | date: 'dd/MM/yyyy' }}</td>
+                        <td>{{ overtime.overtimeHours }}</td>
+                        <td>
+                            <button class="btn btn-danger" (click)="deleteOvertime(overtime.id)">Sil</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <!-- Pagination for Entitled Leaves could go here -->
+            <nav aria-label="Page navigation example" *ngIf="pageOvertime && pageOvertime.length">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                        <a class="page-link" (click)="changePage(1)">&laquo;</a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                        <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
+                    </li>
+                    <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
+                        <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                        <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                        <a class="page-link" (click)="changePage(pages)">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="deleteOvertimeModal" tabindex="-1" aria-labelledby="deleteOvertimeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteOvertimeModalLabel">Mesai silinsin mi?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bu işlemi onaylıyor musunuz?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hayır</button>
+                <button id="confirmYes" type="button" class="btn btn-success" data-bs-dismiss="modal">Evet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="overtimeAddModal" tabindex="-1" aria-labelledby="overtimeAddModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="overtimeAddModalLabel">Mesai Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Mesai eklemek istediğinize emin misiniz?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                    (click)="onOvertimeAddModalConfirm()">Evet, Ekle</button>
+            </div>
+        </div>
     </div>
 </div>

@@ -18,7 +18,7 @@ export class OvertimeService {
 
   async overTimeAdd(overTimeAdd:OvertimeAdd, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<OvertimeAdd> {
     const observable = this.httpClientService.post<OvertimeAdd>({
-      controller: 'Overtime',
+      controller: 'Overtimes',
     }, overTimeAdd);
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback).catch(errorCallback);
@@ -27,7 +27,7 @@ export class OvertimeService {
 
   async overTimeUpdate(overTimeUpdate:OvertimeUpdate, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<OvertimeUpdate> {
     const observable = this.httpClientService.put<OvertimeUpdate>({
-      controller: 'Overtime',
+      controller: 'Overtimes',
     }, overTimeUpdate);
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback).catch(errorCallback);
@@ -36,14 +36,14 @@ export class OvertimeService {
 
   async overTimeDelete(id:string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<OvertimeDelete> {
     const observable = this.httpClientService.delete<OvertimeDelete>({
-      controller: 'Overtime',
+      controller: 'Overtimes',
     }, id);
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback).catch(errorCallback);
     return await promiseData;
   }
 
-  async overTimeGetListByEmployeeId(employeeId:string, startDate:Date, endDate:Date, pageRequest:PageRequest, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<OvertimeList>> {
+  async overTimeGetListByEmployeeId(employeeId:string, startDate?:Date, endDate?:Date, pageRequest?:PageRequest, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<OvertimeList>> {
     const observable:Observable<GetListResponse<OvertimeList>> = this.httpClientService.get<GetListResponse<OvertimeList>>({
       controller: 'Overtimes',
       action: 'GetList/ByEmployeeId',
@@ -58,7 +58,7 @@ export class OvertimeService {
 
   async overtimeGetByDynamicQuery(dynamicQuery: any, pageRequest:PageRequest, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<Overtime>> {
     const observable:Observable<GetListResponse<Overtime>> = this.httpClientService.post<GetListResponse<Overtime>>({
-      controller: 'Overtime',
+      controller: 'Overtimes',
       action: 'GetList/ByDynamic',
       queryString: `&pageIndex=${pageRequest.pageIndex}&pageSize=${pageRequest.pageSize}`
     }, dynamicQuery);

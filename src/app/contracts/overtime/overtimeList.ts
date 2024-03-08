@@ -1,4 +1,5 @@
 export class OvertimeList{
+    id: string;
     employeeId: string;
     overtimeDate: Date;
     overtimeHours: number;
