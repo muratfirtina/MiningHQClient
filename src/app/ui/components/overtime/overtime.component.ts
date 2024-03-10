@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { OvertimeService } from 'src/app/services/common/models/overtime.service';
 import { EmployeeService } from 'src/app/services/common/models/employee.service';
@@ -53,7 +53,7 @@ export class OvertimeComponent extends BaseComponent implements OnInit {
     this.addOvertimeForm = this.fB.group({
       employeeId: [''],
       overtimeDate: [''],
-      overtimeHours: [''],
+      overtimeHours: ['', [Validators.required, Validators.min(1)]],
     })
     
   }
@@ -149,6 +149,7 @@ export class OvertimeComponent extends BaseComponent implements OnInit {
 
   addOvertime() {
     this.showSpinner(SpinnerType.BallSpinClockwise);
+    if (this.addOvertimeForm.valid) {
     const formValues = this.addOvertimeForm.value;
     const overtimeAdd: OvertimeAdd = {
       employeeId: formValues.employeeId,
@@ -165,6 +166,14 @@ export class OvertimeComponent extends BaseComponent implements OnInit {
       console.error(errorMessage);
       this.hideSpinner(SpinnerType.BallSpinClockwise);
     });
+  }
+  else {
+    this.toastr.message('Form geçersiz.', 'Hata', {
+      messageType: ToastrMessageType.Error,
+      position: ToastrPosition.TopRight
+    });
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
   }
 
   openOvertimeAddModal() {

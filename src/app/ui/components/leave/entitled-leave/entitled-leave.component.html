@@ -40,13 +40,16 @@
 
         <div class="col-md-2">
           <input type="number" formControlName="entitledDays" id="entitledDays" class="form-control">
+          <div *ngIf="entitledLeaveAddForm.get('entitledDays').errors?.['min']" class="alert alert-danger">
+            Gün sayısı 0'dan büyük olmalıdır.
+          </div>
         </div>
 
         <div class="col-md-2">
           <input type="date" formControlName="entitledDate" id="entitledDate" class="form-control">
         </div>
 
-        <button class="btn btn-success" style="height: min-content;" (click)="openEntitledLeaveAddModal()">Kaydet</button>
+        <button class="btn btn-success" style="height: min-content;" (click)="openEntitledLeaveAddModal()" [disabled]="!entitledLeaveAddForm.valid">Kaydet</button>
 
 
       </div>
@@ -100,13 +103,17 @@
         <div class="col-md-2">
           <input type="date" formControlName="returnDate" id="returnDate" class="form-control"
             (change)="calculateUsedDays()">
+            <div *ngIf="leaveUsageAddForm.errors?.['dateRangeError']" class="alert alert-danger">
+              Dönüş tarihi, kullanım tarihinden önce olamaz.
+            </div>
         </div>
 
         <div class="col-md-1">
           <input type="number" formControlName="usedDays" id="usedDays" class="form-control">
         </div>
 
-        <button class="btn btn-success" style="height: min-content;" (click)="openLeaveUsageAddModal()">Kaydet</button>
+        <button class="btn btn-success" style="height: min-content;" (click)="openLeaveUsageAddModal()" [disabled]="!leaveUsageAddForm.valid">Kaydet</button>
+        
 
       </div>
     </form>
@@ -215,21 +222,27 @@
 
       <div *ngIf="selectionForm.get('selection').value === 'usedLeaves' && pageLeaveUsage.length > 0" class="mt-4">
         <h2>Kullanılan İzinler</h2>
-        <table class="table">
+        <table class="table" style="text-align: center;">
           <thead>
             <tr>
               <th>Çıkış Tarihi</th>
               <th>Dönüş Tarihi</th>
               <th>İzin Türü</th>
-              <th>Kullanılan Gün Sayısı</th>
+              <th>Gün</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody style="text-align: center;">
             <tr *ngFor="let usage of pageLeaveUsage">
               <td>{{ usage.usageDate | date:'dd/MM/yyyy' }}</td>
               <td>{{ usage.returnDate | date:'dd/MM/yyyy' }}</td>
               <td>{{ usage.leaveTypeName }}</td>
-              <td>{{ usage.usedDays }}</td>
+              <td style="width: min-content;">{{ usage.usedDays }}</td>
+              <td>
+                <button class="btn btn-danger" (click)="deleteLeaveUsage(usage.id)">Sil</button>
+                <button class="btn btn-primary" (click)="generateRequestPDF(usage)">Talep PDF İndir</button>
+                <button class="btn btn-warning" (click)="generateApprovalPDF(usage)">Onay PDF İndir</button>
+                
+              </td>
             </tr>
           </tbody>
         </table>

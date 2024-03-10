@@ -16,6 +16,7 @@
 
                 <div class="col-md-3">
                     <label for="overtimeHours" class="form-label">Mesai Süresi</label>
+                    
                 </div>
             </div>
 
@@ -34,10 +35,13 @@
 
                 <div class="col-md-3">
                     <input type="number" formControlName="overtimeHours" class="form-control" id="overtimeHours">
+                    <div *ngIf="addOvertimeForm.get('overtimeHours').errors?.['min']" style="color: red;">
+                        Mesai süresi 0'dan büyük olmalıdır.
+                      </div>
                 </div>
 
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-success" (click)="openOvertimeAddModal()">Ekle</button>
+                    <button type="button" class="btn btn-success" (click)="openOvertimeAddModal()" [disabled]="!addOvertimeForm.valid">Ekle</button>
                 </div>
             </div>
         </form>
