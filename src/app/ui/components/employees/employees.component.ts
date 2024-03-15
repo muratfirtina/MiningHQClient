@@ -18,6 +18,7 @@ import { QuarryService } from 'src/app/services/common/models/quarry.service';
 import { CommonModule } from '@angular/common';
 import { Employee } from 'src/app/contracts/employee/employee';
 import { PageRequest } from 'src/app/contracts/pageRequest';
+import { UppercaseinputDirective } from 'src/app/directives/common/uppercaseinput.directive';
 
 
 @Component({
@@ -28,7 +29,7 @@ import { PageRequest } from 'src/app/contracts/pageRequest';
         componentId: 'ui-employees'
     },
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule]
+    imports: [CommonModule, FormsModule, ReactiveFormsModule,UppercaseinputDirective]
 })
 export class EmployeesComponent extends BaseComponent implements OnInit {
   
@@ -103,7 +104,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     });
   }
 
-  searchEmployees() {
+  async searchEmployees() {
     const formValue = this.searchForm.value;
     let filters: Filter[] = [];
     const jobName = EmployeefilterByDynamic.jobName;
@@ -122,13 +123,13 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     if (formValue.nameSearch) {
       const nameFilter: Filter = {
         field: firstName,
-        operator: "contains",
+        operator: "startswith",
         value: formValue.nameSearch,
         logic: "or",
         filters: [
           {
             field: lastName,
-            operator: "contains",
+            operator: "startswith",
             value: formValue.nameSearch,
           }
         ]
@@ -163,7 +164,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     // API çağrısını yap
     const pageRequest: PageRequest = { pageIndex: this.currentPageNo -1, pageSize: this.pageSize };
   
-    this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest).then((response) => {
+    await this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest).then((response) => {
       this.employees = response.items;
       this.pageEmployee = response.items;
       this.pages = response.pages;
