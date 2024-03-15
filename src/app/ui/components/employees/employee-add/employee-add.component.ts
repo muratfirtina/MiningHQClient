@@ -12,18 +12,18 @@ import { Job } from 'src/app/contracts/job/job';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Quarry } from 'src/app/contracts/quarry/quarry';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
+import { UppercaseinputDirective } from 'src/app/directives/common/uppercaseinput.directive';
 
 
 
 @Component({
   selector: 'app-employee-add',
   standalone: true,
-  imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule,UppercaseinputDirective],
   templateUrl: './employee-add.component.html',
   styleUrls: ['./employee-add.component.scss','../../../../../styles.scss']
 })
 export class EmployeeAddComponent extends BaseComponent implements OnInit {
-
 
   @Output() createdProduct : EventEmitter<CreateEmployee>= new EventEmitter();
 
@@ -113,6 +113,13 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
       .then((response) => {
         this.quarries = response.items;
       });
+  }
+
+  toUpperCase(fieldName: string): void {
+    const value = this.employeeForm.get(fieldName).value;
+    if (value) {
+      this.employeeForm.get(fieldName).setValue(value.toLocaleUpperCase('tr-TR'), { emitEvent: false });
+    }
   }
 
 }

@@ -16,6 +16,8 @@ import { EmployeeService } from 'src/app/services/common/models/employee.service
 import { JobService } from 'src/app/services/common/models/job.service';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
 import { CommonModule } from '@angular/common';
+import { Employee } from 'src/app/contracts/employee/employee';
+import { PageRequest } from 'src/app/contracts/pageRequest';
 
 
 @Component({
@@ -35,6 +37,11 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   quarries: Quarry[] = [];
   jobs:Job[] = [];
   typeOfBlood = Object.values(TypeOfBlood).filter(value => typeof value === 'string');
+  currentPageNo: number = 1;
+  pageSize: number = 10;
+  pages: number;
+  pageList: number[] = [];
+  pageEmployee: Employee[] = [];
   
 
   
@@ -46,7 +53,8 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
       quarryName: [''],
       sortDirection: ['asc'],
       jobName: [''],
-      typeOfBlood: ['']
+      typeOfBlood: [''],
+      nameSearch: ['']
     });
     
   }
@@ -57,6 +65,12 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   this.getQuarries();
   this.getJobs();
   this.typeOfBlood
+
+  this.searchForm.get('nameSearch')!.valueChanges.subscribe((value: string) => {
+    if (value.length >= 3 || value.length === 0) { // En az 3 karakter girildiğinde veya input temizlendiğinde
+      this.searchEmployees(); // Arama fonksiyonunu çağır
+    }
+  });
   
 }
   
@@ -96,14 +110,33 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     const quarryName = EmployeefilterByDynamic.quarryName;
     const typeOfBlood = EmployeefilterByDynamic.typeOfBlood;
     const firstName = EmployeefilterByDynamic.firstName;
-  
+    const lastName = EmployeefilterByDynamic.lastName;
+    
     // Filtre oluşturucu fonksiyon
     const addFilter = (field: string, value: string) => {
       if (value) { // Eğer değer boş değilse filtreye ekle
         filters.push({ field: field, operator: "eq", value: value });
       }
     };
+
+    if (formValue.nameSearch) {
+      const nameFilter: Filter = {
+        field: firstName,
+        operator: "contains",
+        value: formValue.nameSearch,
+        logic: "or",
+        filters: [
+          {
+            field: lastName,
+            operator: "contains",
+            value: formValue.nameSearch,
+          }
+        ]
+
+      };
   
+      filters.push(nameFilter);
+    }
     // Kullanıcı girişlerine dayalı olarak filtreleri oluştur
     addFilter(jobName, formValue.jobName);
     addFilter(quarryName, formValue.quarryName);
@@ -128,13 +161,43 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     };
   
     // API çağrısını yap
-    const pageRequest = {
-      pageIndex: 0,
-      pageSize: 10
-    };
+    const pageRequest: PageRequest = { pageIndex: this.currentPageNo -1, pageSize: this.pageSize };
   
     this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest).then((response) => {
       this.employees = response.items;
+      this.pageEmployee = response.items;
+      this.pages = response.pages;
+      this.initializePagination();
+
     });
   }
+  initializePagination() {
+    this.pageList = [];
+      if (this.pages >= 7) {
+        if (this.currentPageNo - 3 <= 0) {
+          for (let i = 1; i <= 7; i++) {
+            this.pageList.push(i);
+          }
+        } else if (this.currentPageNo + 3 > this.pages) {
+          for (let i = this.pages - 6; i <= this.pages; i++) {
+            this.pageList.push(i);
+          }
+        } else {
+          for (let i = this.currentPageNo - 3; i <= this.currentPageNo + 3; i++) {
+            this.pageList.push(i);
+          }
+        }
+      } else {
+        for (let i = 1; i <= this.pages; i++) {
+          this.pageList.push(i);
+        }
+      }
+  }
+
+  changePage(pageNo: number) {
+    this.currentPageNo = pageNo;
+    this.searchEmployees(); // Her sayfa değişikliğinde listeyi güncelle
+  }
+
+  
 }

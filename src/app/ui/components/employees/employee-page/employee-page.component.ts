@@ -89,49 +89,39 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     this.employeeService.getEmployeeById(employeeId, () => {}).then((response) => {
       this.employee = response;
 
-      const birthDateISO = this.employee.birthDate ?
-        new Date(this.employee.birthDate).toISOString().substring(0, 10) :
-        null;
-      
-      const hireDateISO = this.employee.hireDate ?
-        new Date(this.employee.hireDate).toISOString().substring(0, 10) :
-        null;
-      
-      const departureDateISO = this.employee.departureDate ?
-        new Date(this.employee.departureDate).toISOString().substring(0, 10) :
-        null;
 
-      
-      this.employeeForm = this.fB.group({
-        firstName: [this.employee.firstName],
-        lastName: [this.employee.lastName],
-        jobName: [this.employee.jobName],
-        quarryName: [this.employee.quarryName],
-        birthDate: [birthDateISO],
-        departureDate: [departureDateISO],
-        emergencyContact: [this.employee.emergencyContact],
-        hireDate: [hireDateISO],
-        licenseType: [this.employee.licenseType],
-        phone: [this.employee.phone],
-        typeOfBlood: [this.employee.typeOfBlood],
-        address: [this.employee.address],
+      this.employeeForm.patchValue({
+        firstName: this.employee.firstName,
+        lastName: this.employee.lastName,
+        jobName: this.employee.jobName,
+        quarryName: this.employee.quarryName,
+        birthDate: this.formatDate(this.employee.birthDate),
+        departureDate: this.formatDate(this.employee.departureDate),
+        emergencyContact: this.employee.emergencyContact,
+        hireDate: this.formatDate(this.employee.hireDate),
+        licenseType: this.employee.licenseType,
+        phone: this.employee.phone,
+        typeOfBlood: this.employee.typeOfBlood,
+        address: this.employee.address,
       });
     });
   }
 
   async updateEmployee(formValue: any) {
+
+
     const update_employee: SingleEmployee = {
       id: this.employee.id,
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       jobName: formValue.jobName,
       quarryName: formValue.quarryName,
-      birthDate: new Date(formValue.birthDate),
-      departureDate: new Date(formValue.departureDate),
+      birthDate: new Date(this.employeeForm.value.birthDate),
+      departureDate: new Date(this.employeeForm.value.departureDate),
       emergencyContact: formValue.emergencyContact,
       employeeImageFiles: this.employee.employeeImageFiles,
       address: formValue.address,
-      hireDate: new Date(formValue.hireDate),
+      hireDate: new Date(this.employeeForm.value.hireDate),
       licenseType: formValue.licenseType,
       phone: formValue.phone,
       typeOfBlood: formValue.typeOfBlood,
@@ -192,28 +182,18 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     
     let doc = new jsPDF();
 
-    const birthDateISO = this.employee.birthDate ?
-        new Date(this.employee.birthDate).toISOString().substring(0, 10) :
-        null;
-    const hireDateISO = this.employee.hireDate ?
-        new Date(this.employee.hireDate).toISOString().substring(0, 10) :
-        null;
-    const departureDateISO = this.employee.departureDate ?
-        new Date(this.employee.departureDate).toISOString().substring(0, 10) :
-        null;
-
     const employeeData = {
       name: this.employee.firstName + ' ' + this.employee.lastName,
       job: this.employee.jobName,
-      birthDate: birthDateISO,
-      hireDate: hireDateISO,
+      birthDate: this.formatDate(this.employee.birthDate),
+      hireDate: this.formatDate(this.employee.hireDate),
       quarry: this.employee.quarryName,
       phone: this.employee.phone,
       address: this.employee.address,
       licenseType: this.employee.licenseType,
       typeOfBlood: this.employee.typeOfBlood,
       emergencyContact: this.employee.emergencyContact,
-      departureDate: departureDateISO,
+      departureDate: this.formatDate(this.employee.departureDate),
     };
 
     doc.addFileToVFS('OpenSans-VariableFont_wdth,wght.ttf', openSansBase64);
@@ -223,15 +203,15 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       head: [[`${employeeData.name}`, '']],
       body: [
         ['Mesleği :', employeeData.job],
-        ['Doğum Tarihi :', birthDateISO],
-        ['İşe Giriş Tarihi :', hireDateISO],
+        ['Doğum Tarihi :', employeeData.birthDate],
+        ['İşe Giriş Tarihi :', employeeData.hireDate],
         ['Şantiye :', employeeData.quarry],
         ['Telefon :', employeeData.phone],
         ['Adres :', employeeData.address],
         ['Ehliyet Tipi :', employeeData.licenseType],
         ['Kan Grubu :', employeeData.typeOfBlood],
         ['Acil Durumda İletişim :', employeeData.emergencyContact],
-        ['İşten Ayrılış Tarihi :', departureDateISO],
+        ['İşten Ayrılış Tarihi :', employeeData.departureDate],
       ],
       styles: {
         font: 'openSansBase64',
@@ -264,4 +244,16 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       return;
     }
   }
+
+  formatDate(date: Date | string): string {
+    if (!date) return null;
+    
+    const newDate = new Date(date);
+    const year = newDate.getUTCFullYear(); // UTC yılı
+    const month = `${newDate.getUTCMonth() + 1}`.padStart(2, '0'); // UTC ayı, getUTCMonth 0'dan başlar
+    const day = `${newDate.getUTCDate() +1}`.padStart(2, '0'); // UTC günü
+    return `${year}-${month}-${day}`; // ISO 8601 formatı: YYYY-MM-DD
+  }
+  
+  
 }

@@ -62,3 +62,22 @@ table.table-striped tbody tr:hover td {
     cursor: pointer;
     
   }
+  .page-link {
+    cursor: pointer;
+    background-color: #ffc107;
+    border-color: #fff;
+    color: #fff;
+}
+.page-item :disabled{
+    color: #fff;
+    
+}
+.active>.page-link, .page-link.active{
+    cursor: default;
+    border-color: #fff;
+    color: #000000;
+}
+.disabled>.page-link, .page-link.disabled{
+    border-color: #fff;
+    color: #000000;
+}

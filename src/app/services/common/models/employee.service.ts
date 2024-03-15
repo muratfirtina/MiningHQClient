@@ -68,7 +68,7 @@ export class EmployeeService {
     
   }
 
-  async getEmployeesByDynamicQuery(dynamicQuery: any, pageRequest: any, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<SingleEmployee>> {
+  async getEmployeesByDynamicQuery(dynamicQuery: any, pageRequest: PageRequest, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<GetListResponse<SingleEmployee>> {
     const observable: Observable<GetListResponse<SingleEmployee>> = this.httpClientService.post<GetListResponse<SingleEmployee>>({
       controller: 'employees',
       action: 'GetList/ByDynamic',

@@ -11,6 +11,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { DynamicLoadComponentDirective } from './app/directives/common/dynamic-load-component.directive';
 import { FormsModule } from '@angular/forms';
 import { BloodTypeDisplayPipe } from './app/pipes/bloodTypeDisplay.pipe';
+import { UppercaseinputDirective } from './app/directives/common/uppercaseinput.directive';
 
 
 bootstrapApplication(AppComponent, {
@@ -22,6 +23,7 @@ bootstrapApplication(AppComponent, {
             ToastrModule.forRoot(),
             RouterModule.forRoot([],{bindToComponentInputs:true}),
             DynamicLoadComponentDirective,
+            UppercaseinputDirective,
             FormsModule),
         { provide: "baseUrl", useValue: "http://localhost:5278/api", multi: true },
         provideAnimations(),
