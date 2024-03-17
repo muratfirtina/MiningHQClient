@@ -36,6 +36,11 @@ const routes: Routes = [
       {path:'jobs',loadComponent:()=>import('./admin/components/jobs/jobs.component').then(m=>m.JobsComponent)},
       {path:'jobs/job-list',loadComponent:()=>import('./admin/components/jobs/job-list/job-list.component').then(m=>m.JobListComponent)},
       {path:'jobs/job-list/:pageNo',loadComponent:()=>import('./admin/components/jobs/job-list/job-list.component').then(m=>m.JobListComponent)},
+      {path:'department',loadComponent:()=>import('./admin/components/department/department.component').then(m=>m.DepartmentComponent)},
+      {path:'department/department-list',loadComponent:()=>import('./admin/components/department/department-list/department-list.component').then(m=>m.DepartmentListComponent)},
+      {path:'department/department-list/:pageNo',loadComponent:()=>import('./admin/components/department/department-list/department-list.component').then(m=>m.DepartmentListComponent)},
+
+      
       
     ]
   },

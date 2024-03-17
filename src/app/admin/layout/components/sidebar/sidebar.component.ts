@@ -10,13 +10,15 @@ import { MachineTypeAddComponent } from 'src/app/admin/components/machine-types/
 import { ModelAddComponent } from 'src/app/admin/components/models/model-add/model-add.component';
 import { BrandAddComponent } from 'src/app/admin/components/brands/brand-add/brand-add.component';
 import { QuarryAddComponent } from 'src/app/admin/components/quarries/quarry-add/quarry-add.component';
+import { DepartmentAddComponent } from 'src/app/admin/components/department/department-add/department-add.component';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
     standalone: true,
-    imports: [NgFor, NgIf, RouterLink,JobAddComponent,MachineAddComponent,MachineTypeAddComponent,ModelAddComponent,BrandAddComponent,QuarryAddComponent]
+    imports: [NgFor, NgIf, RouterLink,JobAddComponent,MachineAddComponent,
+      MachineTypeAddComponent,ModelAddComponent,BrandAddComponent,QuarryAddComponent,DepartmentAddComponent]
 })
 export class SidebarComponent {
 
@@ -29,6 +31,7 @@ export class SidebarComponent {
     { name: 'Gösterge Paneli', isCollapsed: true },
     { name: 'Çalışanlar', isCollapsed: true },
     { name: 'Makinalar', isCollapsed: true },
+    { name: 'Departmanlar', isCollapsed: true },
     { name: 'Meslekler', isCollapsed: true },
     { name: 'Makina Tipleri', isCollapsed: true },
     { name: 'Markalar', isCollapsed: true },

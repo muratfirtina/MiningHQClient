@@ -1,0 +1,58 @@
+<div class="row" id="main">
+    <div class="col-md-3"></div>
+    <div class="col-md-3" style="margin-left: 60px;">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Departman</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of items; let i = index">
+            <td>{{ (currentPageNo - 1) * pageSize + i + 1 }}</td>
+            <td>{{ item.name }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="items.length === 0">
+      <p>No items to display.</p>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-8">
+    <div class="paginatorContainer">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPageNo <= 1">
+            <a class="page-link" [routerLink]="['/admin/department/department-list',1]">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPageNo <= 1">
+            <a class="page-link" [routerLink]="['/admin/department/department-list', currentPageNo - 1 <= 0 ? 1 : currentPageNo - 1]">Previous</a>
+          </li>
+          <li class="page-item" *ngFor="let pageNo of pageList" routerLinkActive="active">
+            <a class="page-link" [routerLink]="['/admin/department/department-list', pageNo]">{{ pageNo }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPageNo >= pages">
+            <a class="page-link" [routerLink]="['/admin/department/department-list', currentPageNo + 1 >= pages ? pages : currentPageNo + 1]">Next</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPageNo >= pages">
+            <a class="page-link" [routerLink]="['/admin/department/department-list', pages]">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link">{{ currentPageNo }}/{{ pages }}</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    </div>
+  </div>
+  

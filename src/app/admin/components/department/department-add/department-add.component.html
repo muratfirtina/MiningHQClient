@@ -1,0 +1,10 @@
+<div class="modal-body" style="padding-bottom: 1px;">
+    <div class="form-group">
+        <label for="ad">Departman Adı:</label>
+        <input type="text" id="departmentName" name="departmentName" class="form-control" #departmentName required>
+    </div>
+    <div class="modal-footer" style="border-top: none;">
+        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+            (click)="addDepartment(departmentName)">Kaydet</button>
+    </div>
+</div>

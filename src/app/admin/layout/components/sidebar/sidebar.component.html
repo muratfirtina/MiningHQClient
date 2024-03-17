@@ -23,6 +23,10 @@
                 <img src="../../../../../assets/icons/machines-mini.svg" >
               </ng-container>
 
+              <ng-container *ngIf="item.name === 'Departmanlar'">
+                <img src="../../../../../assets/icons/machines-mini.svg" >
+              </ng-container>
+
               <ng-container *ngIf="item.name === 'Meslekler'">
                  <img src="../../../../../assets/icons/machines-mini.svg" >
               </ng-container>
@@ -71,6 +75,9 @@
         <li *ngIf="item.name === 'Makina Tipleri'"><a routerLink="machine-types/machine-type-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Makina Tipi Listesi</a></li>
         <li *ngIf="item.name === 'Makina Tipleri'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#machineTypeAddModal">Makina Tipi Ekle</a></li>
 
+        <li *ngIf="item.name === 'Departmanlar'"><a routerLink="department/department-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Departman Listesi</a></li>
+        <li *ngIf="item.name === 'Departmanlar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#departmentAddModal">Departman Ekle</a></li>
+
         <li *ngIf="item.name === 'Meslekler'"><a routerLink="jobs/job-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Meslek Listesi</a></li>
         <li *ngIf="item.name === 'Meslekler'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#jobAddModal">Meslek Ekle</a></li>
       </ul>
@@ -87,6 +94,22 @@
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-job-add></app-job-add>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="departmentAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Departman Ekle</h1>
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-department-add></app-department-add>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
