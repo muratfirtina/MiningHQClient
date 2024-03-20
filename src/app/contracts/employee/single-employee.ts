@@ -5,6 +5,8 @@ export class SingleEmployee {
     id:string;
     firstName:string;
     lastName:string;
+    departmentName:string;
+    departmentId:string;
     jobName:string;
     jobId:string;
     quarryName:string;

@@ -50,7 +50,6 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
       jobName: [''],
       quarryName: [''],
       birthDate: [''],
-      departureDate: [''],
       emergencyContact: [''],
       hireDate: [''],
       licenseType: [''],
@@ -72,7 +71,6 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
       jobName: formValue.jobName,
       quarryName: formValue.quarryName,
       birthDate: new Date(formValue.birthDate),
-      departureDate: new Date(formValue.departureDate),
       emergencyContact: formValue.emergencyContact,
       address: formValue.address,
       hireDate: new Date(formValue.hireDate),
@@ -84,7 +82,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     };
 
     this.employeeService.add(create_employee, () => {
-      this.toastr.success(create_employee.firstName + ' ' + create_employee.lastName + 'Başarıyla Eklendi');
+      this.toastr.success(create_employee.firstName + ' ' + create_employee.lastName + ' Başarıyla Eklendi');
       setTimeout(() => {
         this.router.navigate(['/personeller']);
       }, 1500);

@@ -3,6 +3,7 @@ export enum EmployeefilterByDynamic {
     firstName= "FirstName",
     lastName="LastName",
     jobName= "Job.Name",
+    departmentName= "Department.Name",
     quarryName= "Quarry.Name",
     typeOfBlood="TypeOfBlood"
 }

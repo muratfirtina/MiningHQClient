@@ -19,6 +19,8 @@ import { CommonModule } from '@angular/common';
 import { Employee } from 'src/app/contracts/employee/employee';
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { UppercaseinputDirective } from 'src/app/directives/common/uppercaseinput.directive';
+import { DepartmentService } from 'src/app/services/common/models/department.service';
+import { ListDepartment } from 'src/app/contracts/department/listDepartment';
 
 
 @Component({
@@ -35,6 +37,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   
   searchForm: FormGroup;
   employees: SingleEmployee[] = [];
+  departments: ListDepartment[] = [];
   quarries: Quarry[] = [];
   jobs:Job[] = [];
   typeOfBlood = Object.values(TypeOfBlood).filter(value => typeof value === 'string');
@@ -47,7 +50,13 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
 
   
   
-  constructor(spinner:NgxSpinnerService,private router: Router, private fb: FormBuilder, private employeeService: EmployeeService, private quarryService: QuarryService , private jobService: JobService) {
+  constructor(spinner:NgxSpinnerService,
+    private router: Router, 
+    private fb: FormBuilder, 
+    private employeeService: EmployeeService, 
+    private quarryService: QuarryService , 
+    private jobService: JobService,
+    private departmentService: DepartmentService,) {
     super(spinner);
 
     this.searchForm = this.fb.group({
@@ -55,7 +64,8 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
       sortDirection: ['asc'],
       jobName: [''],
       typeOfBlood: [''],
-      nameSearch: ['']
+      nameSearch: [''],
+      departmentName: ['']
     });
     
   }
@@ -65,6 +75,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   
   this.getQuarries();
   this.getJobs();
+  this.getDepatments();
   this.typeOfBlood
 
   this.searchForm.get('nameSearch')!.valueChanges.subscribe((value: string) => {
@@ -98,6 +109,12 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     });
   }
 
+  getDepatments() {
+    this.departmentService.list(-1, -1).then((response) => {
+      this.departments = response.items;
+    });
+  }
+
   getJobs() {
     this.jobService.list(-1, -1).then((response) => {
       this.jobs = response.items;
@@ -108,6 +125,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     const formValue = this.searchForm.value;
     let filters: Filter[] = [];
     const jobName = EmployeefilterByDynamic.jobName;
+    const departmentName = EmployeefilterByDynamic.departmentName;
     const quarryName = EmployeefilterByDynamic.quarryName;
     const typeOfBlood = EmployeefilterByDynamic.typeOfBlood;
     const firstName = EmployeefilterByDynamic.firstName;
@@ -143,6 +161,7 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     addFilter(quarryName, formValue.quarryName);
     addFilter(typeOfBlood, formValue.typeOfBlood);
     addFilter(firstName, formValue.firstName);
+    addFilter(departmentName, formValue.departmentName);
   
     // Tüm filtreleri birleştir
     let dynamicFilter: Filter | undefined;

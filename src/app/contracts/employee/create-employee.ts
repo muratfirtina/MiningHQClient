@@ -11,7 +11,6 @@ export class CreateEmployee {
     phone:string;
     address:string;
     hireDate:Date;
-    departureDate:Date;
     licenseType:string;
     typeOfBlood:TypeOfBlood;
     emergencyContact:string;

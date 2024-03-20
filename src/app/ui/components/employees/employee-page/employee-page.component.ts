@@ -17,6 +17,10 @@ import autoTable from 'jspdf-autotable';
 import { openSansBase64 } from 'src/assets/fonts/openSansFont';
 import { TypeOfBlood } from 'src/app/contracts/typeOfBlood';
 import { BloodTypeDisplayPipe } from 'src/app/pipes/bloodTypeDisplay.pipe';
+import { Department } from 'src/app/contracts/department/department';
+import { DepartmentService } from 'src/app/services/common/models/department.service';
+import { GetListResponse } from 'src/app/contracts/getListResponse';
+import { ListDepartment } from 'src/app/contracts/department/listDepartment';
 
 declare var $: any;
 
@@ -33,6 +37,8 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
   employee: SingleEmployee;
+  listDepatment: GetListResponse<ListDepartment>;
+  departments: ListDepartment[] = [];
   jobs: Job[] = [];
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
@@ -48,13 +54,17 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     private route: ActivatedRoute,
     private jobService: JobService,
     private quarryService: QuarryService,
+    private departmentService: DepartmentService,
     private fB: FormBuilder
   ) {
     super(spinner);
 
+    
+
     this.employeeForm = this.fB.group({
       firstName: [''],
       lastName: [''],
+      depatmentName: [''],
       jobName: [''],
       quarryName: [''],
       birthDate: [''],
@@ -93,6 +103,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       this.employeeForm.patchValue({
         firstName: this.employee.firstName,
         lastName: this.employee.lastName,
+        departmentName: this.employee.departmentName,
         jobName: this.employee.jobName,
         quarryName: this.employee.quarryName,
         birthDate: this.formatDate(this.employee.birthDate),
@@ -114,6 +125,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       id: this.employee.id,
       firstName: formValue.firstName,
       lastName: formValue.lastName,
+      departmentName: this.employee.departmentName,
       jobName: formValue.jobName,
       quarryName: formValue.quarryName,
       birthDate: new Date(this.employeeForm.value.birthDate),
@@ -125,6 +137,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       licenseType: formValue.licenseType,
       phone: formValue.phone,
       typeOfBlood: formValue.typeOfBlood,
+      departmentId: this.getIdFromItems(this.departments, formValue.departmentName),
       jobId: this.getIdFromItems(this.jobs, formValue.jobName),
       quarryId: this.getIdFromItems(this.quarries, formValue.quarryName),
       puantajDurumu: this.employee.puantajDurumu,
@@ -158,6 +171,8 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
         this.quarries = response.items;
       });
   }
+
+  
 
   /* generatePDF() {
     const content = this.pdfContent.nativeElement;
