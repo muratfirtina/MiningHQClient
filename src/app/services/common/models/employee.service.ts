@@ -80,4 +80,20 @@ export class EmployeeService {
     return await promiseData;
   }
 
+  async uploadImage(path: string, formFiles: FileList, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
+    const formData = new FormData();
+    for (let i = 0; i < formFiles.length; i++) {
+      formData.append(`files`, formFiles[i]);
+    }
+    formData.append('path', path);
+    const observable: Observable<FormData> = this.httpClientService.post<FormData>({
+      controller: 'employees',
+      action: 'Upload'
+    }, formData,);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
 }

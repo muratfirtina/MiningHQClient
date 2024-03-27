@@ -22,7 +22,7 @@
 
               <label for="departmentName" class="col-md-2 control-label">Departmanı:</label>
               <div class="col-md-4">
-                <input type="text" class="form-control" id="departmentName" formControlName="departmentName"
+                <input type="text" readonly class="form-control" id="departmentName" formControlName="departmentName"
                   placeholder={{employee.departmentName}}>
               </div>
 
@@ -110,4 +110,13 @@
       </div>
     </div>
   </div>
+  <div class="mb-3">
+    <label for="formFileMultiple" class="form-label">Çalışan Resmi Yükle</label>
+    <input class="form-control" type="file" id="formFileMultiple" (change)="onFileSelected($event)" multiple>
+  </div>
+  <button type="button" class="btn btn-success" (click)="uploadFile()">Yükle</button>
+
   
+  
+  
+<!--  <app-file-upload [options]="fileUploadOptions"></app-file-upload> -->
