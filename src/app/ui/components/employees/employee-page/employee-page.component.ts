@@ -37,6 +37,7 @@ import {
   FileUploadOptions,
 } from 'src/app/services/common/file-upload/file-upload.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ListImageFile } from 'src/app/contracts/list-image-file';
 
 declare var $: any;
 
@@ -57,11 +58,11 @@ declare var $: any;
 })
 export class EmployeePageComponent extends BaseComponent implements OnInit {
   @ViewChild('pdfContent') pdfContent: ElementRef;
-  /* @Output() fileUploadOptions : Partial<FileUploadOptions> ={
+  @Output() fileUploadOptions : Partial<FileUploadOptions> ={
     controller: 'Employees',
     action: 'Upload',
     explanation: 'Çalışan Resmi Yükle',
-  }  */
+  } 
 
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
   employee: SingleEmployee;
@@ -70,10 +71,12 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   jobs: Job[] = [];
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
+  employeeImages: ListImageFile;
   typeOfBlood: TypeOfBlood[] = Object.values(TypeOfBlood)
     .filter((value) => typeof value === 'string')
     .map((value) => value as TypeOfBlood);
 
+  
   constructor(
     spinner: NgxSpinnerService,
     private toastr: ToastrService,
@@ -112,6 +115,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       const employeeId = params.get('employeeId');
       if (employeeId) {
         this.loadEmployeeDetails(employeeId);
+        this.loadEmployeeShowcaseImage(employeeId);
       }
     });
     this.getJobs();
@@ -124,6 +128,13 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       .getEmployeeById(employeeId, () => {})
       .then((response) => {
         this.employee = response;
+
+        this.fileUploadOptions = {
+          ...this.fileUploadOptions,
+          path: `${this.employee.firstName} ${this.employee.lastName}`, // Path'i çalışanın adı ve soyadıyla ayarla
+          employeeId: employeeId, // employeeId'yi de ayarla
+          category: 'employee-images',
+        };
 
         this.employeeForm.patchValue({
           firstName: this.employee.firstName,
@@ -154,7 +165,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       birthDate: new Date(this.employeeForm.value.birthDate),
       departureDate: new Date(this.employeeForm.value.departureDate),
       emergencyContact: formValue.emergencyContact,
-      employeeImageFiles: this.employee.employeeImageFiles,
+      employeeFiles: this.employee.employeeFiles,
       address: formValue.address,
       hireDate: new Date(this.employeeForm.value.hireDate),
       licenseType: formValue.licenseType,
@@ -326,6 +337,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   
     // Çalışanın tam adını oluştur
     const path = `${this.employee.firstName} ${this.employee.lastName}`;
+    const category = "employee-images"
     
     // Örneğin employeeId'yi 'this.employee.id' üzerinden alıyoruz
     const employeeId = this.employee.id;
@@ -335,7 +347,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     }
   
     // uploadImage metodunu çağırırken employeeFullName parametresini de gönder
-    this.employeeService.uploadImage(path, this.selectedFiles,
+    this.employeeService.uploadImage(category,employeeId,path, this.selectedFiles,
       () => {
         this.toastr.success('Dosya başarıyla yüklendi.');
       },
@@ -344,4 +356,14 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       }
     );
   }
+
+  loadEmployeeShowcaseImage(employeeId: string): void {
+    this.employeeService.getEmployeeImages(employeeId).then(images => {
+      this.employeeImages = images.find(image => image.showcase);
+    }).catch(error => {
+      console.error('Employee images could not be loaded', error);
+      this.toastr.error('Çalışan resimleri yüklenirken bir hata oluştu.');
+    });
+  }
+  
 }

@@ -19,7 +19,7 @@ export class SingleEmployee {
     licenseType:string;
     typeOfBlood:string;
     emergencyContact:string;
-    employeeImageFiles:ListImageFile[];
+    employeeFiles:ListImageFile[];
     puantajDurumu:Map<string,boolean>;
 
 }

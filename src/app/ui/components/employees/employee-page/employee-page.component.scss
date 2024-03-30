@@ -24,3 +24,10 @@
     box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
             rgba(253, 253, 253, 0.5) 5px 10px 15px;
 }
+
+.showcase-image {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 50px;
+    object-fit: cover; /* Görselin oranını koruyarak kutuya sığdırır */
+  }

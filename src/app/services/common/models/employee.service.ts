@@ -7,6 +7,7 @@ import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { Employee } from 'src/app/contracts/employee/employee';
+import { ListImageFile } from 'src/app/contracts/list-image-file';
 
 @Injectable({
   providedIn: 'root'
@@ -80,12 +81,14 @@ export class EmployeeService {
     return await promiseData;
   }
 
-  async uploadImage(path: string, formFiles: FileList, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
+  async uploadImage(category:string, employeeId: string,path: string, formFiles: FileList, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
     const formData = new FormData();
     for (let i = 0; i < formFiles.length; i++) {
       formData.append(`files`, formFiles[i]);
     }
     formData.append('path', path);
+    formData.append('employeeId', employeeId);
+    formData.append('category', category);
     const observable: Observable<FormData> = this.httpClientService.post<FormData>({
       controller: 'employees',
       action: 'Upload'
@@ -96,4 +99,15 @@ export class EmployeeService {
     return await promiseData;
   }
 
+  async getEmployeeImages(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListImageFile[]> {
+    const observable: Observable<ListImageFile[]> = this.httpClientService.get<ListImageFile[]>({
+      controller: 'employees',
+      action: 'GetImagesByEmployeeId'
+    }, employeeId);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+  
 }
