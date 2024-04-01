@@ -26,18 +26,17 @@ export class FileUploadComponent {
     private dialog: MatDialog,
     private dialogService: DialogService,
     private spinner:NgxSpinnerService,
-    private employeeService: EmployeeService
+    
     ) {}
 
   public files: NgxFileDropEntry[];
   
   @Input() options: Partial<FileUploadOptions>
-  
 
   public selectedFiles(files: NgxFileDropEntry[]) {
+
     this.files = files;
     const fileData: FormData = new FormData();
-  
     fileData.append('path', this.options.path); // Backend'in beklediği "path" parametresini FormData'ya ekleyin.
     if(this.options.employeeId) {
       fileData.append('employeeId', this.options.employeeId);
@@ -50,42 +49,48 @@ export class FileUploadComponent {
         fileData.append('files', _file, _file.name); // "files" anahtarı altında dosyaları ekleyin.
       });
     });
-  
-    // Dialog açılıp kapandıktan sonra dosyaları yükleyin
+
     this.dialogService.openDialog({
       componentType: FileUploadDialogComponent,
       data: FileUploadDialogState.Yes,
-      afterClosed: () => {
-        this.uploadFiles(fileData); // Dosya yükleme işlemini bir fonksiyon haline getirdim.
-      }
+      afterClosed:() => {
+          this.spinner.show(SpinnerType.BallSpinClockwise);
+          this.httpClientService.post({
+    
+            controller: this.options.controller,
+            action: this.options.action,
+            queryString: this.options.queryString,
+            headers: new HttpHeaders({"responseType": "blob"})
+            
+          }, fileData).subscribe({
+    
+            next: (data) =>{
+      
+            const message :string = "File uploaded successfully"
+            this.spinner.hide(SpinnerType.BallSpinClockwise);
+      
+                this.customToastrService.message(message, "Success" ,{
+                  messageType: ToastrMessageType.Success,
+                  position:ToastrPosition.TopRight
+                })
+                
+              
+              
+            }, error: (error: HttpErrorResponse) => {
+      
+            const message :string = "File upload failed"
+      
+            this.spinner.hide(SpinnerType.BallSpinClockwise);
+      
+                this.customToastrService.message(message, "Failed" ,{
+                  messageType: ToastrMessageType.Error,
+                  position:ToastrPosition.TopRight
+                })
+          }});
+        }
+
     });
-  }
-  
-  private uploadFiles(fileData: FormData) {
-    this.spinner.show(SpinnerType.BallSpinClockwise);
-    this.httpClientService.post({
-      controller: this.options.controller,
-      action: this.options.action,
-      queryString: this.options.queryString,
-      headers: new HttpHeaders({ "responseType": "blob" })
-    }, fileData).subscribe({
-      next: (data) => {
-        const message: string = "File uploaded successfully";
-        this.spinner.hide(SpinnerType.BallSpinClockwise);
-        this.customToastrService.message(message, "Success", {
-          messageType: ToastrMessageType.Success,
-          position: ToastrPosition.TopRight
-        });
-      },
-      error: (error: HttpErrorResponse) => {
-        const message: string = "File upload failed";
-        this.spinner.hide(SpinnerType.BallSpinClockwise);
-        this.customToastrService.message(message, "Failed", {
-          messageType: ToastrMessageType.Error,
-          position: ToastrPosition.TopRight
-        });
-      }
-    });
+    
   }
   
 

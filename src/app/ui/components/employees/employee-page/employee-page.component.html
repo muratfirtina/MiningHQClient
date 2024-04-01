@@ -2,24 +2,24 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12" style="display: grid;">
-        <h2 style="align-self: center; justify-self: center; margin-bottom: 50px;">{{employee.firstName + " " +
+        <h2 style="align-self: center; justify-self: center;">{{employee.firstName + " " +
           employee.lastName}}</h2>
       </div>
       <!-- employee-page.component.html -->
       <div *ngIf="loadEmployeeShowcaseImage" class="text-center">
-        <img [src]="employeeImages.path" alt="Showcase Image" class="rounded showcase-image" />
+        <img [src]="employeeImages?.path" alt="Showcase Image" class="rounded showcase-image" (click)="addEmployeeImage(employee.id)">
       </div>
 
-      <div class="col-md-11">
+      <div class="col-md-12">
         <form [formGroup]="employeeForm">
           <div class="row form-group">
             <label for="firstName" class="col-md-2 control-label">Adı:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Adı">
             </div>
 
             <label for="lastName" class="col-md-2 control-label">Soyadı:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Soyadı">
             </div>
           </div>
@@ -27,13 +27,13 @@
           <div class="row form-group">
 
             <label for="departmentName" class="col-md-2 control-label">Departmanı:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="text" readonly class="form-control" id="departmentName" formControlName="departmentName"
                 placeholder={{employee.departmentName}}>
             </div>
 
             <label for="jobName" class="col-md-2 control-label">Mesleği:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <select id="jobName" class="form-select" formControlName="jobName" required>
                 <option *ngFor="let job of jobs" [value]="job.name">{{ job.name }}</option>
               </select>
@@ -42,7 +42,7 @@
 
           <div class="row form-group">
             <label for="quarryName" class="col-md-2 control-label">Ocak:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <select id="quarryName" class="form-select" formControlName="quarryName" required>
                 <option *ngFor="let quarry of quarries" [value]="quarry.name">{{ quarry.name }}</option>
               </select>
@@ -51,24 +51,24 @@
 
           <div class="row form-group">
             <label for="birthDate" class="col-md-2 control-label">Doğum Tarihi:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="date" class="form-control" id="birthDate" formControlName="birthDate">
             </div>
 
             <label for="hireDate" class="col-md-2 control-label">İşe Giriş Tarihi:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="date" class="form-control" id="hireDate" formControlName="hireDate">
             </div>
           </div>
 
           <div class="row form-group">
             <label for="phone" class="col-md-2 control-label">Telefon:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="text" class="form-control" id="phone" formControlName="phone" placeholder="Telefon">
             </div>
 
             <label for="departureDate" class="col-md-2 control-label">Çıkış Tarihi:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="date" class="form-control" id="departureDate" formControlName="departureDate"
                 placeholder="Çıkış Tarihi">
             </div>
@@ -76,7 +76,7 @@
 
           <!-- <div class="row form-group">
               <label for="licenseType" class="col-md-2 control-label">Ehliyet Tipi:</label>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <select id="licenseType" class="form-control" formControlName="licenseType" required>
                     <option *ngFor="let licenseType of licenseTypes" [value]="licenseType.name">{{ licenseType.name }}</option>
                   </select>
@@ -86,14 +86,14 @@
 
           <div class="row form-group">
             <label for="emergencyContact" class="col-md-2 control-label">Acil Durum İletişim:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <input type="text" class="form-control" id="emergencyContact" formControlName="emergencyContact"
                 placeholder="Telefon">
             </div>
 
 
             <label for="typeOfBlood" class="col-md-2 control-label">Kan Grubu:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <select id="typeOfBlood" class="form-select" formControlName="typeOfBlood" required>
                 <option *ngFor="let type of typeOfBlood" [value]="type">{{ type }}</option>
               </select>
@@ -102,17 +102,47 @@
 
           <div class="row form-group">
             <label for="address" class="col-md-2 control-label">Ev Adresi:</label>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <textarea class="form-control" id="address" formControlName="address" placeholder="Adres"></textarea>
             </div>
           </div>
 
           <div class="row form-group">
-            <div class="col-md-8" style="margin-top: 75px;">
+            <div class="col-md-3"></div>
+            <div class="col-md-8" style="margin-top: 75px; display: flex;
+            margin-top: 75px;
+            flex-direction: row;">
               <button type="submit" class="btn btn-warning"
                 (click)="updateEmployee(employeeForm.value)">Güncelle</button>
-              <button type="" style="margin-left: 30px; color: white;" class="btn btn-primary"
-                (click)="generatePDF()">Download PDF</button>
+              <button type="button" class="btn btn-success" style="margin-left: 30px;" (click)="addEmployeeImage(employee.id)">Dosya Yükle</button>
+              <button type="button" style="margin-left: 30px; display: flex;
+              flex-direction: column;
+              align-items: center;" class="btn btn-primary"
+                (click)="generatePDF()">
+                <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 424 511.54" width="40" height="60">
+                  <path fill="#fff" fill-rule="nonzero" d="M86.37 413.44c-11.76 0-11.76-17.89 0-17.89H189.1c-.2 2.95-.31 5.93-.31 8.94s.11 5.99.31 8.95H86.37zm35.31-167.09H104.5v19.96H78.08v-82.59h41.62c18.94 0 28.41 10.17 28.41 30.52 0 11.19-2.47 19.47-7.4 24.84-1.85 2.03-4.41 3.75-7.66 5.16-3.26 1.41-7.05 2.11-11.37 2.11zm-17.18-41.49v20.35h6.08c3.17 0 5.49-.33 6.94-.99 1.45-.66 2.18-2.18 2.18-4.56v-9.25c0-2.38-.73-3.9-2.18-4.56-1.45-.66-3.77-.99-6.94-.99h-6.08zm53.52 61.45v-82.59h37c14.89 0 25.11 3.17 30.66 9.51 5.55 6.34 8.32 16.94 8.32 31.78 0 14.85-2.77 25.44-8.32 31.78-5.55 6.34-15.77 9.52-30.66 9.52h-37zm37.4-61.45h-10.97v40.3h10.97c3.61 0 6.23-.41 7.86-1.25 1.63-.84 2.44-2.75 2.44-5.75v-26.3c0-2.99-.81-4.91-2.44-5.74-1.63-.84-4.25-1.26-7.86-1.26zm98.71 30.79h-22.47v30.66h-26.43v-82.59h54.18l-3.3 21.14h-24.45v11.1h22.47v19.69zM265.81 24.26v29.1c0 65.66 15.31 69.47 69.08 69.47h22.03l-91.11-98.57zm94.33 115.92h-21.48c-61.02 0-90.2-4.09-90.2-86.28V17.35H56.82c-21.7 0-39.47 17.78-39.47 39.47v264.79H219.2c-4.64 5.47-8.83 11.34-12.51 17.54H17.35v89.83c0 21.62 17.85 39.47 39.47 39.47h149.04c3.53 6.12 7.56 11.92 12.02 17.34H56.82C25.63 485.79 0 460.17 0 428.98V56.82C0 25.55 25.55 0 56.82 0h206.33a8.68 8.68 0 016.93 3.45l105.07 113.68c2.19 2.37 2.34 4.66 2.34 7.52v166.86c-5.55-2.98-11.35-5.56-17.35-7.71V140.18z"/><path fill="red" d="M316.95 297.45c59.12 0 107.05 47.93 107.05 107.05 0 59.11-47.93 107.04-107.05 107.04S209.9 463.61 209.9 404.5c0-59.12 47.93-107.05 107.05-107.05z"/><path fill="#fff" fill-rule="nonzero" d="M337.9 356.54l-3.77 47.75 17.35-6.07c11.47-4.4 23.27 3.72 14.38 13.82-10.82 12.45-27.26 29.55-39.22 40.94-7.43 7.42-11.73 7.49-19.18.06-13.24-13-26.24-27.44-39.18-40.87-9.25-10.06 2.3-18.55 14.28-13.95l17.16 6.01c-1.25-16.28-2.82-31.84-3.77-48.1 0-2.99 2.5-5.39 5.42-5.61 10.31 0 20.84-.24 31.12 0 2.92.22 5.42 2.62 5.42 5.61l-.01.41z"/></svg>
+                PDF olarak indir</button>
+                <button type="button" class="btn btn-primary" style="
+                margin-left: 30px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            ">
+                  <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.88 116.05" width="50px" height="60px">
+                    <defs>
+                        <style>.cls-1{fill:#de9c2d;}.cls-2{fill:#737373;}.cls-3{fill:#f5f5f5;}.cls-4{fill:#fad460;}</style>
+                    </defs>
+                    <path class="cls-1" d="M2.48,41.58H7V31.72a2.48,2.48,0,0,1,2.49-2.48h4.4V23.32a2.49,2.49,0,0,1,2.49-2.48H56.61a2.48,2.48,0,0,1,2.48,2.48v5.92h54.3a2.48,2.48,0,0,1,2.48,2.48v9.86h4.53a2.45,2.45,0,0,1,1,.2,1.69,1.69,0,0,1,.91.68,2.46,2.46,0,0,1,.59,1.6,2.33,2.33,0,0,1-.06.53l-8.68,63.81c-.48,5.67-3,7.65-7.94,7.65H14.7c-5.45,0-7.41-2.47-8-7.73L0,44.32A2.53,2.53,0,0,1,.26,43a1.7,1.7,0,0,1,1.39-1.22,2.63,2.63,0,0,1,.57-.13h.26Z"/>
+                    <path class="cls-1" d="M9.06,31.33V41.81H113.3V31.33H59.49A2.5,2.5,0,0,1,57,28.84V22.93H16.26v5.91a2.49,2.49,0,0,1-2.48,2.49Z"/>
+                    <path class="cls-2" d="M23.3,41.84V16.43a3.55,3.55,0,0,1,3.56-3.56H48.73v29Z"/>
+                    <polygon class="cls-3" points="48.73 15.25 25.7 15.25 25.7 41.8 48.73 41.8 48.73 15.25 48.73 15.25"/>
+                    <path class="cls-2" d="M35.88,25.88H48.73v3.23H35.88c-2,0-1.93-3.23,0-3.23Zm0,9.61H48.73v3.23H35.86c-2,0-1.93-3.23,0-3.23Z"/>
+                    <path class="cls-2" d="M46.29,41.84V3.64A3.65,3.65,0,0,1,49.94,0H87a2,2,0,0,1,1.56.75l18,17.47a2,2,0,0,1,1.47,2V41.84Z"/>
+                    <path class="cls-3" d="M105.52,41.69V20.57H89.06a2.05,2.05,0,0,1-2-2.05v-16H48.78V41.69Z"/>
+                    <path class="cls-2" d="M59.17,13.33H75.6c2,0,2,3.3,0,3.3H59.17c-2,0-2-3.3,0-3.3Zm0,19.68H88.84c2,0,2,3.3,0,3.3H59.16c-2,0-2-3.27,0-3.31Zm0-9.84H79.07c2,0,2,3.3,0,3.3H59.16c-2,0-2-3.3,0-3.3Z"/>
+                    <path class="cls-4" d="M3.63,45.09l7.07,63.52c.17,1.64,1.24,3.27,3,3.27H107c1.82,0,2.82-1.73,3-3.34l9.08-63.45Z"/>
+                </svg>
+                Personel Dosyaları</button>
             </div>
           </div>
         </form>
@@ -120,13 +150,5 @@
     </div>
   </div>
 </div>
-<div class="mb-3">
-  <label for="formFileMultiple" class="form-label">Çalışan Resmi Yükle</label>
-  <input class="form-control" type="file" id="formFileMultiple" (change)="onFileSelected($event)" multiple>
-</div>
-<button type="button" class="btn btn-success" (click)="uploadFile()">Yükle</button>
 
 
-
-
-<app-file-upload [options]="fileUploadOptions"></app-file-upload>

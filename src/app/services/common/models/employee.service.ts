@@ -48,14 +48,15 @@ export class EmployeeService {
       .catch(errorCallback);
     return await promiseData;
   }
-  async getEmployeeById(employeeId: string, successCallback?: () => void): Promise<SingleEmployee> {
+  async getEmployeeById(employeeId: string, successCallback?: () => void,errorCallback?:(errorMessage: string) => void): Promise<SingleEmployee> {
     const observable: Observable<SingleEmployee> = this.httpClientService.get<SingleEmployee>({
       controller: 'employees'
     } , employeeId);
 
-    const employee:SingleEmployee = await firstValueFrom(observable);
-    successCallback();
-    return employee;
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+    .catch(errorCallback);
+    return await promiseData;
   }
 
   async update(employee: SingleEmployee,successCallback?: () => void, errorCallback?: (errorMessage: string) => void) {
@@ -104,6 +105,18 @@ export class EmployeeService {
       controller: 'employees',
       action: 'GetImagesByEmployeeId'
     }, employeeId);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
+  async changeShowcase(employeeId: string, fileId: string, showcase: boolean, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<void> {
+    const observable: Observable<void> = this.httpClientService.get<void>({
+      controller: 'employees',
+      action: 'ChangeShowcase',
+      queryString: `employeeId=${employeeId}&fileId=${fileId}&showcase=${showcase}`
+    });
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
       .catch(errorCallback);

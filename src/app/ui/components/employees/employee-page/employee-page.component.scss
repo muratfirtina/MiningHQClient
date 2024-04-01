@@ -8,6 +8,7 @@
     align-items: center;
 }
 .btn-warning {
+    height: 100px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
         rgba(245, 201, 2, 0.5) 5px 5px 15px;
 }
@@ -17,17 +18,28 @@
 }
 
 .btn-primary {
+    height: 100px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
-            rgba(159, 159, 159, 0.5) 5px 5px 15px;
+        rgba(159, 159, 159, 0.5) 5px 5px 15px !important; 
 }
 .btn-primary:hover{
     box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
-            rgba(253, 253, 253, 0.5) 5px 10px 15px;
+        rgba(253, 253, 253, 0.5) 5px 10px 15px !important; 
+}
+
+.btn-success {
+    height: 100px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
+        rgba(144, 253, 157, 0.5) 5px 5px 15px;
+}
+.btn-success:hover{
+    box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
+        rgba(253, 253, 253, 0.5) 5px 10px 15px;
 }
 
 .showcase-image {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     margin-bottom: 50px;
     object-fit: cover; /* Görselin oranını koruyarak kutuya sığdırır */
   }

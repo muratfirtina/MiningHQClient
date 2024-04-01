@@ -38,6 +38,8 @@ import {
 } from 'src/app/services/common/file-upload/file-upload.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ListImageFile } from 'src/app/contracts/list-image-file';
+import { DialogService } from 'src/app/services/common/dialog.service';
+import { EmployeImageDialogComponent } from 'src/app/dialogs/employee-dialogs/employe-image-dialog/employe-image-dialog.component';
 
 declare var $: any;
 
@@ -58,11 +60,6 @@ declare var $: any;
 })
 export class EmployeePageComponent extends BaseComponent implements OnInit {
   @ViewChild('pdfContent') pdfContent: ElementRef;
-  @Output() fileUploadOptions : Partial<FileUploadOptions> ={
-    controller: 'Employees',
-    action: 'Upload',
-    explanation: 'Çalışan Resmi Yükle',
-  } 
 
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
   employee: SingleEmployee;
@@ -85,7 +82,8 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     private jobService: JobService,
     private quarryService: QuarryService,
     private departmentService: DepartmentService,
-    private fB: FormBuilder
+    private fB: FormBuilder,
+    private dialogService:DialogService
   ) {
     super(spinner);
 
@@ -128,13 +126,6 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       .getEmployeeById(employeeId, () => {})
       .then((response) => {
         this.employee = response;
-
-        this.fileUploadOptions = {
-          ...this.fileUploadOptions,
-          path: `${this.employee.firstName} ${this.employee.lastName}`, // Path'i çalışanın adı ve soyadıyla ayarla
-          employeeId: employeeId, // employeeId'yi de ayarla
-          category: 'employee-images',
-        };
 
         this.employeeForm.patchValue({
           firstName: this.employee.firstName,
@@ -365,5 +356,12 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       this.toastr.error('Çalışan resimleri yüklenirken bir hata oluştu.');
     });
   }
+
+  addEmployeeImage(employeeId:string): void {
+    const dialogRef = this.dialogService.openDialog({componentType:EmployeImageDialogComponent, data:employeeId,
+    options:{width:'1000px',height:'500px'}});
+    
+}
+
   
 }
