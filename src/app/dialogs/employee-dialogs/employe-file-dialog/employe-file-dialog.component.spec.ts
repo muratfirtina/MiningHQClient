@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EmployeImageDialogComponent } from './employe-image-dialog.component';
+import { EmployeFileDialogComponent } from './employe-file-dialog.component';
 
 describe('EmployeImageDialogComponent', () => {
-  let component: EmployeImageDialogComponent;
-  let fixture: ComponentFixture<EmployeImageDialogComponent>;
+  let component: EmployeFileDialogComponent;
+  let fixture: ComponentFixture<EmployeFileDialogComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [EmployeImageDialogComponent]
+      imports: [EmployeFileDialogComponent]
     });
-    fixture = TestBed.createComponent(EmployeImageDialogComponent);
+    fixture = TestBed.createComponent(EmployeFileDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

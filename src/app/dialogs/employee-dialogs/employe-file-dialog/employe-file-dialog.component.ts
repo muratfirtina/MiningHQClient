@@ -16,17 +16,17 @@ import {MatCardModule} from '@angular/material/card';
 import { CustomToastrService, ToastrMessageType, ToastrOptions, ToastrPosition } from 'src/app/services/common/custom-toastr.service';
 
 @Component({
-  selector: 'app-employe-image-dialog',
+  selector: 'app-employe-file-dialog',
   standalone: true,
   imports: [CommonModule, MatDialogModule,NgxSpinnerModule,RouterModule,FileUploadComponent,MatCardModule],
-  templateUrl: './employe-image-dialog.component.html',
-  styleUrls: ['./employe-image-dialog.component.scss']
+  templateUrl: './employe-file-dialog.component.html',
+  styleUrls: ['./employe-file-dialog.component.scss']
 })
-export class EmployeImageDialogComponent extends BaseDialog<EmployeImageDialogComponent> implements OnInit{
+export class EmployeFileDialogComponent extends BaseDialog<EmployeFileDialogComponent> implements OnInit{
 
   constructor(
-    dialogRef: MatDialogRef<EmployeImageDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: EmployeImageDialogState | string,
+    dialogRef: MatDialogRef<EmployeFileDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: EmployeFileDialogState | string,
     private employeeService: EmployeeService,
     private route: ActivatedRoute,
     private spinner:NgxSpinnerService,
@@ -40,12 +40,11 @@ export class EmployeImageDialogComponent extends BaseDialog<EmployeImageDialogCo
   pageRequest: PageRequest = { pageIndex: -1, pageSize: -1 };
 
   @Output() options: Partial<FileUploadOptions> = {
-    acceptedFileTypes: ".png, .jpg, .jpeg, .gif, .webp",
+    acceptedFileTypes: ".png, .jpg, .jpeg, .gif, .webp, .pdf, .doc, .docx, .xls, .xlsx, .heic",
     controller: 'Employees',
     action: 'Upload',
-    explanation: 'Çalışan Resmi Yükle',
-    category: 'employee-images',
-   
+    explanation: 'Personel Evrağı Yükle',
+    category: 'employee-images/files',
     
    }
 
@@ -54,12 +53,16 @@ export class EmployeImageDialogComponent extends BaseDialog<EmployeImageDialogCo
 async ngOnInit() {
   this.spinner.show(SpinnerType.BallSpinClockwise);
   this.employee = await this.employeeService.getEmployeeById(this.data as string);
-  this.employeeImages = await this.employeeService.getEmployeeImages(this.data as string);
+  //this.employeeImages = await this.employeeService.getEmployeeFiles(this.data as string);
+
+  const firstNameLower = this.employee.firstName.toLowerCase();
+  const lastNameLower = this.employee.lastName.toLowerCase();
 
   // personelin bilgilerini aldıktan sonra options nesnesini güncelle
   this.options = {
     ...this.options,
-    path: `${this.employee.firstName} ${this.employee.lastName}`, // Path'i çalışanın adı ve soyadıyla ayarla
+
+    path: `${firstNameLower}-${lastNameLower}`,
     employeeId: this.employee.id, // employeeId'yi de ayarla
   
   };
@@ -73,7 +76,7 @@ openFileUploadDialog() {
     data: this.options, // options nesnesini FileUploadComponent'e aktar
     afterClosed: async () => {
       // Dialog kapandıktan sonra yapılmak istenen işlemler, örneğin yeniden resim listesini yükle
-      this.employeeImages = await this.employeeService.getEmployeeImages(this.data as string);
+      this.employeeImages = await this.employeeService.getEmployeeFiles(this.data as string);
     }
   });
 }
@@ -90,14 +93,12 @@ showCase(id: string) {
      new ToastrOptions(ToastrMessageType.Success, ToastrPosition.BottomRight));
      
   })
-  console.log(id);
-  console.log(this.data);
   }
   
 }
 
 
 
-export enum EmployeImageDialogState {
+export enum EmployeFileDialogState {
   Close
 }

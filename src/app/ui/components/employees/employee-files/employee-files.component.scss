@@ -1,0 +1,92 @@
+.employee-files-container {
+  margin: 20px;
+}
+
+.file-card {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.file-preview {
+  margin-right: 15px;
+}
+
+.file-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.file-info {
+  flex-grow: 1;
+}
+
+.file-name {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.file-preview img {
+  transition: transform 0.3s ease-in-out; /* Animasyon için geçiş efekti */
+}
+
+.file-preview img:hover {
+  transform: scale(2); /* Resmi 1.5 kat büyüt */
+}
+
+.employee-files-container {
+  margin-top: 50px;
+}
+.employee-title-container {
+  display: flex;
+  align-items: first baseline;
+  justify-content: center; /* Yatayda ortala */
+}
+
+.employee-name {
+  font-size: 24px; /* Yazı boyutunu büyüt */
+  font-weight: bold; /* Yazı tipini kalın yap */
+  margin-left: 20px; /* Geri butonu ile ad arasında boşluk bırak */
+}
+
+.file-card-container {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Beş sütun oluştur */
+  gap: 10px; /* Sütunlar ve satırlar arasındaki boşluk */
+}
+
+.file-card {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.file-delete{
+  padding: 5px 15px
+}
+
+.btn-success {
+  margin-left: 50px;
+}
+.btn-primary {
+  width: 50px;
+  height: 41px;
+}
+
+.btn-warning {
+  width: 50px;
+  height: 41px;
+}
+
+.btn-danger {
+  width: 50px;
+  height: 41px;
+}
+

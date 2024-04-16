@@ -100,7 +100,7 @@ export class EmployeeService {
     return await promiseData;
   }
 
-  async getEmployeeImages(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListImageFile[]> {
+  async getEmployeeFiles(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListImageFile[]> {
     const observable: Observable<ListImageFile[]> = this.httpClientService.get<ListImageFile[]>({
       controller: 'employees',
       action: 'GetImagesByEmployeeId'
@@ -117,6 +117,33 @@ export class EmployeeService {
       action: 'ChangeShowcase',
       queryString: `employeeId=${employeeId}&fileId=${fileId}&showcase=${showcase}`
     });
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
+  async uploadImageForEmployee(category:string, employeeId: string,path: string, formFile: File, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
+    const formData = new FormData();
+    formData.append('file', formFile);
+    formData.append('path', path);
+    formData.append('employeeId', employeeId);
+    formData.append('category', category);
+    const observable: Observable<FormData> = this.httpClientService.post<FormData>({
+      controller: 'employees',
+      action: 'UploadEmployeePhoto'
+    }, formData);
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
+  async getEmployeePhoto(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListImageFile> {
+    const observable: Observable<ListImageFile> = this.httpClientService.get<ListImageFile>({
+      controller: 'employees',
+      action: 'GetEmployeePhoto'
+    }, employeeId);
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
       .catch(errorCallback);

@@ -1,45 +1,57 @@
-.container{
-    margin-top: 50px;
+.container {
+  margin-top: 50px;
 }
 .form-group {
-    margin-bottom: 10px;
-    text-align: end;
-    display: flex;
-    align-items: center;
+  margin-bottom: 10px;
+  text-align: end;
+  display: flex;
+  align-items: center;
 }
 .btn-warning {
-    height: 100px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
-        rgba(245, 201, 2, 0.5) 5px 5px 15px;
+  height: 100px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
+    rgba(245, 201, 2, 0.5) 5px 5px 15px;
 }
-.btn-warning:hover{
-    box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
-        rgba(253, 253, 253, 0.5) 5px 10px 15px;
+.btn-warning:hover {
+  box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
+    rgba(253, 253, 253, 0.5) 5px 10px 15px;
 }
 
 .btn-primary {
-    height: 100px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
-        rgba(159, 159, 159, 0.5) 5px 5px 15px !important; 
+  height: 100px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
+    rgba(159, 159, 159, 0.5) 5px 5px 15px !important;
 }
-.btn-primary:hover{
-    box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
-        rgba(253, 253, 253, 0.5) 5px 10px 15px !important; 
+.btn-primary:hover {
+  box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
+    rgba(253, 253, 253, 0.5) 5px 10px 15px !important;
 }
 
 .btn-success {
-    height: 100px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
-        rgba(144, 253, 157, 0.5) 5px 5px 15px;
+  height: 100px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
+    rgba(144, 253, 157, 0.5) 5px 5px 15px;
 }
-.btn-success:hover{
-    box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
-        rgba(253, 253, 253, 0.5) 5px 10px 15px;
+.btn-success:hover {
+  box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
+    rgba(253, 253, 253, 0.5) 5px 10px 15px;
 }
 
 .showcase-image {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 50px;
-    object-fit: cover; /* Görselin oranını koruyarak kutuya sığdırır */
-  }
+  width: 150px;
+  height: 150px;
+  margin-bottom: 50px;
+  object-fit: cover; /* Görselin oranını koruyarak kutuya sığdırır */
+}
+
+.employee-title-container {
+  display: flex;
+  align-items: first baseline;
+  justify-content: center; /* Yatayda ortala */
+}
+
+.employee-name {
+    font-size: 24px; /* Yazı boyutunu büyüt */
+    font-weight: bold; /* Yazı tipini kalın yap */
+    margin-left: 20px; /* Geri butonu ile ad arasında boşluk bırak */
+}

@@ -10,7 +10,7 @@ import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { EmployeeService } from 'src/app/services/common/models/employee.service';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -39,7 +39,8 @@ import {
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ListImageFile } from 'src/app/contracts/list-image-file';
 import { DialogService } from 'src/app/services/common/dialog.service';
-import { EmployeImageDialogComponent } from 'src/app/dialogs/employee-dialogs/employe-image-dialog/employe-image-dialog.component';
+import { EmployeFileDialogComponent } from 'src/app/dialogs/employee-dialogs/employe-file-dialog/employe-file-dialog.component';
+import { EmployePhotoDialogComponent } from 'src/app/dialogs/employee-dialogs/employe-photo-dialog/employe-photo-dialog.component';
 
 declare var $: any;
 
@@ -79,6 +80,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     private toastr: ToastrService,
     private employeeService: EmployeeService,
     private route: ActivatedRoute,
+    private router: Router,
     private jobService: JobService,
     private quarryService: QuarryService,
     private departmentService: DepartmentService,
@@ -113,7 +115,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       const employeeId = params.get('employeeId');
       if (employeeId) {
         this.loadEmployeeDetails(employeeId);
-        this.loadEmployeeShowcaseImage(employeeId);
+        this.getEmployeePhoto(employeeId);
       }
     });
     this.getJobs();
@@ -348,20 +350,36 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     );
   }
 
-  loadEmployeeShowcaseImage(employeeId: string): void {
-    this.employeeService.getEmployeeImages(employeeId).then(images => {
-      this.employeeImages = images.find(image => image.showcase);
-    }).catch(error => {
-      console.error('Employee images could not be loaded', error);
-      this.toastr.error('Çalışan resimleri yüklenirken bir hata oluştu.');
+  getEmployeePhoto(employeeId: string): void {
+    this.employeeService.getEmployeePhoto(employeeId, () => {
+    }).then((response ) => {
+      this.employeeImages = response;
     });
   }
 
-  addEmployeeImage(employeeId:string): void {
-    const dialogRef = this.dialogService.openDialog({componentType:EmployeImageDialogComponent, data:employeeId,
+  addEmployeeFiles(employeeId:string): void {
+    const dialogRef = this.dialogService.openDialog({componentType:EmployeFileDialogComponent, data:employeeId,
     options:{width:'1000px',height:'500px'}});
     
-}
+  }
 
+  addEmployeePhoto(employeeId:string): void {
+  const dialogRef = this.dialogService.openDialog({componentType:EmployePhotoDialogComponent, data:employeeId,
+  options:{width:'500px',height:'500px'}});
+    
+  }
+
+  goToEmployeFiles(employeeId:string): void {
+    this.router.navigate(['personeller/personel/personel-dosyalar/',employeeId]);
+  }
+
+  goBack() {
+    if (this.employee && this.employee.id) {
+      this.router.navigate([`/personeller/personel-listesi`]); // Personel ID'sini kullanarak URL oluştur
+    } else {
+      // Geriye düşerse başka bir rotaya yönlendirme veya hata yönetimi
+      this.router.navigate(['/personeller']); // Varsayılan geri rotası
+    }
+  }
   
 }

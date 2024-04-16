@@ -51,6 +51,7 @@ const routes: Routes = [
   {path:'personeller/personel-listesi/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
   {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
   {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),data:{breadcrumb:'Personel Ekle'}},
+  {path:'personeller/personel/personel-dosyalar/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-files/employee-files.component').then(m=>m.EmployeeFilesComponent),data:{breadcrumb:'Personel Dosyaları'}},
   {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makina Arama'}},
   {path:'personeller/puantaj',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent),data:{breadcrumb:'İzinler'}},
   {path:'personeller/puantaj/izinislemleri',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler'}},
