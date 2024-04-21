@@ -13,6 +13,8 @@ import { EmployeFileDialogComponent, EmployeFileDialogState } from 'src/app/dial
 import { MatCardModule } from '@angular/material/card';
 import { ListImageFile } from 'src/app/contracts/list-image-file';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
+import { switchMap } from 'rxjs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-employee-files',
@@ -37,38 +39,40 @@ export class EmployeeFilesComponent extends BaseComponent implements OnInit {
     private employeeService: EmployeeService,
     private dialogService: DialogService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,) {
     super(spinner);
   }
 
   
 
-   async ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      const employeeId = params.get('employeeId');
-      if (employeeId) {
-        this.getEmployee(employeeId);
-        this.getEmployeeFiles(employeeId);
-        // options nesnesine employeeId ekleyin
-        
-      }
+  async ngOnInit() {
+    //employeeId yi rotadan al.
+    this.route.paramMap.pipe(
+      switchMap(params => {
+        const employeeId = params.get('employeeId');
+        return this.employeeService.getEmployeeById(employeeId);
+      })
+    ).subscribe(employee => {
+      this.employee = employee;
+      this.getEmployeeFiles(employee.id);
     });
+    
+    
   }
-
-  getEmployee(employeeId: string) {
-    this.employeeService.getEmployeeById(employeeId).then((response) => {
-      this.employee = response;
-      
-
-    });
-  }
-
+  
   getEmployeeFiles(employeeId: string) {
-    this.employeeService.getEmployeeFiles(employeeId).then((response) => {
-      this.employeeFiles = response;
-      
+    this.employeeService.getEmployeeFiles(employeeId).then(response => {
+        this.employeeFiles = response.map(file => ({
+            ...file,
+            safeUrl: this.sanitizer.bypassSecurityTrustUrl(file.url)
+        }));
+    }).catch(error => {
+        console.error('Failed to load employee files:', error);
     });
-  }
+}
+
+  
 
   addEmployeeFiles(employeeId:string): void {
     const dialogRef = this.dialogService.openDialog({componentType:EmployeFileDialogComponent, data:employeeId,
@@ -85,10 +89,10 @@ export class EmployeeFilesComponent extends BaseComponent implements OnInit {
     }
   }
 
-  printImage(fileId: string) {
+  printImage(fileName: string) {
     let printContents, popupWin;
-    const imageId = 'printableImage' + fileId;
-    printContents = document.getElementById(imageId).outerHTML;
+    const imageName = 'printableImage' + fileName;
+    printContents = document.getElementById(imageName).outerHTML;
     popupWin = window.open('', '_blank', 'top=0,left=0,height=100%,width=auto');
   
     // Özelleştirilmiş CSS ile yeni pencere içeriği
