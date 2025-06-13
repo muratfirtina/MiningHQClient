@@ -62,7 +62,7 @@ async ngOnInit() {
   this.options = {
     ...this.options,
 
-    path: `${firstNameLower}-${lastNameLower}`,
+    folderPath: `${firstNameLower}-${lastNameLower}`,
     employeeId: this.employee.id, // employeeId'yi de ayarla
   
   };

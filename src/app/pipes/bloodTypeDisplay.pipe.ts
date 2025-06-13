@@ -3,32 +3,47 @@ import { TypeOfBlood } from '../contracts/typeOfBlood';
 
 @Pipe({
   name: 'bloodTypeDisplay',
-  standalone: true,
+  standalone: true
 })
 export class BloodTypeDisplayPipe implements PipeTransform {
 
-  transform(bloodType: TypeOfBlood): any {
-    switch (bloodType) {
-      case TypeOfBlood.APositive:
-        return "A+";
-      case TypeOfBlood.ANegative:
-        return "A-";
-      case TypeOfBlood.BPositive:
-        return "B+";
-      case TypeOfBlood.BNegative:
-        return "B-";
-      case TypeOfBlood.ABPositive:
-        return "AB+";
-      case TypeOfBlood.ABNegative:
-        return "AB-";
-      case TypeOfBlood.OPositive:
-        return "O+";
-      case TypeOfBlood.ONegative:
-        return "O-";
+  private bloodTypeMap: { [key: string]: string } = {
+    'None': 'Belirtilmemiş',
+    'APositive': 'A Rh+',
+    'ANegative': 'A Rh-',
+    'BPositive': 'B Rh+',
+    'BNegative': 'B Rh-',
+    'ABPositive': 'AB Rh+',
+    'ABNegative': 'AB Rh-',
+    'OPositive': 'O Rh+',
+    'ONegative': 'O Rh-',
+    // Sayısal değerler için de mapping (backward compatibility)
+    '0': 'Belirtilmemiş',
+    '1': 'A Rh+',
+    '2': 'A Rh-',
+    '3': 'B Rh+',
+    '4': 'B Rh-',
+    '5': 'AB Rh+',
+    '6': 'AB Rh-',
+    '7': 'O Rh+',
+    '8': 'O Rh-'
+  };
 
-       default: bloodType;
-      
-      // ... other cases
+  transform(value: TypeOfBlood | string | number | any): string {
+    if (!value && value !== 0) return '';
+    
+    // String olarak geliyorsa direkt kontrol et
+    if (typeof value === 'string') {
+      return this.bloodTypeMap[value] || value;
     }
+    
+    // Sayısal değer olarak geliyorsa
+    if (typeof value === 'number') {
+      return this.bloodTypeMap[value.toString()] || value.toString();
+    }
+    
+    // Diğer durumlar için string'e çevir
+    const stringValue = String(value);
+    return this.bloodTypeMap[stringValue] || stringValue;
   }
 }

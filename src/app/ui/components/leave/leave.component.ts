@@ -11,29 +11,51 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './leave.component.html',
   styleUrls: ['./leave.component.scss']
 })
-export class LeaveComponent extends BaseComponent{
+export class LeaveComponent extends BaseComponent {
   
-  constructor(spinner:NgxSpinnerService,private router: Router) {
+  constructor(spinner: NgxSpinnerService, private router: Router) {
     super(spinner);
   }
 
   async ngOnInit() {
-
+    // Sayfa yüklendiğinde gerekli işlemler
   }
   
-  navigateToLeaveUsage(){
-    this.router.navigate(['personeller/puantaj/mesai-takip']);
+  // Ana navigasyon fonksiyonları
+  navigateToTimekeeping() {
+    this.router.navigate(['personeller/puantaj/puantaj-tablosu']);
   }
 
-  gottoEmployeeAdd() {
-    this.router.navigate(['personeller/personel-ekle']);
+  navigateToLeaveUsage() {
+    this.router.navigate(['personeller/puantaj/mesai-takip']);
   }
 
   navigateToEntitledLeave() {
     this.router.navigate(['personeller/puantaj/izinislemleri']);
   }
 
-  navigateToTimekeeping() {
-    this.router.navigate(['personeller/puantaj/puantaj-tablosu']);
+  // Ek kısayol fonksiyonları
+  navigateToEmployeeList() {
+    this.router.navigate(['personeller']);
+  }
+
+  navigateToLeaveReports() {
+    this.router.navigate(['personeller/puantaj/raporlar']);
+  }
+
+  navigateToOvertime() {
+    this.router.navigate(['personeller/puantaj/fazla-mesai']);
+  }
+
+  navigateToShiftManagement() {
+    this.router.navigate(['personeller/puantaj/vardiya']);
+  }
+
+  navigateToLeaveBalance() {
+    this.router.navigate(['personeller/puantaj/izin-bakiye']);
+  }
+
+  goBack() {
+    this.router.navigate(['personeller']);
   }
 }

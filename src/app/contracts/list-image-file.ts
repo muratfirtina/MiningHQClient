@@ -1,7 +1,7 @@
 export class ListImageFile {
     fileName: string;
     category: string;
-    path: string;
+    filePath: string;
     url: string;
     id: string;
     showcase: boolean;

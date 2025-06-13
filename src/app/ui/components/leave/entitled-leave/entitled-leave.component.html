@@ -1,338 +1,623 @@
-<div class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-
-    <H2 style="display:flex; justify-content: center; margin: 50px;">Hakedilen İzin Girişi</H2>
-
-    <form [formGroup]="entitledLeaveAddForm">
-
-      <div class="labelsadd" style="display: flex;">
-        <div class="col-md-3">
-          <label for="employeeId">Personel</label>
-        </div>
-
-        <div class="col-md-2">
-          <label for="leaveTypeId">İzin Tipi</label>
-        </div>
-
-        <div class="col-md-2">
-          <label for="entitledDays">Hakedilen Gün Sayısı</label>
-        </div>
-
-        <div class="col-md-2">
-          <label for="entitledDate">Hakediş Tarihi</label>
-        </div>
+<div class="modern-leave-management-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-calendar-check"></i>
+          İzin Yönetimi
+        </h1>
+        <p class="page-subtitle">Personel izin haklarını ve kullanımlarını yönetin</p>
       </div>
-
-      <div class="formAdd" style="display: flex;">
-        <div class="col-md-3">
-          <select formControlName="employeeId" id="employeeId" class="form-select">
-            <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-              {{employee.lastName}}</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
-            <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <input type="number" formControlName="entitledDays" id="entitledDays" class="form-control">
-          <div *ngIf="entitledLeaveAddForm.get('entitledDays').errors?.['min']" class="alert alert-danger">
-            Gün sayısı 0'dan büyük olmalıdır.
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{employees.length}}</span>
+            <span class="stat-label">Toplam Personel</span>
           </div>
         </div>
-
-        <div class="col-md-2">
-          <input type="date" formControlName="entitledDate" id="entitledDate" class="form-control">
-        </div>
-
-        <button class="btn btn-success" style="height: min-content;" (click)="openEntitledLeaveAddModal()" [disabled]="!entitledLeaveAddForm.valid">Kaydet</button>
-
-
       </div>
-    </form>
+    </div>
+  </div>
 
-    <H2 style="display:flex; justify-content: center; margin: 50px;">İzin Kullanımı</H2>
-
-    <form [formGroup]="leaveUsageAddForm">
-
-      <div class="labelsadd" style="display: flex;">
-        <div class="col-md-3">
-          <label for="employeeId">Personel</label>
-        </div>
-
-        <div class="col-md-2">
-          <label for="leaveTypeId">İzin Tipi</label>
-        </div>
-
-        <div class="col-md-2">
-          <label for="usageDate">Başlangıç Tarihi</label>
-        </div>
-
-        <div class="col-md-2">
-          <label for="returnDate">İşbaşı Tarihi</label>
-        </div>
-
-        <div class="col-md-1">
-          <label for="usedDays">Kullanılan Gün</label>
-        </div>
-      </div>
-
-      <div class="formUsageAdd" style="display: flex;">
-        <div class="col-md-3">
-          <select formControlName="employeeId" id="employeeId" class="form-select">
-            <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-              {{employee.lastName}}</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <select formControlName="leaveTypeId" id="leaveTypeId" class="form-select">
-            <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
-          </select>
-        </div>
-
-        <div class="col-md-2">
-          <input type="date" formControlName="usageDate" id="usageDate" class="form-control"
-            (change)="calculateUsedDays()">
-        </div>
-
-        <div class="col-md-2">
-          <input type="date" formControlName="returnDate" id="returnDate" class="form-control"
-            (change)="calculateUsedDays()">
-            <div *ngIf="leaveUsageAddForm.errors?.['dateRangeError']" class="alert alert-danger">
-              Dönüş tarihi, kullanım tarihinden önce olamaz.
-            </div>
-        </div>
-
-        <div class="col-md-1">
-          <input type="number" formControlName="usedDays" id="usedDays" class="form-control">
-        </div>
-
-        <button class="btn btn-success" style="height: min-content;" (click)="openLeaveUsageAddModal()" [disabled]="!leaveUsageAddForm.valid">Kaydet</button>
+  <div class="container-custom">
+    
+    <!-- Leave Entry Forms Section -->
+    <div class="forms-section">
+      <div class="forms-grid">
         
+        <!-- Entitled Leave Entry -->
+        <div class="form-card entitled-leave-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fas fa-plus-circle"></i>
+              <h3>Hakedilen İzin Girişi</h3>
+            </div>
+            <p class="card-subtitle">Personel izin haklarını tanımlayın</p>
+          </div>
+          
+          <form [formGroup]="entitledLeaveAddForm" class="modern-form">
+            <div class="form-grid">
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-user"></i>
+                  Personel
+                </label>
+                <select formControlName="employeeId" class="form-select">
+                  <option value="">Personel seçiniz</option>
+                  <option *ngFor="let employee of employees" [value]="employee.id">
+                    {{employee.firstName}} {{employee.lastName}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-tags"></i>
+                  İzin Tipi
+                </label>
+                <select formControlName="leaveTypeId" class="form-select">
+                  <option value="">İzin tipi seçiniz</option>
+                  <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">
+                    {{leaveType.name}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-calendar-plus"></i>
+                  Hakedilen Gün Sayısı
+                </label>
+                <input type="number" 
+                       formControlName="entitledDays" 
+                       class="form-input"
+                       placeholder="Gün sayısı"
+                       min="1">
+                <div *ngIf="entitledLeaveAddForm.get('entitledDays').errors?.['min']" 
+                     class="error-message">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  Gün sayısı 0'dan büyük olmalıdır.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-calendar"></i>
+                  Hakediş Tarihi
+                </label>
+                <input type="date" 
+                       formControlName="entitledDate" 
+                       class="form-input">
+              </div>
+
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" 
+                      class="action-btn primary" 
+                      (click)="openEntitledLeaveAddModal()" 
+                      [disabled]="!entitledLeaveAddForm.valid">
+                <i class="fas fa-save"></i>
+                Hakediş Kaydet
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Leave Usage Entry -->
+        <div class="form-card usage-leave-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fas fa-calendar-minus"></i>
+              <h3>İzin Kullanımı</h3>
+            </div>
+            <p class="card-subtitle">Personel izin kullanımlarını kaydedin</p>
+          </div>
+          
+          <form [formGroup]="leaveUsageAddForm" class="modern-form">
+            <div class="form-grid">
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-user"></i>
+                  Personel
+                </label>
+                <select formControlName="employeeId" class="form-select">
+                  <option value="">Personel seçiniz</option>
+                  <option *ngFor="let employee of employees" [value]="employee.id">
+                    {{employee.firstName}} {{employee.lastName}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-tags"></i>
+                  İzin Tipi
+                </label>
+                <select formControlName="leaveTypeId" class="form-select">
+                  <option value="">İzin tipi seçiniz</option>
+                  <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">
+                    {{leaveType.name}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-play"></i>
+                  Başlangıç Tarihi
+                </label>
+                <input type="date" 
+                       formControlName="usageDate" 
+                       class="form-input"
+                       (change)="calculateUsedDays()">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-stop"></i>
+                  İşbaşı Tarihi
+                </label>
+                <input type="date" 
+                       formControlName="returnDate" 
+                       class="form-input"
+                       (change)="calculateUsedDays()">
+                <div *ngIf="leaveUsageAddForm.errors?.['dateRangeError']" 
+                     class="error-message">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  Dönüş tarihi, kullanım tarihinden önce olamaz.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-calculator"></i>
+                  Kullanılan Gün
+                </label>
+                <input type="number" 
+                       formControlName="usedDays" 
+                       class="form-input"
+                       readonly>
+              </div>
+
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" 
+                      class="action-btn secondary" 
+                      (click)="openLeaveUsageAddModal()" 
+                      [disabled]="!leaveUsageAddForm.valid">
+                <i class="fas fa-save"></i>
+                Kullanım Kaydet
+              </button>
+            </div>
+          </form>
+        </div>
 
       </div>
-    </form>
+    </div>
 
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="filter-card">
+        <div class="filter-header">
+          <h3>
+            <i class="fas fa-filter"></i>
+            İzin Listesi Filtreleri
+          </h3>
+        </div>
+        
+        <div class="filter-form">
+          <!-- Selection Form -->
+          <form [formGroup]="selectionForm" class="selection-form">
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-list"></i>
+                İzin Türü Seçimi
+              </label>
+              <select formControlName="selection" 
+                      class="form-select"
+                      (change)="onSelectionChange()">
+                <option value="">Seçim Yapın</option>
+                <option value="entitledLeaves">Hakedilen İzinler</option>
+                <option value="usedLeaves">Kullanılan İzinler</option>
+              </select>
+            </div>
+          </form>
 
-    <H2 style="display:flex; justify-content: center; margin: 50px;">Hakediş Listesi</H2>
+          <!-- Dynamic Filter Form -->
+          <div *ngIf="selectionForm.get('selection').value" 
+               [formGroup]="selectionForm.get('selection').value === 'entitledLeaves' ? listByEmployeeIdForm : leaveUsageListByEmplooyeIdForm"
+               class="filter-grid">
+            
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-user"></i>
+                Personel
+              </label>
+              <select formControlName="employeeId" class="form-select">
+                <option value="">Personel Seçin</option>
+                <option *ngFor="let employee of employees" [value]="employee.id">
+                  {{employee.firstName}} {{employee.lastName}}
+                </option>
+              </select>
+            </div>
 
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-tags"></i>
+                İzin Tipi
+              </label>
+              <select formControlName="leaveTypeId" class="form-select">
+                <option value="">Tümü</option>
+                <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">
+                  {{leaveType.name}}
+                </option>
+              </select>
+            </div>
 
+            <div class="form-group" *ngIf="selectionForm.get('selection').value === 'usedLeaves'">
+              <label class="form-label">
+                <i class="fas fa-calendar"></i>
+                Başlangıç Tarihi
+              </label>
+              <input type="date" formControlName="usageDate" class="form-input">
+            </div>
 
-    <div class="container">
-      <div class="row">
-        <!-- Selection Form -->
-        <form [formGroup]="selectionForm" class="row">
-          <div class="col-md-3">
-            <label for="selection">İzin Seçimi:</label>
-            <select formControlName="selection" id="selection" class="form-select">
-              <option value="">Seçim Yapın</option>
-              <option value="entitledLeaves">Hakedilen İzinler</option>
-              <option value="usedLeaves">Kullanılan İzinler</option>
-            </select>
-          </div>
-        </form>
+            <div class="form-group">
+              <label class="form-label">
+                <i class="fas fa-sort"></i>
+                Sıralama
+              </label>
+              <select formControlName="sortDirection" class="form-select">
+                <option value="asc">Eskiden Yeniye</option>
+                <option value="desc">Yeniden Eskiye</option>
+              </select>
+            </div>
 
-        <div
-          [formGroup]="selectionForm.get('selection').value === 'entitledLeaves' ? listByEmployeeIdForm : leaveUsageListByEmplooyeIdForm"
-          class="row">
-          <div class="col-md-3">
-            <label for="employeeSelect" class="form-label">Personel</label>
-            <select formControlName="employeeId" class="form-select" id="employeeSelect">
-              <option value="">Personel Seçin</option>
-              <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-                {{employee.lastName}}</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="leaveTypeSelect" class="form-label">İzin Tipi</label>
-            <select formControlName="leaveTypeId" class="form-select" id="leaveTypeSelect">
-              <option value="">Tümü</option>
-              <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">{{leaveType.name}}</option>
-            </select>
-          </div>
-
-          <div class="col-md-3" *ngIf="selectionForm.get('selection').value === 'usedLeaves'">
-            <label for="usageDate" class="form-label">Başlangıç Tarihi</label>
-            <input type="date" formControlName="usageDate" class="form-control" id="usageDate">
-          </div>
-
-          <div class="col-md-2">
-            <label for="sortDirection" class="form-label">Sıralama</label>
-            <select formControlName="sortDirection" class="form-select" id="sortDirection">
-              <option value="asc">Eskiden Yeniye</option>
-              <option value="desc">Yeniden Eskiye</option>
-            </select>
           </div>
         </div>
       </div>
     </div>
 
-    <div>
-
-      <div *ngIf="selectionForm.get('selection').value === 'entitledLeaves' && pagedEntitledLeave.length > 0"
-        class="mt-4">
-        <h2>Hakedilen İzinler</h2>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Tarih</th>
-              <th>İzin Türü</th>
-              <th>Gün Sayısı</th>
-              <th *ngIf="remainingDaysForSelectedEmployee >= 0" style="width: 150px;">Mevcut İzin Hakkı:
-                {{remainingDaysForSelectedEmployee}}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let leave of pagedEntitledLeave">
-              <td>{{ leave.entitledDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ leave.leaveTypeName }}</td>
-              <td>{{ leave.entitledDays }}</td>
-              <td>
-                <button class="btn btn-danger" (click)="deleteEntitledLeave(leave.id)">Sil</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- Pagination for Entitled Leaves could go here -->
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-center">
-            <li class="page-item" [class.disabled]="currentPageNo <= 1">
-              <a class="page-link" (click)="changePage(1)">&laquo;</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo <= 1">
-              <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
-            </li>
-            <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
-              <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo >= pages">
-              <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo >= pages">
-              <a class="page-link" (click)="changePage(pages)">&raquo;</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-      <div *ngIf="selectionForm.get('selection').value === 'usedLeaves' && pageLeaveUsage.length > 0" class="mt-4">
-        <h2>Kullanılan İzinler</h2>
-        <table class="table" style="text-align: center;">
-          <thead>
-            <tr>
-              <th>Çıkış Tarihi</th>
-              <th>Dönüş Tarihi</th>
-              <th>İzin Türü</th>
-              <th>Gün</th>
-            </tr>
-          </thead>
-          <tbody style="text-align: center;">
-            <tr *ngFor="let usage of pageLeaveUsage">
-              <td>{{ usage.usageDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ usage.returnDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ usage.leaveTypeName }}</td>
-              <td style="width: min-content;">{{ usage.usedDays }}</td>
-              <td>
-                <button class="btn btn-danger" (click)="deleteLeaveUsage(usage.id)">Sil</button>
-                <button class="btn btn-primary" (click)="generateRequestPDF(usage)">Talep PDF İndir</button>
-                <button class="btn btn-warning" (click)="generateApprovalPDF(usage)">Onay PDF İndir</button>
-                
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <!-- Pagination for Used Leaves could go here -->
-        <nav aria-label="Page navigation example">
-          <ul class="pagination justify-content-center">
-            <li class="page-item" [class.disabled]="currentPageNo <= 1">
-              <a class="page-link" (click)="changePage(1)">&laquo;</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo <= 1">
-              <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
-            </li>
-            <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
-              <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo >= pages">
-              <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPageNo >= pages">
-              <a class="page-link" (click)="changePage(pages)">&raquo;</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-
-    </div>
-    <!-- ------------------------------------------------------------------------- -->
-
-
-
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="confirmModalLabel">İzin Silinsin mi?</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Bu işlemi onaylıyor musunuz?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hayır</button>
-            <button id="confirmYes" type="button" class="btn btn-success" data-bs-dismiss="modal">Evet</button>
+    <!-- Results Section -->
+    <div class="results-section" *ngIf="selectionForm.get('selection').value">
+      
+      <!-- Entitled Leaves Table -->
+      <div class="table-card" *ngIf="selectionForm.get('selection').value === 'entitledLeaves' && pagedEntitledLeave.length > 0">
+        <div class="table-header">
+          <div class="table-title">
+            <h3>
+              <i class="fas fa-calendar-plus"></i>
+              Hakedilen İzinler
+            </h3>
+            <div class="remaining-days" *ngIf="remainingDaysForSelectedEmployee >= 0">
+              <span class="remaining-label">Mevcut İzin Hakkı:</span>
+              <span class="remaining-number">{{remainingDaysForSelectedEmployee}} gün</span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+        
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-calendar"></i>
+                    Tarih
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-tags"></i>
+                    İzin Türü
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-calendar-day"></i>
+                    Gün Sayısı
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-cog"></i>
+                    İşlemler
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let leave of pagedEntitledLeave" class="table-row">
+                <td>
+                  <span class="date-badge">{{ leave.entitledDate | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td>
+                  <span class="type-badge">{{ leave.leaveTypeName }}</span>
+                </td>
+                <td>
+                  <span class="days-badge">{{ leave.entitledDays }} gün</span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-icon-btn delete" 
+                            (click)="deleteEntitledLeave(leave.id)"
+                            title="Sil">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    <!-- Hakedilen İzin Ekleme Modalı -->
-    <div class="modal fade" id="entitledLeaveAddModal" tabindex="-1" aria-labelledby="entitledLeaveAddModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="entitledLeaveAddModalLabel">Hakedilen İzin Ekle</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            Hakedilen izin eklemek istediğinize emin misiniz?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-              (click)="onEntitledLeaveAddConfirm()">Evet, Ekle</button>
-          </div>
+        <!-- Pagination -->
+        <div class="pagination-section">
+          <nav class="pagination-nav">
+            <ul class="pagination">
+              <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                <a class="page-link" (click)="changePage(1)">
+                  <i class="fas fa-angle-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                  <i class="fas fa-angle-left"></i>
+                </a>
+              </li>
+              <li class="page-item" 
+                  *ngFor="let pageNo of pageList" 
+                  [class.active]="pageNo === currentPageNo">
+                <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                  <i class="fas fa-angle-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                <a class="page-link" (click)="changePage(pages)">
+                  <i class="fas fa-angle-double-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
-    </div>
 
-    <!-- İzin Kullanımı Ekleme Modalı -->
-    <div class="modal fade" id="leaveUsageAddModal" tabindex="-1" aria-labelledby="leaveUsageAddModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="leaveUsageAddModalLabel">İzin Kullanımı Ekle</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            İzin kullanımı eklemek istediğinize emin misiniz?
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-              (click)="onLeaveUsageAddConfirm()">Evet, Ekle</button>
+      <!-- Used Leaves Table -->
+      <div class="table-card" *ngIf="selectionForm.get('selection').value === 'usedLeaves' && pageLeaveUsage.length > 0">
+        <div class="table-header">
+          <div class="table-title">
+            <h3>
+              <i class="fas fa-calendar-minus"></i>
+              Kullanılan İzinler
+            </h3>
           </div>
         </div>
-      </div>
-    </div>
+        
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-play"></i>
+                    Çıkış Tarihi
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-stop"></i>
+                    Dönüş Tarihi
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-tags"></i>
+                    İzin Türü
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-calendar-day"></i>
+                    Gün
+                  </div>
+                </th>
+                <th>
+                  <div class="th-content">
+                    <i class="fas fa-cog"></i>
+                    İşlemler
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let usage of pageLeaveUsage" class="table-row">
+                <td>
+                  <span class="date-badge">{{ usage.usageDate | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td>
+                  <span class="date-badge">{{ usage.returnDate | date:'dd/MM/yyyy' }}</span>
+                </td>
+                <td>
+                  <span class="type-badge">{{ usage.leaveTypeName }}</span>
+                </td>
+                <td>
+                  <span class="days-badge">{{ usage.usedDays }} gün</span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-icon-btn delete" 
+                            (click)="deleteLeaveUsage(usage.id)"
+                            title="Sil">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="action-icon-btn download primary" 
+                            (click)="generateRequestPDF(usage)"
+                            title="Talep PDF">
+                      <i class="fas fa-file-alt"></i>
+                    </button>
+                    <button class="action-icon-btn download secondary" 
+                            (click)="generateApprovalPDF(usage)"
+                            title="Onay PDF">
+                      <i class="fas fa-file-check"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
+        <!-- Pagination -->
+        <div class="pagination-section">
+          <nav class="pagination-nav">
+            <ul class="pagination">
+              <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                <a class="page-link" (click)="changePage(1)">
+                  <i class="fas fa-angle-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                  <i class="fas fa-angle-left"></i>
+                </a>
+              </li>
+              <li class="page-item" 
+                  *ngFor="let pageNo of pageList" 
+                  [class.active]="pageNo === currentPageNo">
+                <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                  <i class="fas fa-angle-right"></i>
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                <a class="page-link" (click)="changePage(pages)">
+                  <i class="fas fa-angle-double-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="(selectionForm.get('selection').value === 'entitledLeaves' && pagedEntitledLeave.length === 0) || (selectionForm.get('selection').value === 'usedLeaves' && pageLeaveUsage.length === 0)">
+        <div class="empty-icon">
+          <i class="fas fa-calendar-times"></i>
+        </div>
+        <h3>Veri bulunamadı</h3>
+        <p>Seçilen kriterlere uygun izin kaydı bulunamadı.</p>
+      </div>
+
+    </div>
 
   </div>
+
+  <!-- Modals -->
+  <!-- Confirm Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modern-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">
+            <i class="fas fa-exclamation-triangle"></i>
+            Silme Onayı
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bu izin kaydını silmek istediğinize emin misiniz?</p>
+          <p class="warning-text">Bu işlem geri alınamaz.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i>
+            İptal
+          </button>
+          <button id="confirmYes" type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <i class="fas fa-trash"></i>
+            Evet, Sil
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entitled Leave Add Modal -->
+  <div class="modal fade" id="entitledLeaveAddModal" tabindex="-1" aria-labelledby="entitledLeaveAddModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modern-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="entitledLeaveAddModalLabel">
+            <i class="fas fa-plus-circle"></i>
+            Hakedilen İzin Ekle
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Hakedilen izin kaydını oluşturmak istediğinize emin misiniz?</p>
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Bu işlem personelin izin hakkını artıracaktır.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i>
+            İptal
+          </button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="onEntitledLeaveAddConfirm()">
+            <i class="fas fa-check"></i>
+            Evet, Ekle
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Usage Add Modal -->
+  <div class="modal fade" id="leaveUsageAddModal" tabindex="-1" aria-labelledby="leaveUsageAddModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modern-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="leaveUsageAddModalLabel">
+            <i class="fas fa-calendar-minus"></i>
+            İzin Kullanımı Ekle
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>İzin kullanım kaydını oluşturmak istediğinize emin misiniz?</p>
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Bu işlem personelin izin hakkını azaltacaktır.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i>
+            İptal
+          </button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="onLeaveUsageAddConfirm()">
+            <i class="fas fa-check"></i>
+            Evet, Ekle
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

@@ -37,16 +37,26 @@ export class FileUploadComponent {
 
     this.files = files;
     const fileData: FormData = new FormData();
-    fileData.append('path', this.options.path); // Backend'in beklediği "path" parametresini FormData'ya ekleyin.
+    
+    // ⭐ Backend property isimlerine uygun field isimleri (PascalCase)
+    fileData.append('FolderPath', this.options.folderPath);
     if(this.options.employeeId) {
-      fileData.append('employeeId', this.options.employeeId);
+      fileData.append('EmployeeId', this.options.employeeId);
     }
     if(this.options.category) {
-      fileData.append('category', this.options.category);
+      fileData.append('Category', this.options.category);
     }
+    
+    // ⭐ Action'a göre dosya field'ı belirleme
     files.forEach((file: NgxFileDropEntry) => {
       (file.fileEntry as FileSystemFileEntry).file((_file: File) => {
-        fileData.append('files', _file, _file.name); // "files" anahtarı altında dosyaları ekleyin.
+        if (this.options.action === 'UploadEmployeePhoto') {
+          // Profil fotoğrafı için "File" field'ı (tekil)
+          fileData.append('File', _file, _file.name);
+        } else if (this.options.action === 'Upload') {
+          // Employee dosyaları için "Files" field'ı (çoğul)
+          fileData.append('Files', _file, _file.name);
+        }
       });
     });
 
@@ -110,11 +120,16 @@ export class FileUploadOptions {
   controller?: string;
   action?: string;
   queryString?: string;
-  path?: string; // Bu satır eklendi
+  folderPath?: string;
   explanation?: string;
   acceptedFileTypes?: string;
   employeeId?: string;
   category?: string;
+  
+  // ⭐ Yeni parametreler
+  isProfilePhoto?: boolean; // Profil fotoğrafı mı yoksa genel dosya mı
+  maxFileCount?: number;    // Maximum dosya sayısı (1 = tek dosya, -1 = sınırsız)
+
   
   //isAdminPage?: boolean = false;
 }

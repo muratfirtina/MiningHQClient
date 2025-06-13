@@ -82,23 +82,6 @@ export class EmployeeService {
     return await promiseData;
   }
 
-  async uploadImage(category:string, employeeId: string,path: string, formFiles: FileList, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
-    const formData = new FormData();
-    for (let i = 0; i < formFiles.length; i++) {
-      formData.append(`files`, formFiles[i]);
-    }
-    formData.append('path', path);
-    formData.append('employeeId', employeeId);
-    formData.append('category', category);
-    const observable: Observable<FormData> = this.httpClientService.post<FormData>({
-      controller: 'employees',
-      action: 'Upload'
-    }, formData,);
-    const promiseData = firstValueFrom(observable);
-    promiseData.then(successCallback)
-      .catch(errorCallback);
-    return await promiseData;
-  }
 
   async getEmployeeFiles(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListImageFile[]> {
     const observable: Observable<ListImageFile[]> = this.httpClientService.get<ListImageFile[]>({
@@ -123,21 +106,44 @@ export class EmployeeService {
     return await promiseData;
   }
 
-  async uploadImageForEmployee(category:string, employeeId: string,path: string, formFile: File, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
-    const formData = new FormData();
-    formData.append('file', formFile);
-    formData.append('path', path);
-    formData.append('employeeId', employeeId);
-    formData.append('category', category);
-    const observable: Observable<FormData> = this.httpClientService.post<FormData>({
-      controller: 'employees',
-      action: 'UploadEmployeePhoto'
-    }, formData);
-    const promiseData = firstValueFrom(observable);
-    promiseData.then(successCallback)
-      .catch(errorCallback);
-    return await promiseData;
-  }
+  async uploadImage(category: string, employeeId: string, folderPath: string, formFile: File, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<FormData> {
+  const formData = new FormData();
+  
+  formData.append('file', formFile);     
+  formData.append('folderPath', folderPath);   // ⭐ path yerine folderPath
+  formData.append('employeeId', employeeId);
+  formData.append('category', category);
+  
+  const observable: Observable<FormData> = this.httpClientService.post<FormData>({
+    controller: 'employees',
+    action: 'Upload'
+  }, formData);
+  
+  const promiseData = firstValueFrom(observable);
+  promiseData.then(successCallback)
+    .catch(errorCallback);
+  return await promiseData;
+}
+
+  async uploadImageForEmployee(category: string, employeeId: string, folderPath: string, formFile: File, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<any> {
+  const formData = new FormData();
+  
+  // ⭐ Backend'deki property adlarına uygun gönderim - 'File' field ismi kullanılıyor
+  formData.append('File', formFile);           // IFormFile File (büyük F ile)
+  formData.append('Category', category);       // string Category  
+  formData.append('FolderPath', folderPath);   // string FolderPath
+  formData.append('EmployeeId', employeeId);   // string EmployeeId
+  
+  const observable: Observable<any> = this.httpClientService.post<any>({
+    controller: 'employees',
+    action: 'UploadEmployeePhoto'
+  }, formData);
+  
+  const promiseData = firstValueFrom(observable);
+  promiseData.then(successCallback)
+    .catch(errorCallback);
+  return await promiseData;
+}
 
   async getEmployeePhoto(employeeId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListImageFile> {
     const observable: Observable<ListImageFile> = this.httpClientService.get<ListImageFile>({
@@ -149,5 +155,54 @@ export class EmployeeService {
       .catch(errorCallback);
     return await promiseData;
   }
+
+  async getEmployeePhotoBase64(employeeId: string): Promise<{
+  base64: string,
+  mimeType: string,
+  fileSize: number,
+  success: boolean,
+  message?: string,
+  id?: string,
+  employeeId?: string,
+  name?: string,
+  url?: string
+} | null> {
+  try {
+    const response$ = this.httpClientService.get<{
+      base64: string,
+      mimeType: string,
+      fileSize: number,
+      success: boolean,
+      message?: string,
+      id?: string,
+      employeeId?: string,
+      name?: string,
+      url?: string
+    }>({
+      controller: "employees",
+      action: `get-employee-photo-base64/${employeeId}`
+    });
+    
+    // Observable'ı Promise'e çevir
+    const response = await firstValueFrom(response$);
+    
+    if (response && response.success) {
+      console.log('✅ Employee photo base64 retrieved successfully:', {
+        employeeId,
+        mimeType: response.mimeType,
+        fileSize: response.fileSize,
+        hasBase64: !!response.base64,
+        message: response.message
+      });
+      return response;
+    } else {
+      console.warn('❌ Employee photo base64 response unsuccessful:', response);
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Error getting employee photo base64:', error);
+    return null;
+  }
+}
   
 }

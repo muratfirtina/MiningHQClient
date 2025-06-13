@@ -58,7 +58,7 @@ export class EmployePhotoDialogComponent extends BaseDialog<EmployePhotoDialogCo
     // personelin bilgilerini aldıktan sonra options nesnesini güncelle
     this.options = {
       ...this.options,
-      path: `${this.employee.firstName}${this.employee.lastName}`,
+      folderPath: `${this.employee.firstName}${this.employee.lastName}`,
       employeeId: this.employee.id,
     };
   
@@ -69,7 +69,14 @@ openFileUploadDialog() {
   this.dialogService.openDialog({
     componentType: FileUploadComponent,
     data: this.options, // options nesnesini FileUploadComponent'e aktar
-    
+    afterClosed: async () => {
+      // Dialog kapandıktan sonra profil fotoğrafını yenile
+      this.employeeImage = await this.employeeService.getEmployeePhoto(this.data as string);
+      
+      // Ana component'e de fotoğrafın güncellendiğini bildirmek için
+      // MatDialogRef'i kapat ve result döndür
+      this.dialogRef.close('photo-updated');
+    }
   });
 }
   

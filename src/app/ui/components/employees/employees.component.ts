@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { BaseComponent } from 'src/app/base/base.component';
-import { EmployeeAddComponent } from './employee-add/employee-add.component';
-import { DynamicLoadComponentDirective } from 'src/app/directives/common/dynamic-load-component.directive';
+import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { FormGroup, FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Filter, DynamicQuery } from 'src/app/contracts/dynamic-query';
 import { EmployeefilterByDynamic } from 'src/app/contracts/employee/employeeFilterByDynamic';
-import { EmployeeFilterList } from 'src/app/contracts/employee/employeeFilterList';
 import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
 import { Job } from 'src/app/contracts/job/job';
 import { Quarry } from 'src/app/contracts/quarry/quarry';
@@ -21,7 +18,7 @@ import { PageRequest } from 'src/app/contracts/pageRequest';
 import { UppercaseinputDirective } from 'src/app/directives/common/uppercaseinput.directive';
 import { DepartmentService } from 'src/app/services/common/models/department.service';
 import { ListDepartment } from 'src/app/contracts/department/listDepartment';
-
+import { BloodTypeDisplayPipe } from 'src/app/pipes/bloodTypeDisplay.pipe';
 
 @Component({
     selector: 'app-employees',
@@ -31,7 +28,7 @@ import { ListDepartment } from 'src/app/contracts/department/listDepartment';
         componentId: 'ui-employees'
     },
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule,UppercaseinputDirective]
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, UppercaseinputDirective, BloodTypeDisplayPipe]
 })
 export class EmployeesComponent extends BaseComponent implements OnInit {
   
@@ -39,24 +36,40 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
   employees: SingleEmployee[] = [];
   departments: ListDepartment[] = [];
   quarries: Quarry[] = [];
-  jobs:Job[] = [];
+  jobs: Job[] = [];
   typeOfBlood = Object.values(TypeOfBlood).filter(value => typeof value === 'string');
+  
+  // Kan grubu seçenekleri
+  bloodTypeOptions = [
+    { key: 'APositive', display: 'A Rh+' },
+    { key: 'ANegative', display: 'A Rh-' },
+    { key: 'BPositive', display: 'B Rh+' },
+    { key: 'BNegative', display: 'B Rh-' },
+    { key: 'ABPositive', display: 'AB Rh+' },
+    { key: 'ABNegative', display: 'AB Rh-' },
+    { key: 'OPositive', display: 'O Rh+' },
+    { key: 'ONegative', display: 'O Rh-' }
+  ];
+  
   currentPageNo: number = 1;
   pageSize: number = 10;
-  pages: number;
+  pages: number = 0;
   pageList: number[] = [];
   pageEmployee: Employee[] = [];
   
-
+  // Loading states
+  isLoading = false;
+  isSearching = false;
   
-  
-  constructor(spinner:NgxSpinnerService,
+  constructor(
+    spinner: NgxSpinnerService,
     private router: Router, 
     private fb: FormBuilder, 
     private employeeService: EmployeeService, 
-    private quarryService: QuarryService , 
+    private quarryService: QuarryService, 
     private jobService: JobService,
-    private departmentService: DepartmentService,) {
+    private departmentService: DepartmentService,
+  ) {
     super(spinner);
 
     this.searchForm = this.fb.group({
@@ -67,26 +80,41 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
       nameSearch: [''],
       departmentName: ['']
     });
-    
   }
 
   async ngOnInit() {
+    this.showSpinner(SpinnerType.BallSpinClockwise);
     
-  
-  this.getQuarries();
-  this.getJobs();
-  this.getDepatments();
-  this.typeOfBlood
-
-  this.searchForm.get('nameSearch')!.valueChanges.subscribe((value: string) => {
-    if (value.length >= 3 || value.length === 0) { // En az 3 karakter girildiğinde veya input temizlendiğinde
-      this.searchEmployees(); // Arama fonksiyonunu çağır
+    try {
+      await Promise.all([
+        this.getQuarries(),
+        this.getJobs(),
+        this.getDepatments()
+      ]);
+      
+      // Initial search to load all employees
+      await this.searchEmployees();
+    } catch (error) {
+      console.error('Error loading initial data:', error);
+    } finally {
+      this.hideSpinner(SpinnerType.BallSpinClockwise);
     }
-  });
+
+    // Setup real-time search
+    this.searchForm.get('nameSearch')!.valueChanges.subscribe((value: string) => {
+      if (value.length >= 3 || value.length === 0) {
+        this.searchEmployees();
+      }
+    });
+  }
   
-}
+  // Performance optimization for *ngFor
+  trackByEmployeeId(index: number, employee: SingleEmployee): string {
+    return employee.id;
+  }
   
-  gotoEmployeeList(){
+  // Navigation methods
+  gotoEmployeeList() {
     this.router.navigate(['personeller/personel-listesi']);
   }
 
@@ -102,28 +130,42 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     this.router.navigate(['personeller/puantaj']);
   }
 
-  getQuarries() {
-    this.quarryService.list(-1, -1).then((response) => {
+  // Data loading methods
+  async getQuarries() {
+    try {
+      const response = await this.quarryService.list(-1, -1);
       this.quarries = response.items;
-
-    });
+    } catch (error) {
+      console.error('Error loading quarries:', error);
+    }
   }
 
-  getDepatments() {
-    this.departmentService.list(-1, -1).then((response) => {
+  async getDepatments() {
+    try {
+      const response = await this.departmentService.list(-1, -1);
       this.departments = response.items;
-    });
+    } catch (error) {
+      console.error('Error loading departments:', error);
+    }
   }
 
-  getJobs() {
-    this.jobService.list(-1, -1).then((response) => {
+  async getJobs() {
+    try {
+      const response = await this.jobService.list(-1, -1);
       this.jobs = response.items;
-    });
+    } catch (error) {
+      console.error('Error loading jobs:', error);
+    }
   }
 
   async searchEmployees() {
+    if (this.isSearching) return; // Prevent multiple simultaneous searches
+    
+    this.isSearching = true;
     const formValue = this.searchForm.value;
     let filters: Filter[] = [];
+    
+    // Filter field mappings
     const jobName = EmployeefilterByDynamic.jobName;
     const departmentName = EmployeefilterByDynamic.departmentName;
     const quarryName = EmployeefilterByDynamic.quarryName;
@@ -131,39 +173,38 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
     const firstName = EmployeefilterByDynamic.firstName;
     const lastName = EmployeefilterByDynamic.lastName;
     
-    // Filtre oluşturucu fonksiyon
+    // Helper function to add filters
     const addFilter = (field: string, value: string) => {
-      if (value) { // Eğer değer boş değilse filtreye ekle
-        filters.push({ field: field, operator: "eq", value: value });
+      if (value && value.trim()) {
+        filters.push({ field: field, operator: "eq", value: value.trim() });
       }
     };
 
-    if (formValue.nameSearch) {
+    // Name search with OR logic
+    if (formValue.nameSearch && formValue.nameSearch.trim()) {
       const nameFilter: Filter = {
         field: firstName,
         operator: "startswith",
-        value: formValue.nameSearch,
+        value: formValue.nameSearch.trim(),
         logic: "or",
         filters: [
           {
             field: lastName,
             operator: "startswith",
-            value: formValue.nameSearch,
+            value: formValue.nameSearch.trim(),
           }
         ]
-
       };
-  
       filters.push(nameFilter);
     }
-    // Kullanıcı girişlerine dayalı olarak filtreleri oluştur
+    
+    // Add other filters
     addFilter(jobName, formValue.jobName);
     addFilter(quarryName, formValue.quarryName);
     addFilter(typeOfBlood, formValue.typeOfBlood);
-    addFilter(firstName, formValue.firstName);
     addFilter(departmentName, formValue.departmentName);
   
-    // Tüm filtreleri birleştir
+    // Combine all filters
     let dynamicFilter: Filter | undefined;
     if (filters.length > 0) {
       dynamicFilter = filters.length === 1 ? filters[0] : {
@@ -174,50 +215,83 @@ export class EmployeesComponent extends BaseComponent implements OnInit {
       };
     }
   
-    // Dinamik sorguyu oluştur
+    // Create dynamic query
     const dynamicQuery: DynamicQuery = {
-      sort: [{ field: firstName, dir: formValue.sortDirection }],
+      sort: [{ field: firstName, dir: formValue.sortDirection || 'asc' }],
       filter: dynamicFilter
     };
   
-    // API çağrısını yap
-    const pageRequest: PageRequest = { pageIndex: this.currentPageNo -1, pageSize: this.pageSize };
+    // Make API call
+    const pageRequest: PageRequest = { 
+      pageIndex: this.currentPageNo - 1, 
+      pageSize: this.pageSize 
+    };
   
-    await this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest).then((response) => {
-      this.employees = response.items;
-      this.pageEmployee = response.items;
-      this.pages = response.pages;
+    try {
+      const response = await this.employeeService.getEmployeesByDynamicQuery(dynamicQuery, pageRequest);
+      this.employees = response.items || [];
+      this.pageEmployee = response.items || [];
+      this.pages = response.pages || 0;
       this.initializePagination();
-
-    });
+    } catch (error) {
+      console.error('Error searching employees:', error);
+      this.employees = [];
+      this.pageEmployee = [];
+      this.pages = 0;
+    } finally {
+      this.isSearching = false;
+    }
   }
+
   initializePagination() {
     this.pageList = [];
-      if (this.pages >= 7) {
-        if (this.currentPageNo - 3 <= 0) {
-          for (let i = 1; i <= 7; i++) {
-            this.pageList.push(i);
-          }
-        } else if (this.currentPageNo + 3 > this.pages) {
-          for (let i = this.pages - 6; i <= this.pages; i++) {
-            this.pageList.push(i);
-          }
-        } else {
-          for (let i = this.currentPageNo - 3; i <= this.currentPageNo + 3; i++) {
-            this.pageList.push(i);
-          }
+    if (this.pages >= 7) {
+      if (this.currentPageNo - 3 <= 0) {
+        for (let i = 1; i <= 7; i++) {
+          this.pageList.push(i);
+        }
+      } else if (this.currentPageNo + 3 > this.pages) {
+        for (let i = this.pages - 6; i <= this.pages; i++) {
+          this.pageList.push(i);
         }
       } else {
-        for (let i = 1; i <= this.pages; i++) {
+        for (let i = this.currentPageNo - 3; i <= this.currentPageNo + 3; i++) {
           this.pageList.push(i);
         }
       }
+    } else {
+      for (let i = 1; i <= this.pages; i++) {
+        this.pageList.push(i);
+      }
+    }
   }
 
   changePage(pageNo: number) {
+    if (pageNo < 1 || pageNo > this.pages || pageNo === this.currentPageNo) {
+      return;
+    }
+    
     this.currentPageNo = pageNo;
-    this.searchEmployees(); // Her sayfa değişikliğinde listeyi güncelle
+    this.searchEmployees();
   }
 
-  
+  // Filter reset method
+  resetFilters() {
+    this.searchForm.reset({
+      quarryName: '',
+      sortDirection: 'asc',
+      jobName: '',
+      typeOfBlood: '',
+      nameSearch: '',
+      departmentName: ''
+    });
+    this.currentPageNo = 1;
+    this.searchEmployees();
+  }
+
+  // Export functionality (placeholder)
+  exportData() {
+    console.log('Export functionality to be implemented');
+    // Implement export logic here
+  }
 }

@@ -4,42 +4,72 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BaseComponent } from 'src/app/base/base.component';
-import { DynamicQuery, Filter } from 'src/app/contracts/dynamic-query';
-import { EmployeefilterByDynamic } from 'src/app/contracts/employee/employeeFilterByDynamic';
-import { EmployeeFilterList } from 'src/app/contracts/employee/employeeFilterList';
-import { SingleEmployee } from 'src/app/contracts/employee/single-employee';
-import { Job } from 'src/app/contracts/job/job';
-import { Quarry } from 'src/app/contracts/quarry/quarry';
-import { TypeOfBlood } from 'src/app/contracts/typeOfBlood';
-import { EmployeeService } from 'src/app/services/common/models/employee.service';
-import { JobService } from 'src/app/services/common/models/job.service';
-import { QuarryService } from 'src/app/services/common/models/quarry.service';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss'],
     standalone: true,
-    imports: []
+    imports: [CommonModule]
 })
 export class HomeComponent extends BaseComponent implements OnInit{
 
-
-  constructor(spinner:NgxSpinnerService,private router: Router) {
+  constructor(spinner: NgxSpinnerService, private router: Router) {
     super(spinner);
   }
 
   async ngOnInit() {
+    // Sayfa yüklendiğinde gerekli işlemler
+  }
   
-  
-}
-  
-  gotoEmployees(){
+  // Ana navigasyon fonksiyonları
+  gotoEmployees() {
     this.router.navigate(['/personeller']);
   }
 
-  gottoMachines() {
+  gotoMachines() {
     this.router.navigate(['/makinalar']);
   }
 
+  // Personel kısayolları
+  gotoEmployeeList() {
+    this.router.navigate(['/personeller']);
+  }
+
+  gotoEmployeeAdd() {
+    this.router.navigate(['/personeller/personel-ekle']);
+  }
+
+  gotoLeaveManagement() {
+    this.router.navigate(['/personeller/puantaj']);
+  }
+
+  /* gotoAttendance() {
+    this.router.navigate(['/puantaj']);
+  } */
+
+  gotoEmployeeReports() {
+    this.router.navigate(['/personel-raporlari']);
+  }
+
+  // Makina kısayolları
+  gotoMachineList() {
+    this.router.navigate(['/makinalar']);
+  }
+
+  gotoMachineAdd() {
+    this.router.navigate(['/makinalar/ekle']);
+  }
+
+  gotoMaintenance() {
+    this.router.navigate(['/bakim']);
+  }
+
+  gotoMachineReports() {
+    this.router.navigate(['/makina-raporlari']);
+  }
+
+  gotoInventory() {
+    this.router.navigate(['/envanter']);
+  }
 }

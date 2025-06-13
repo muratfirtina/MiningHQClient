@@ -70,11 +70,19 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
   employeeImages: ListImageFile;
-  typeOfBlood: TypeOfBlood[] = Object.values(TypeOfBlood)
-    .filter((value) => typeof value === 'string')
-    .map((value) => value as TypeOfBlood);
 
-  
+  // Kan grubu seçenekleri
+  bloodTypeOptions = [
+    { key: 'APositive', display: 'A Rh+' },
+    { key: 'ANegative', display: 'A Rh-' },
+    { key: 'BPositive', display: 'B Rh+' },
+    { key: 'BNegative', display: 'B Rh-' },
+    { key: 'ABPositive', display: 'AB Rh+' },
+    { key: 'ABNegative', display: 'AB Rh-' },
+    { key: 'OPositive', display: 'O Rh+' },
+    { key: 'ONegative', display: 'O Rh-' },
+  ];
+
   constructor(
     spinner: NgxSpinnerService,
     private toastr: ToastrService,
@@ -85,7 +93,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     private quarryService: QuarryService,
     private departmentService: DepartmentService,
     private fB: FormBuilder,
-    private dialogService:DialogService
+    private dialogService: DialogService
   ) {
     super(spinner);
 
@@ -104,10 +112,6 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       typeOfBlood: [''],
       address: [''],
     });
-
-    /* this.bloodTypeOptions = Object.entries(TypeOfBlood)
-      .filter(([key, value]) => typeof value === 'number') // Filter to only include the enum members, not reverse mappings
-      .map(([key, value]) => ({ name: key, value: value as TypeOfBlood })); */
   }
 
   ngOnInit(): void {
@@ -120,7 +124,6 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
     });
     this.getJobs();
     this.getQuarries();
-    this.typeOfBlood;
   }
 
   loadEmployeeDetails(employeeId: string) {
@@ -216,104 +219,558 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       });
   }
 
-  /* generatePDF() {
-    const content = this.pdfContent.nativeElement;
+  // Düzgün ve temiz PDF oluşturma fonksiyonu
+  // Employee Page Component'te bu helper method'ları ekleyin ve generatePDF'i güncelleyin
 
-    html2canvas(content).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('employee-details.pdf');
-    });
-  }
-  printPage() {
-    window.print();
-  } */
+  // ⭐ Helper method: Fotoğraf boyutlarını hesaplama
+  private async calculateImageDimensions(
+    base64Image: string
+  ): Promise<{ width: number; height: number } | null> {
+    return new Promise((resolve) => {
+      const tempImg = new Image();
 
-  generatePDF() {
-    const isConfirmed = window.confirm(
-      'Çalışan bilgilerini PDF olarak indirmek istediğinize emin misiniz?'
-    );
-    if (isConfirmed) {
-      let doc = new jsPDF();
-
-      const employeeData = {
-        name: this.employee.firstName + ' ' + this.employee.lastName,
-        job: this.employee.jobName,
-        birthDate: this.formatDate(this.employee.birthDate),
-        hireDate: this.formatDate(this.employee.hireDate),
-        quarry: this.employee.quarryName,
-        phone: this.employee.phone,
-        address: this.employee.address,
-        licenseType: this.employee.licenseType,
-        typeOfBlood: this.employee.typeOfBlood,
-        emergencyContact: this.employee.emergencyContact,
-        departureDate: this.formatDate(this.employee.departureDate),
+      tempImg.onload = () => {
+        resolve({
+          width: tempImg.width,
+          height: tempImg.height,
+        });
       };
 
-      doc.addFileToVFS('OpenSans-VariableFont_wdth,wght.ttf', openSansBase64);
-      doc.addFont(
-        'OpenSans-VariableFont_wdth,wght.ttf',
-        'openSansBase64',
-        'normal'
-      );
+      tempImg.onerror = () => {
+        console.error('❌ Image dimensions calculation failed');
+        resolve(null);
+      };
 
-      autoTable(doc, {
-        head: [[`${employeeData.name}`, '']],
-        body: [
-          ['Mesleği :', employeeData.job],
-          ['Doğum Tarihi :', employeeData.birthDate],
-          ['İşe Giriş Tarihi :', employeeData.hireDate],
-          ['Şantiye :', employeeData.quarry],
-          ['Telefon :', employeeData.phone],
-          ['Adres :', employeeData.address],
-          ['Ehliyet Tipi :', employeeData.licenseType],
-          ['Kan Grubu :', employeeData.typeOfBlood],
-          ['Acil Durumda İletişim :', employeeData.emergencyContact],
-          ['İşten Ayrılış Tarihi :', employeeData.departureDate],
-        ],
-        styles: {
-          font: 'openSansBase64',
-          fontSize: 10,
+      // Timeout ekle
+      setTimeout(() => {
+        console.warn('⏰ Image loading timeout');
+        resolve(null);
+      }, 3000);
+
+      tempImg.src = base64Image;
+    });
+  }
+
+  // ⭐ Helper method: Aspect ratio koruyan boyut hesaplama
+  private calculateFitDimensions(
+    originalWidth: number,
+    originalHeight: number,
+    containerWidth: number,
+    containerHeight: number
+  ): { width: number; height: number; x: number; y: number } {
+    const aspectRatio = originalWidth / originalHeight;
+    const containerAspectRatio = containerWidth / containerHeight;
+
+    let finalWidth = containerWidth;
+    let finalHeight = containerHeight;
+
+    if (aspectRatio > containerAspectRatio) {
+      // Fotoğraf daha geniş - genişliğe göre sığdır
+      finalHeight = containerWidth / aspectRatio;
+    } else {
+      // Fotoğraf daha dar - yüksekliğe göre sığdır
+      finalWidth = containerHeight * aspectRatio;
+    }
+
+    // Merkeze hizala
+    const x = (containerWidth - finalWidth) / 2;
+    const y = (containerHeight - finalHeight) / 2;
+
+    return {
+      width: finalWidth,
+      height: finalHeight,
+      x: x,
+      y: y,
+    };
+  }
+
+  // ⭐ Güncellenmiş generatePDF method'u
+  // generatePDF metodunun güncellenmiş versiyonu
+// generatePDF metodunun güncellenmiş versiyonu
+async generatePDF() {
+  const isConfirmed = window.confirm(
+    'Personel bilgi formunu PDF olarak indirmek istediğinize emin misiniz?'
+  );
+
+  if (!isConfirmed) return;
+
+  try {
+    this.showSpinner(SpinnerType.BallSpinClockwise);
+
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // ⭐ TÜRKÇE DESTEKLI PROFESYONEL FONT AYARLARI
+    // Inter font base64 string'i ekleyin (örnekte kısaltılmış)
+    const interFontBase64 = `ADD_INTER_FONT_BASE64_HERE`; // Bu kısmı Inter font base64 ile değiştirin
+    
+    // Alternatif olarak mevcut OpenSans fontunu kullan (zaten Türkçe destekli)
+    doc.addFileToVFS('OpenSans-VariableFont_wdth,wght.ttf', openSansBase64);
+    doc.addFont('OpenSans-VariableFont_wdth,wght.ttf', 'OpenSans', 'normal');
+    doc.addFont('OpenSans-VariableFont_wdth,wght.ttf', 'OpenSans', 'bold');
+    doc.setFont('OpenSans', 'normal');
+    
+    // **HEADER SECTION - Koyu mavi arka plan**
+    doc.setFillColor(41, 128, 185); // Daha koyu profesyonel mavi
+    doc.rect(0, 15, pageWidth, 35, 'F');
+
+    // **FORM TITLE**
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('OpenSans', 'bold');
+    doc.text('Personel Bilgi Formu', 20, 35);
+
+    // **COMPANY LOGO/NAME AREA**
+    doc.setFillColor(52, 152, 219); // Açık mavi ton
+    doc.rect(pageWidth - 80, 20, 70, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont('OpenSans', 'bold');
+    doc.text('FIRMA ADI', pageWidth - 75, 30);
+
+    let currentY = 65;
+
+    // **PHOTO SECTION - Sağ tarafta**
+    const photoWidth = 45;
+    const photoHeight = 55;
+    const photoX = pageWidth - photoWidth - 20;
+    const photoY = currentY;
+
+    // Fotoğraf çerçevesi - daha modern görünüm
+    doc.setFillColor(248, 249, 250);
+    doc.rect(photoX - 2, photoY - 2, photoWidth + 4, photoHeight + 4, 'F');
+    doc.setDrawColor(108, 117, 125);
+    doc.setLineWidth(0.8);
+    doc.rect(photoX - 2, photoY - 2, photoWidth + 4, photoHeight + 4, 'S');
+
+    // ⭐ Fotoğraf yükleme - aynı mantık
+    if (this.employee?.id) {
+      try {
+        console.log('🔄 Fotoğraf yükleniyor, Employee ID:', this.employee.id);
+
+        const photoData = await this.employeeService.getEmployeePhotoBase64(
+          this.employee.id
+        );
+
+        if (photoData && photoData.base64 && photoData.success) {
+          console.log('✅ Fotoğraf base64 alındı, boyut hesaplanıyor...');
+
+          const imageFormat = photoData.mimeType.includes('png')
+            ? 'PNG'
+            : 'JPEG';
+          const base64Image = `data:${photoData.mimeType};base64,${photoData.base64}`;
+
+          const dimensions = await this.calculateImageDimensions(base64Image);
+
+          if (dimensions) {
+            console.log('📐 Orijinal boyutlar:', dimensions);
+
+            const fitDimensions = this.calculateFitDimensions(
+              dimensions.width,
+              dimensions.height,
+              photoWidth,
+              photoHeight
+            );
+
+            console.log('📏 Hesaplanan fit boyutları:', fitDimensions);
+
+            doc.addImage(
+              base64Image,
+              imageFormat,
+              photoX + fitDimensions.x,
+              photoY + fitDimensions.y,
+              fitDimensions.width,
+              fitDimensions.height
+            );
+
+            console.log(
+              "✅ Fotoğraf başarıyla PDF'e eklendi (aspect ratio korundu)"
+            );
+            this.toastr.success("Fotoğraf PDF'e dahil edildi", '', {
+              timeOut: 2000,
+            });
+          } else {
+            console.warn(
+              '❌ Fotoğraf boyutları hesaplanamadı, placeholder kullanılıyor'
+            );
+            this.addPhotoPlaceholder(
+              doc,
+              photoX,
+              photoY,
+              photoWidth,
+              photoHeight
+            );
+          }
+        } else {
+          console.log('❌ Fotoğraf verisi alınamadı');
+          this.addPhotoPlaceholder(
+            doc,
+            photoX,
+            photoY,
+            photoWidth,
+            photoHeight
+          );
+        }
+      } catch (error) {
+        console.error('❌ Fotoğraf işleme hatası:', error);
+        this.addPhotoPlaceholder(
+          doc,
+          photoX,
+          photoY,
+          photoWidth,
+          photoHeight
+        );
+      }
+    } else {
+      console.log('❌ Employee ID bulunamadı');
+      this.addPhotoPlaceholder(doc, photoX, photoY, photoWidth, photoHeight);
+    }
+
+    // **MAIN INFO BOX DATA - Sol gri kutu için autoTable**
+    const mainInfoData = [
+      [
+        'Adı Soyadı',
+        `${this.employee.firstName || ''} ${this.employee.lastName || ''}`,
+      ],
+      ['TC Kimlik No', this.employee.id?.substring(0, 11) || '12345678901'],
+      [
+        'Doğum Tarihi',
+        this.formatDisplayDate(this.employee.birthDate) || '-',
+      ],
+      ['Görevi', this.employee.jobName || '-'],
+    ];
+
+    // Sol gri kutu - modern görünüm
+    doc.setFillColor(241, 243, 244);
+    const infoBoxWidth = 110;
+    const infoBoxHeight = 55;
+    const infoBoxX = 20;
+    doc.rect(infoBoxX, currentY, infoBoxWidth, infoBoxHeight, 'F');
+    doc.setDrawColor(173, 181, 189);
+    doc.setLineWidth(0.5);
+    doc.rect(infoBoxX, currentY, infoBoxWidth, infoBoxHeight, 'S');
+
+    // ⭐ autoTable ile sol kutu içeriği - OPENSANS FONT
+    autoTable(doc, {
+      startY: currentY + 5,
+      body: mainInfoData,
+      theme: 'plain',
+      styles: {
+        font: 'OpenSans', // Türkçe destekli profesyonel font
+        fontSize: 10,
+        cellPadding: 2,
+        textColor: [33, 37, 41], // Koyu gri
+      },
+      columnStyles: {
+        0: {
+          cellWidth: 30,
+          fontStyle: 'bold',
+          textColor: [0, 0, 0], // Tam siyah
+          valign: 'middle',
+          halign: 'left',
+          fontSize: 11, // Biraz daha büyük
+        },
+        1: {
+          cellWidth: 70,
+          textColor: [73, 80, 87],
+          valign: 'middle',
+          halign: 'left',
           fontStyle: 'normal',
         },
-        headStyles: {
-          font: 'openSansBase64',
+      },
+      margin: { left: infoBoxX + 5, right: 0 },
+      tableWidth: infoBoxWidth - 10,
+      showHead: false,
+    });
+
+    // Fotoğraf alanının bittiği yerden devam et
+    currentY = Math.max(
+      currentY + infoBoxHeight + 15,
+      photoY + photoHeight + 10
+    );
+
+    // ⭐ Detaylı bilgiler için autoTable - ADRES DÜZELTMESİ İLE
+    const detailInfoData = [
+      [' ', ' ', ' ', ' '],
+      
+      [
+        'Doğum Tarihi:',
+        this.formatDisplayDate(this.employee.birthDate) || '-',
+        'Cep Telefon:',
+        this.employee.phone || '-',
+      ],
+      //['Doğum Yeri:', '-', 'Ev Telefonu:', '-'],
+      ['İşe Giriş Tarihi:', this.formatDisplayDate(this.employee.hireDate) || '-', 'Lisans Türü:', this.employee.licenseType || '-'],
+      ['Departman:', this.employee.departmentName || '-','Kan Grubu:',this.getBloodTypeDisplay(this.employee.typeOfBlood) || '-'],
+      ['Acil Durum İletişim:', this.employee.emergencyContact || '-'],
+      // ⭐ ADRES İÇİN AYRI SATIR - TAM GÖRÜNÜR
+      [
+        'Adres:',
+        this.employee.address || '-',
+        '',
+        '',
+      ],
+    ];
+
+    autoTable(doc, {
+      startY: currentY,
+      body: detailInfoData,
+      theme: 'plain',
+      styles: {
+        font: 'OpenSans', // Türkçe destekli profesyonel font
+        fontSize: 10,
+        cellPadding: 3,
+        textColor: [33, 37, 41],
+        valign: 'middle',
+        halign: 'left',
+      },
+      columnStyles: {
+        0: {
           fontStyle: 'bold',
-          fontSize: 14,
-          halign: 'left',
-          fillColor: [255, 193, 7],
-          textColor: [0, 0, 0], // Başlık yazı rengi (beyaz)
+          cellWidth: 40, // Biraz genişlettik
+          fontSize: 11, // Başlık için büyük font
+          textColor: [0, 0, 0], // Tam siyah
         },
-        bodyStyles: {
-          fillColor: [255, 255, 255], // Satır arkaplan rengi (beyaz)
+        1: {
+          cellWidth: 55, // Genişlettik
+          fontSize: 10,
+          textColor: [73, 80, 87],
+          fontStyle: 'normal',
         },
-        theme: 'grid', // Tema seçimi (opsiyonel)
-        // Diğer özelleştirmeler...
-      });
-      const pdfBlob = doc.output('blob');
+        2: {
+          fontStyle: 'bold',
+          cellWidth: 40,
+          fontSize: 11, // Başlık için büyük font
+          textColor: [0, 0, 0], // Tam siyah
+        },
+        3: {
+          cellWidth: 55,
+          fontSize: 10,
+          textColor: [73, 80, 87],
+          fontStyle: 'normal',
+        },
+      },
+      // ⭐ Adres satırında özel davranış
+      willDrawCell: function (data) {
+        // Adres satırı (5. satır, index 5) için özel işlem
+        if (data.row.index === 5 && data.column.index === 1) {
+          // Adres çok uzunsa çok satırlı yap
+          const address = data.cell.raw as string;
+          if (address && address.length > 50) {
+            const words = address.split(' ');
+            const lines = [];
+            let currentLine = '';
+            
+            words.forEach(word => {
+              if ((currentLine + word).length > 45) {
+                lines.push(currentLine.trim());
+                currentLine = word + ' ';
+              } else {
+                currentLine += word + ' ';
+              }
+            });
+            
+            if (currentLine.trim()) {
+              lines.push(currentLine.trim());
+            }
+            
+            // İlk satırı yazdır
+            data.cell.text = [lines[0] || address];
+            
+            // Eğer birden fazla satır varsa, altına ekle
+            if (lines.length > 1) {
+              const doc = data.doc;
+              const remainingText = lines.slice(1).join('\n');
+              
+              doc.setFont('OpenSans', 'normal');
+              doc.setFontSize(9);
+              doc.setTextColor(73, 80, 87);
+              
+              const textLines = doc.splitTextToSize(remainingText, data.cell.width - 6);
+              let yPos = data.cell.y + data.cell.height - 2;
+              
+              textLines.forEach((line: string, index: number) => {
+                if (index < 2) { // Maksimum 2 ek satır
+                  doc.text(line, data.cell.x + 3, yPos);
+                  yPos += 4;
+                }
+              });
+            }
+          }
+        }
+        return true;
+      },
+      margin: { left: 20, right: 20 },
+    });
 
-      // Blob için bir URL oluştur
-      const pdfUrl = URL.createObjectURL(pdfBlob);
+    // Tablo sonrası Y pozisyonu
+    const finalY = (doc as any).lastAutoTable.finalY || currentY + 80;
 
-      // Yeni sekmede PDF'i aç
-      window.open(pdfUrl, '_blank');
-    } else {
-      return;
+    // **FOOTER - Modern tasarım**
+    doc.setFont('OpenSans', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(108, 117, 125); // Bootstrap secondary color
+    const currentDate = new Date().toLocaleDateString('tr-TR');
+    doc.text(`Düzenleme Tarihi: ${currentDate}`, 20, pageHeight - 10);
+    doc.text('Sayfa 1/1', pageWidth / 2, pageHeight - 10, {
+      align: 'center',
+    });
+
+    // PDF'i yeni sekmede aç
+    const pdfBlob = doc.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    window.open(pdfUrl, '_blank');
+
+    this.toastr.success('PDF başarıyla oluşturuldu!');
+  } catch (error) {
+    console.error('PDF oluşturma hatası:', error);
+    this.toastr.error('PDF oluşturulurken bir hata oluştu.');
+  } finally {
+    this.hideSpinner(SpinnerType.BallSpinClockwise);
+  }
+}
+
+// Güncellenmiş placeholder method'u - OpenSans font ile
+private addPhotoPlaceholder(
+  doc: jsPDF,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+) {
+  doc.setFont('OpenSans', 'normal');
+  doc.setTextColor(108, 117, 125);
+  doc.setFontSize(8);
+  doc.text('FOTOĞRAF', x + width / 2, y + height / 2 - 2, {
+    align: 'center',
+  });
+  doc.text('YOK', x + width / 2, y + height / 2 + 4, { align: 'center' });
+}
+
+  // Güvenli fotoğraf yükleme fonksiyonu
+  private async getImageAsBase64Safe(imageUrl: string): Promise<string | null> {
+    try {
+      // CORS sorunlarını önlemek için alternatif yöntemler
+
+      // Yöntem 1: Doğrudan fetch (eğer CORS izni varsa)
+      try {
+        const response = await fetch(imageUrl, { mode: 'cors' });
+        if (response.ok) {
+          const blob = await response.blob();
+          return await this.blobToBase64(blob);
+        }
+      } catch (corsError) {
+        console.warn('CORS fetch başarısız, alternatif yöntem deneniyor...');
+      }
+
+      // Yöntem 2: Proxy URL kullanma (eğer mevcutsa)
+      // const proxyUrl = `api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
+
+      // Yöntem 3: Canvas kullanarak (sadece same-origin için)
+      return await this.getImageViaCanvas(imageUrl);
+    } catch (error) {
+      console.error('Fotoğraf yüklenirken hata:', error);
+      return null;
     }
+  }
+
+  // Canvas kullanarak fotoğraf yükleme
+  private async getImageViaCanvas(imageUrl: string): Promise<string | null> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // CORS denemesi
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          ctx?.drawImage(img, 0, 0);
+
+          const base64 = canvas.toDataURL('image/jpeg', 0.8);
+          const base64Data = base64.split(',')[1];
+          resolve(base64Data);
+        } catch (error) {
+          console.warn('Canvas çizimi başarısız:', error);
+          resolve(null);
+        }
+      };
+
+      img.onerror = () => {
+        console.warn('Fotoğraf yüklenemedi:', imageUrl);
+        resolve(null);
+      };
+
+      img.src = imageUrl;
+
+      // Timeout ekle
+      setTimeout(() => resolve(null), 5000);
+    });
+  }
+
+  // Blob'u Base64'e çevirme
+  private async blobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result as string;
+        const base64Data = base64.split(',')[1];
+        resolve(base64Data);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  // Kan grubu display helper fonksiyonu
+  getBloodTypeDisplay(bloodType: string): string {
+    if (!bloodType) return '';
+
+    const bloodTypeMap: { [key: string]: string } = {
+      APositive: 'A Rh+',
+      ANegative: 'A Rh-',
+      BPositive: 'B Rh+',
+      BNegative: 'B Rh-',
+      ABPositive: 'AB Rh+',
+      ABNegative: 'AB Rh-',
+      OPositive: 'O Rh+',
+      ONegative: 'O Rh-',
+      '1': 'A Rh+',
+      '2': 'A Rh-',
+      '3': 'B Rh+',
+      '4': 'B Rh-',
+      '5': 'AB Rh+',
+      '6': 'AB Rh-',
+      '7': 'O Rh+',
+      '8': 'O Rh-',
+    };
+    return bloodTypeMap[bloodType] || bloodType;
   }
 
   formatDate(date: Date | string): string {
     if (!date) return null;
 
     const newDate = new Date(date);
-    const year = newDate.getUTCFullYear(); // UTC yılı
-    const month = `${newDate.getUTCMonth() + 1}`.padStart(2, '0'); // UTC ayı, getUTCMonth 0'dan başlar
-    const day = `${newDate.getUTCDate() + 1}`.padStart(2, '0'); // UTC günü
-    return `${year}-${month}-${day}`; // ISO 8601 formatı: YYYY-MM-DD
+    const year = newDate.getUTCFullYear();
+    const month = `${newDate.getUTCMonth() + 1}`.padStart(2, '0');
+    const day = `${newDate.getUTCDate() + 1}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // Gösterim için tarih formatı
+  formatDisplayDate(date: Date | string): string {
+    if (!date) return '';
+
+    try {
+      const newDate = new Date(date);
+      return newDate.toLocaleDateString('tr-TR');
+    } catch (error) {
+      return '';
+    }
   }
 
   selectedFiles: FileList = null;
@@ -323,63 +780,81 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   }
 
   uploadFile(): void {
-    if (!this.selectedFiles) {
-      this.toastr.error('Lütfen bir dosya seçin.');
+    if (!this.selectedFiles || this.selectedFiles.length === 0) {
+      this.toastr.error('Lütfen bir profil fotoğrafı seçin.');
       return;
     }
-  
-    // Çalışanın tam adını oluştur
-    const path = `${this.employee.firstName} ${this.employee.lastName}`;
-    const category = "employee-images"
-    
-    // Örneğin employeeId'yi 'this.employee.id' üzerinden alıyoruz
+
+    const folderPath = `${this.employee.firstName}${this.employee.lastName}`;
+    const category = 'employee-images/photo';
+
     const employeeId = this.employee.id;
     if (!employeeId) {
       this.toastr.error('Çalışan ID bilgisi bulunamadı.');
       return;
     }
-  
-    // uploadImage metodunu çağırırken employeeFullName parametresini de gönder
-    this.employeeService.uploadImage(category,employeeId,path, this.selectedFiles,
+
+    const profilePhoto = this.selectedFiles[0];
+
+    this.employeeService.uploadImageForEmployee(
+      category,
+      employeeId,
+      folderPath,
+      profilePhoto,
       () => {
-        this.toastr.success('Dosya başarıyla yüklendi.');
+        this.toastr.success('Profil fotoğrafı başarıyla yüklendi.');
+        this.getEmployeePhoto(this.employee.id);
       },
       (errorMessage: string) => {
-        this.toastr.error(`Dosya yükleme başarısız: ${errorMessage}`);
+        this.toastr.error(
+          `Profil fotoğrafı yükleme başarısız: ${errorMessage}`
+        );
       }
     );
   }
 
   getEmployeePhoto(employeeId: string): void {
-    this.employeeService.getEmployeePhoto(employeeId, () => {
-    }).then((response ) => {
-      this.employeeImages = response;
+    this.employeeService
+      .getEmployeePhoto(employeeId, () => {})
+      .then((response) => {
+        this.employeeImages = response;
+      });
+  }
+
+  addEmployeeFiles(employeeId: string): void {
+    this.dialogService.openDialog({
+      componentType: EmployeFileDialogComponent,
+      data: employeeId,
+      options: { width: '1000px', height: '500px' },
+      afterClosed: () => {
+        this.loadEmployeeDetails(employeeId);
+      },
     });
   }
 
-  addEmployeeFiles(employeeId:string): void {
-    const dialogRef = this.dialogService.openDialog({componentType:EmployeFileDialogComponent, data:employeeId,
-    options:{width:'1000px',height:'500px'}});
-    
+  addEmployeePhoto(employeeId: string): void {
+    this.dialogService.openDialog({
+      componentType: EmployePhotoDialogComponent,
+      data: employeeId,
+      options: { width: '500px', height: '500px' },
+      afterClosed: () => {
+        this.getEmployeePhoto(employeeId);
+      },
+    });
   }
 
-  addEmployeePhoto(employeeId:string): void {
-  const dialogRef = this.dialogService.openDialog({componentType:EmployePhotoDialogComponent, data:employeeId,
-  options:{width:'500px',height:'500px'}});
-    
-  }
-
-  goToEmployeFiles(employeeId:string): void {
-    this.router.navigate(['personeller/personel/personel-dosyalar/',employeeId]);
+  goToEmployeFiles(employeeId: string): void {
+    this.router.navigate([
+      'personeller/personel/personel-dosyalar/',
+      employeeId,
+    ]);
   }
 
   goBack() {
     if (this.employee && this.employee.id) {
-      this.router.navigate([`/personeller/personel-listesi`]); // Personel ID'sini kullanarak URL oluştur
+      this.router.navigate([`/personeller`]);
     } else {
-      // Geriye düşerse başka bir rotaya yönlendirme veya hata yönetimi
-      this.router.navigate(['/personeller']); // Varsayılan geri rotası
+      this.router.navigate(['/personeller']);
     }
   }
-  
 }

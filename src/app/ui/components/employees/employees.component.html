@@ -1,122 +1,330 @@
-<div class="row" id="main">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-
-    <button type="button" class="btn btn-warning" id="emlpoyeeList" (click)="gotoEmployeeList()"><svg
-        xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-people-fill"
-        viewBox="0 0 16 16">
-        <path
-          d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-      </svg>Personel Listesi</button>
-
-    <button type="button" class="btn btn-warning" id="leaveSettings" (click)="navigateToLeave()">
-      <svg width="50" height="50" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
-        <title>schedule-calendar</title>
-       
-        <g>
-         <title>Layer 1</title>
-         <path stroke="null" fill="#003353" id="svg_1" d="m40.70968,45.88l-36.49937,0a4.2253,4.21164 0 0 1 -4.21031,-4.1967l0,-33.26375a4.2253,4.21164 0 0 1 4.21031,-4.19671l3.88443,0l0,5.16374a4.6261,4.61115 0 0 0 1.7493,3.58811a5.45018,5.43257 0 0 0 6.85862,0a4.6261,4.61115 0 0 0 1.7493,-3.58811l0,-5.16374l7.84377,0l0,5.16374a4.6261,4.61115 0 0 0 1.74931,3.58811a5.45018,5.43257 0 0 0 6.85861,0a4.6261,4.61115 0 0 0 1.74931,-3.58811l0,-5.16374l4.05673,0a4.23279,4.21911 0 0 1 4.21032,4.19671l0,33.26375a4.22155,4.20791 0 0 1 -4.21032,4.1967zm-9.40203,-24.68365l6.03079,0a0.77539,0.77288 0 0 1 0.77164,0.74674l0,5.00319a0.77539,0.77288 0 0 1 -0.77164,0.74675l-6.03079,0a0.77164,0.76915 0 0 1 -0.74917,-0.74675l0,-4.98452a0.76789,0.76541 0 0 1 0.74917,-0.74675l0,-0.01867zm-11.80311,0l6.03453,0a0.77164,0.76915 0 0 1 0.74916,0.74674l0,5.00319a0.77539,0.77288 0 0 1 -0.74916,0.74675l-6.03453,0a0.77164,0.76915 0 0 1 -0.74917,-0.74675l0,-4.98452a0.77164,0.76915 0 0 1 0.74917,-0.74675l0,-0.01867zm-11.92672,0l6.03453,0a0.77164,0.76915 0 0 1 0.74917,0.74674l0,5.00319a0.77539,0.77288 0 0 1 -0.74917,0.74675l-6.03453,0a0.77164,0.76915 0 0 1 -0.76789,-0.74675l0,-4.98452a0.76789,0.76541 0 0 1 0.76789,-0.74675l0,-0.01867zm23.72984,10.63738l6.03079,0a0.77539,0.77288 0 0 1 0.77164,0.74674l0,5.00319a0.77164,0.76915 0 0 1 -0.77164,0.76541l-6.03079,0a0.77164,0.76915 0 0 1 -0.74917,-0.76541l0,-4.98452a0.77164,0.76915 0 0 1 0.74917,-0.74675l0,-0.01867zm-11.80311,0l6.03453,0a0.77164,0.76915 0 0 1 0.74916,0.74674l0,5.00319a0.77164,0.76915 0 0 1 -0.74916,0.76541l-6.03453,0a0.77164,0.76915 0 0 1 -0.74917,-0.76541l0,-4.98452a0.77539,0.77288 0 0 1 0.74917,-0.74675l0,-0.01867zm-11.92672,0l6.03453,0a0.77164,0.76915 0 0 1 0.74917,0.74674l0,5.00319a0.77164,0.76915 0 0 1 -0.74917,0.76541l-6.03453,0a0.77164,0.76915 0 0 1 -0.76789,-0.76541l0,-4.98452a0.77164,0.76915 0 0 1 0.76789,-0.74675l0,-0.01867zm21.86441,-30.17223c0,-0.91476 0.899,-1.66151 2.02275,-1.66151s2.03399,0.74674 2.03399,1.66151l0,7.72508c0,0.9185 -0.90649,1.66151 -2.03399,1.66151s-2.03024,-0.74674 -2.03024,-1.66151l0,-7.72508l0.00749,0zm-18.20473,0c0,-0.91476 0.91398,-1.66151 2.03773,-1.66151s2.03024,0.74674 2.03024,1.66151l0,7.72508c0,0.9185 -0.90649,1.66151 -2.03024,1.66151s-2.03773,-0.74301 -2.03773,-1.66151l0,-7.72508zm-9.88899,14.71461l0,24.85914a3.32255,3.31181 0 0 0 3.31131,3.30061l35.58539,0a3.32255,3.31181 0 0 0 3.31506,-3.30061l0,-24.85914l-42.21176,0z"/>
-        </g>
-       </svg>Puantaj İşemleri</button>
-
-    <button type="button" class="btn btn-warning" id="employeeCreate" (click)="gottoEmployeeAdd()"><svg
-        xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-person-plus"
-        viewBox="0 0 16 16">
-        <path
-          d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-        <path fill-rule="evenodd"
-          d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
-      </svg>Personel Kayıt</button>
+<div class="modern-employee-list-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-users"></i>
+          Personel Yönetimi
+        </h1>
+        <p class="page-subtitle">Personel bilgilerini görüntüle, filtrele ve yönet</p>
+      </div>
+      <div class="header-actions">
+        <div class="action-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{employees.length}}</span>
+            <span class="stat-label">Personel</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-md-2"></div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <div class="container-custom">
+      <div class="action-buttons">
+        
+        <!-- <button type="button" 
+                class="action-btn primary" 
+                (click)="gotoEmployeeList()">
+          <div class="btn-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Personel Listesi</span>
+            <span class="btn-subtitle">Tüm personelleri görüntüle</span>
+          </div>
+        </button> -->
+
+        <button type="button" 
+                class="action-btn secondary" 
+                (click)="navigateToLeave()">
+          <div class="btn-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Puantaj İşlemleri</span>
+            <span class="btn-subtitle">İzin ve puantaj takibi</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn accent" 
+                (click)="gottoEmployeeAdd()">
+          <div class="btn-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Personel Kayıt</span>
+            <span class="btn-subtitle">Yeni personel ekle</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+      <div class="content-layout">
+        
+        <!-- Filters Sidebar -->
+        <div class="filters-sidebar">
+          <div class="filter-card">
+            <div class="filter-header">
+              <h3>
+                <i class="fas fa-filter"></i>
+                Filtreler
+              </h3>
+              <button class="clear-filters" type="button" (click)="searchForm.reset(); searchEmployees()">
+                <i class="fas fa-times"></i>
+                Temizle
+              </button>
+            </div>
+            
+            <form [formGroup]="searchForm" (ngSubmit)="searchEmployees()" class="filter-form">
+              
+              <!-- Name Search -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-search"></i>
+                  Ad veya Soyad Ara
+                </label>
+                <input type="text" 
+                       id="nameSearch" 
+                       formControlName="nameSearch" 
+                       class="filter-input"
+                       placeholder="Personel adı yazın..."
+                       appUppercaseinput>
+              </div>
+
+              <!-- Department Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-building"></i>
+                  Departman
+                </label>
+                <select formControlName="departmentName" class="filter-select">
+                  <option value="">Tüm Departmanlar</option>
+                  <option *ngFor="let department of departments" [value]="department.name">
+                    {{department.name}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Job Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-briefcase"></i>
+                  Meslek
+                </label>
+                <select formControlName="jobName" class="filter-select">
+                  <option value="">Tüm Meslekler</option>
+                  <option *ngFor="let job of jobs" [value]="job.name">
+                    {{job.name}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Quarry Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Ocak
+                </label>
+                <select formControlName="quarryName" class="filter-select">
+                  <option value="">Tüm Ocaklar</option>
+                  <option *ngFor="let quarry of quarries" [value]="quarry.name">
+                    {{quarry.name}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Blood Type Filter -->
+              <div class="filter-group">
+  <label class="filter-label">
+    <i class="fas fa-tint"></i>
+    Kan Grubu
+  </label>
+  <select formControlName="typeOfBlood" class="filter-select">
+    <option value="">Tüm Kan Grupları</option>
+    <option *ngFor="let option of bloodTypeOptions" [value]="option.key">
+      {{option.display}}
+    </option>
+  </select>
 </div>
 
-<div class="filter-container">
-  <div class="col-md-12">
-    <div class="col-md-1"></div>
-    <div class="col-md-2">
-      <form [formGroup]="searchForm" (ngSubmit)="searchEmployees()">
+              <!-- Sort Direction -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-sort"></i>
+                  Sıralama
+                </label>
+                <select formControlName="sortDirection" class="filter-select">
+                  <option value="asc">A'dan Z'ye</option>
+                  <option value="desc">Z'den A'ya</option>
+                </select>
+              </div>
 
-        <div class="form-group">
-          <label for="departmentName">Departman:</label>
-          <select type="text" id="departmentName" formControlName="departmentName" class="form-select">
-            <option value="">Tümü</option>
-            <option *ngFor="let department of departments" [value]="department.name">{{ department.name }}</option>
-          </select>
-        </div>
+              <button type="submit" class="filter-submit-btn">
+                <i class="fas fa-search"></i>
+                Filtrele
+              </button>
 
-        <div class="form-group">
-          <label for="jobName">Mesleği:</label>
-          <select type="text" id="jobName" formControlName="jobName" class="form-select">
-            <option value="">Tümü</option>
-            <option *ngFor="let job of jobs" [value]="job.name">{{ job.name }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="quarryName">Ocak:</label>
-          <select type="text" id="quarryName" formControlName="quarryName" class="form-select">
-            <option value="">Tümü</option>
-            <option *ngFor="let quarry of quarries" [value]="quarry.name">{{ quarry.name }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="typeOfBlood">Kan Grubu:</label>
-          <select id="typeOfBlood" formControlName="typeOfBlood" class="form-select">
-            <option value="">Tümü</option>
-            <option *ngFor="let bloodType of typeOfBlood" [value]="bloodType">{{ bloodType }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="nameSearch">Ad veya Soyad Ara</label>
-          <input type="text" id="nameSearch" formControlName="nameSearch" class="form-control" placeholder="Adı veya Soyadı" appUppercaseinput>
+            </form>
+          </div>
         </div>
 
-        <button type="submit" class="btn">Ara</button>
-      </form>
+        <!-- Employee Table -->
+        <div class="table-section">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">
+                <h3>Personel Listesi</h3>
+                <span class="result-count">{{employees.length}} personel bulundu</span>
+              </div>
+              <div class="table-actions">
+                <button class="table-action-btn" type="button">
+                  <i class="fas fa-download"></i>
+                  Dışa Aktar
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-user"></i>
+                        Adı Soyadı
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-briefcase"></i>
+                        Görevi
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Çalıştığı Ocak
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-tint"></i>
+                        Kan Grubu
+                      </div>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-cog"></i>
+                        İşlemler
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let employee of employees; trackBy: trackByEmployeeId" 
+                      class="employee-row"
+                      (click)="goToEmployeePage(employee.id)">
+                    <td>
+                      <div class="employee-info">
+                        <div class="employee-avatar">
+                          <i class="fas fa-user"></i>
+                        </div>
+                        <div class="employee-details">
+                          <span class="employee-name">{{employee.firstName}} {{employee.lastName}}</span>
+                          <span class="employee-meta">ID: {{employee.id.substring(0, 8)}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="job-badge">{{employee.jobName}}</span>
+                    </td>
+                    <td>
+                      <div class="quarry-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{employee.quarryName}}
+                      </div>
+                    </td>
+                    <td>
+  <span class="blood-type-badge">{{employee.typeOfBlood | bloodTypeDisplay}}</span>
+</td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-icon-btn view" 
+                                (click)="$event.stopPropagation(); goToEmployeePage(employee.id)"
+                                title="Görüntüle">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Empty State -->
+              <div *ngIf="employees.length === 0" class="empty-state">
+                <div class="empty-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <h3>Personel bulunamadı</h3>
+                <p>Arama kriterlerinize uygun personel bulunamadı. Filtreleri kontrol edin.</p>
+                <button class="empty-action-btn" (click)="searchForm.reset(); searchEmployees()">
+                  <i class="fas fa-refresh"></i>
+                  Filtreleri Temizle
+                </button>
+              </div>
+            </div>
 
+            <!-- Pagination -->
+            <div class="pagination-section" *ngIf="pageEmployee && pageEmployee.length">
+              <div class="pagination-info">
+                Sayfa {{currentPageNo}} / {{pages}} ({{employees.length}} sonuç)
+              </div>
+              
+              <nav class="pagination-nav">
+                <ul class="pagination">
+                  <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                    <a class="page-link" (click)="changePage(1)">
+                      <i class="fas fa-angle-double-left"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                    <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                      <i class="fas fa-angle-left"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" 
+                      *ngFor="let pageNo of pageList" 
+                      [class.active]="pageNo === currentPageNo">
+                    <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                    <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                      <i class="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                    <a class="page-link" (click)="changePage(pages)">
+                      <i class="fas fa-angle-double-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="col-md-6" style="margin-top: 24px;">
-      <table class="table table-striped" style="border: 1px; text-align: center;">
-        <thead>
-          <tr class="table-warning">
-            <th>Adı Soyadı</th>
-            <th>Görevi</th>
-            <th>Çalıştığı Ocak</th>
-            <!-- Diğer kolon başlıkları -->
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let employee of employees" (click)="goToEmployeePage(employee.id)">
-            <td>{{ employee.firstName }} {{ employee.lastName }}</td>
-            <td>{{ employee.jobName}}</td>
-            <td>{{ employee.quarryName }}</td>
-            <!-- Diğer kolon değerleri -->
-          </tr>
-        </tbody>
-      </table>
-      <div>
-        <!-- Pagination for Entitled Leaves could go here -->
-        <nav aria-label="Page navigation example" *ngIf="pageEmployee && pageEmployee.length">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                    <a class="page-link" (click)="changePage(1)">&laquo;</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                    <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
-                </li>
-                <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
-                    <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                    <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                    <a class="page-link" (click)="changePage(pages)">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    </div>
-    <div class="col-md-1"></div>
   </div>
+
 </div>

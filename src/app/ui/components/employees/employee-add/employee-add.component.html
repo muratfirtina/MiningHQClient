@@ -1,94 +1,234 @@
-<div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12" style="display: grid;">
-          <h2 style="align-self: center; justify-self: center; margin-bottom: 50px;">Yeni Personel Kayıt</h2>
-        </div>
-        <div class="col-md-11">
-          <form [formGroup]="employeeForm" (ngSubmit)="addEmployee(employeeForm.value)">
-            <div class="row form-group">
-              <label for="firstName" class="col-md-2 control-label">Adı:</label>
-              <div class="col-md-4">
-                <input type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Adı" appUppercaseinput>
-              </div>
+<div class="modern-employee-add-page">
   
-              <label for="lastName" class="col-md-2 control-label">Soyadı:</label>
-              <div class="col-md-4">
-                <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Soyadı" appUppercaseinput>
-              </div>
-            </div>
-  
-            <div class="row form-group">
-              <label for="jobName" class="col-md-2 control-label">Mesleği:</label>
-              <div class="col-md-4">
-                <select id="jobName" class="form-select" formControlName="jobName" required>
-                  <option *ngFor="let job of jobs" [value]="job.name">{{ job.name }}</option>
-                </select>
-              </div>
-  
-              <label for="quarryName" class="col-md-2 control-label">Ocak:</label>
-              <div class="col-md-4">
-                <select id="quarryName" class="form-select" formControlName="quarryName" required>
-                  <option *ngFor="let quarry of quarries" [value]="quarry.name">{{ quarry.name }}</option>
-                </select>
-              </div>
-            </div>
-  
-            <div class="row form-group">
-              <label for="birthDate" class="col-md-2 control-label">Doğum Tarihi:</label>
-              <div class="col-md-4">
-                <input type="date" class="form-control" id="birthDate" formControlName="birthDate">
-              </div>
-  
-              <label for="hireDate" class="col-md-2 control-label">İşe Giriş Tarihi:</label>
-              <div class="col-md-4">
-                <input type="date" class="form-control" id="hireDate" formControlName="hireDate">
-              </div>
-            </div>
-
-            <div class="row form-group">
-              <label for="phone" class="col-md-2 control-label">Telefon:</label>
-              <div class="col-md-4">
-                <input type="text" class="form-control" id="phone" formControlName="phone" placeholder="Telefon">
-              </div>
-  
-              <label for="emergencyContact" class="col-md-2 control-label">Acil Durum İletişim:</label>              
-              <div class="col-md-4">
-                <input type="text" class="form-control" id="emergencyContact" formControlName="emergencyContact" placeholder="Telefon">
-              </div>
-            </div>
-
-            <!-- <div class="row form-group">
-              <label for="licenseType" class="col-md-2 control-label">Ehliyet Tipi:</label>
-              <div class="col-md-4">
-                <select id="licenseType" class="form-control" formControlName="licenseType" required>
-                    <option *ngFor="let licenseType of licenseTypes" [value]="licenseType.name">{{ licenseType.name }}</option>
-                  </select>
-              </div>
-  
-              <label for="typeOfBlood" class="col-md-2 control-label">Adres:</label>
-              <div class="col-md-4">
-                <select id="typeOfBlood" class="form-control" formControlName="typeOfBlood" required>
-                    <option *ngFor="let bloodType of bloodTypes" [value]="bloodType.name">{{ bloodType.name }}</option>
-                  </select>
-              </div>
-            </div> -->
-
-            <div class="row form-group">
-              <label for="address" class="col-md-2 control-label">Ev Adresi:</label>
-              <div class="col-md-10">
-                <textarea class="form-control" id="address" formControlName="address" placeholder="Adres"></textarea>
-              </div>
-            </div>
-  
-            <div class="row form-group">
-              <div class="col-md-10">
-                <button type="submit" class="btn btn-warning">Kaydet</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-user-plus"></i>
+        Yeni Personel Kayıt
+      </h1>
+      <p class="page-subtitle">Yeni personel bilgilerini girin ve sisteme kaydedin</p>
     </div>
   </div>
-  
+
+  <div class="container-custom">
+    
+    <div class="main-content">
+      <div class="form-section">
+        
+        <div class="form-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fas fa-user-edit"></i>
+              <h3>Personel Bilgileri</h3>
+            </div>
+            <p class="card-subtitle">Lütfen tüm alanları eksiksiz doldurun</p>
+          </div>
+          
+          <form [formGroup]="employeeForm" 
+                (ngSubmit)="addEmployee(employeeForm.value)" 
+                class="modern-form">
+            
+            <!-- Kişisel Bilgiler -->
+            <div class="form-section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-user"></i>
+                Kişisel Bilgiler
+              </div>
+              <div class="divider-line"></div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-user"></i>
+                  Adı
+                </label>
+                <input type="text" 
+                       formControlName="firstName"
+                       class="form-input"
+                       placeholder="Personel adını girin"
+                       appUppercaseinput
+                       required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-user"></i>
+                  Soyadı
+                </label>
+                <input type="text" 
+                       formControlName="lastName"
+                       class="form-input"
+                       placeholder="Personel soyadını girin"
+                       appUppercaseinput
+                       required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-birthday-cake"></i>
+                  Doğum Tarihi
+                </label>
+                <input type="date" 
+                       formControlName="birthDate"
+                       class="form-input"
+                       required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-phone"></i>
+                  Telefon
+                </label>
+                <input type="tel" 
+                       formControlName="phone"
+                       class="form-input"
+                       placeholder="0555 123 45 67"
+                       required>
+              </div>
+            </div>
+
+            <div class="form-group form-full">
+              <label class="form-label">
+                <i class="fas fa-home"></i>
+                Ev Adresi
+              </label>
+              <textarea formControlName="address"
+                        class="form-textarea"
+                        placeholder="Tam adres bilgisini girin"
+                        required></textarea>
+            </div>
+
+            <!-- İş Bilgileri -->
+            <div class="form-section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-briefcase"></i>
+                İş Bilgileri
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-briefcase"></i>
+                  Meslek
+                </label>
+                <select formControlName="jobName" class="form-select" required>
+                  <option value="">Meslek seçin</option>
+                  <option *ngFor="let job of jobs" [value]="job.name">
+                    {{job.name}}
+                  </option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Çalıştığı Ocak
+                </label>
+                <select formControlName="quarryName" class="form-select" required>
+                  <option value="">Ocak seçin</option>
+                  <option *ngFor="let quarry of quarries" [value]="quarry.name">
+                    {{quarry.name}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-calendar-plus"></i>
+                  İşe Giriş Tarihi
+                </label>
+                <input type="date" 
+                       formControlName="hireDate"
+                       class="form-input"
+                       required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-phone-alt"></i>
+                  Acil Durum İletişim
+                </label>
+                <input type="tel" 
+                       formControlName="emergencyContact"
+                       class="form-input"
+                       placeholder="0555 987 65 43"
+                       required>
+              </div>
+            </div>
+
+            <!-- İsteğe Bağlı Alanlar (Comment olarak bırakılan alanlar) -->
+            <div class="form-section-divider" style="display: none;">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-id-card"></i>
+                Ek Bilgiler
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <!-- Bu alanlar component'te comment olduğu için gizli bırakıyorum -->
+            <div style="display: none;">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-id-card"></i>
+                    Ehliyet Tipi
+                  </label>
+                  <input type="text" 
+                         formControlName="licenseType"
+                         class="form-input"
+                         placeholder="Ehliyet tipi">
+                </div>
+                
+                <div class="form-group">
+  <label for="typeOfBlood" class="form-label">
+    <i class="fas fa-tint"></i>
+    Kan Grubu
+  </label>
+  <select id="typeOfBlood" 
+          formControlName="typeOfBlood" 
+          class="form-select">
+    <option value="">Kan grubu seçiniz</option>
+    <option *ngFor="let option of bloodTypeOptions" [value]="option.key">
+      {{option.display}}
+    </option>
+  </select>
+</div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="button" 
+                      class="action-btn secondary"
+                      (click)="router.navigate(['/personeller'])">
+                <i class="fas fa-times"></i>
+                İptal
+              </button>
+              <button type="submit" 
+                      class="action-btn primary"
+                      [disabled]="!employeeForm.valid">
+                <i class="fas fa-save"></i>
+                Kaydet
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

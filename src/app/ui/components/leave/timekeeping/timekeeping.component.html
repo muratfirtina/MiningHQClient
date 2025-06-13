@@ -1,105 +1,237 @@
-<div class="row">
-  <div class="col-md-12">
-    <div style="text-align: center; margin-top: 50px;">
-      <h2>Personel Puantaj</h2>
-      <div *ngIf="anniversaries.length > 0" class="alert alert-warning" role="alert" style="margin-top: 30px;">
-        <h3>Dikkat</h3>
-        <ul>
-          <li *ngFor="let anniversary of anniversaries">
-            {{anniversary.message}}
-          </li>
-          Yıllık İzin Girişi Yapayı Unutmayın! Yıllık İzin Girişi yapmak için <a
-            [routerLink]="['/personeller/puantaj/izinislemleri']">tıklayınız</a>
-        </ul>
+<div class="modern-timekeeping-management-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-calendar-check"></i>
+          Puantaj Yönetimi
+        </h1>
+        <p class="page-subtitle">Personel devam durumlarını takip edin ve yönetin</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{items.length}}</span>
+            <span class="stat-label">Toplam Personel</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{months[selectedMonth-1]?.name}}</span>
+            <span class="stat-label">{{selectedYear}}</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{days?.length || 0}}</span>
+            <span class="stat-label">Gün</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom">
+    
+    <!-- Anniversary Alert -->
+    <div class="anniversary-alert" *ngIf="anniversaries.length > 0">
+      <div class="alert-header">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Dikkat! İşe Giriş Yıldönümü</h3>
+      </div>
+      <ul class="alert-list">
+        <li *ngFor="let anniversary of anniversaries">
+          {{anniversary.message}}
+        </li>
+      </ul>
+      <a [routerLink]="['/personeller/puantaj/izinislemleri']" class="alert-link">
+        <i class="fas fa-calendar-plus"></i>
+        Yıllık İzin Girişi Yap
+      </a>
+      <p style="margin-top: 1rem; color: #1f2937; font-weight: 600;">
+        Yıllık İzin Girişi Yapmayı Unutmayın!
+      </p>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls-section">
+      <div class="controls-grid">
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" 
+                 class="search-input" 
+                 placeholder="Personel ara..." 
+                 (input)="searchEmployees($event)">
+        </div>
+        <select class="date-select" 
+                [(ngModel)]="selectedMonth" 
+                (change)="changeMonthOrYear(selectedYear, selectedMonth)">
+          <option *ngFor="let month of months" [value]="month.value">
+            {{month.name}}
+          </option>
+        </select>
+        <select class="date-select" 
+                [(ngModel)]="selectedYear" 
+                (change)="changeMonthOrYear(selectedYear, selectedMonth)">
+          <option *ngFor="let year of years" [value]="year">
+            {{year}}
+          </option>
+        </select>
       </div>
     </div>
 
-    <div class="header-container">
-      <div class="input-container" style="margin-bottom: 20px; width: 300px;">
-        <input type="text" class="form-control" placeholder="Ara..." (input)="searchEmployees($event)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
-          viewBox="0 0 16 16">
-          <path
-            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-        </svg>
+    <!-- Legend -->
+    <div class="legend">
+      <h4>
+        <i class="fas fa-info-circle"></i>
+        Durum Göstergeleri
+      </h4>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <span class="legend-icon status-attended">✓</span>
+          <span class="legend-text">Geldi</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon status-absent">✗</span>
+          <span class="legend-text">Gelmedi</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon status-sick">🤒</span>
+          <span class="legend-text">Raporlu</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon status-notset">-</span>
+          <span class="legend-text">Belirlenmedi</span>
+        </div>
       </div>
-      <select class="form-select" style="width: 120px; margin-bottom: 20px; margin-left: 20px;"
-        [(ngModel)]="selectedMonth" (change)="changeMonthOrYear(selectedYear,selectedMonth)">
-        <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
-      </select>
-
-      <!-- Yıl seçimi -->
-      <select class="form-select" style="width: 100px; margin-bottom: 20px; margin-left: 10px; "
-        [(ngModel)]="selectedYear" (change)="changeMonthOrYear(selectedYear, selectedMonth)">
-        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-      </select>
     </div>
-    <div class="puantaj-container">
+
+    <!-- Timekeeping Table -->
+    <div class="timekeeping-section" *ngIf="items && items.length > 0">
+      <div class="table-header">
+        <h3>
+          <i class="fas fa-table"></i>
+          Puantaj Tablosu - {{months[selectedMonth-1]?.name}} {{selectedYear}}
+        </h3>
+        <button class="save-btn" (click)="openConfirmModal()">
+          <i class="fas fa-save"></i>
+          Kaydet
+        </button>
+      </div>
       
-      <div class="col-md-12" style="width: max-content; overflow-x:auto; font-size: 0.8em;">
-        <table style="width: min-content;">
-          <tr>
-            <th style=" padding-left: 40px; padding-right: 40px;">Personel Listesi</th>
-            <th *ngFor="let day of days; let i = index">
-              Gün {{ day }} <input type="checkbox" (click)="selectAll(i)">
-            </th>
-            <th>Geldi</th>
-            <th>İzinli</th>
-            <th>Raporlu</th>
-            <th>Mevcut İzin Hakkı</th>
-           <!--  <th>İzin Hakediş Girişi</th> -->
-          </tr>
-          <tr *ngFor="let personel of items" style="background-color: white;">
-            <td (click)="goToEmployeePage(personel.employeeId)" class="personellist">{{ personel.firstName }} {{ personel.lastName }}</td>
-            <td *ngFor="let day of days; let i = index">
-              <span style="font-size: 20px;" class="puantaj" (click)="toggleTimekeeping(personel.employeeId, i)"
-                [ngClass]="{
-                'crossed': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Absent,
-                'checked': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Attended,
-                'sick': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.OnSickLeave,
-                'null': timekeepingStatus[personel.employeeId][i] === timekeepingStatus.NotSet
-                 }">
-                {{ timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Attended ? '✓' :
-                timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Absent ? '✗' :
-                timekeepingStatus[personel.employeeId][i] === timekeepingStatus.OnSickLeave ? '🤒' : '-' }}
-              </span>
-            </td>
-            <td style="color: green; font-size: 14px;">✓ {{ getAttendedDays(personel.employeeId) }}</td>
-            <td style="color: red; font-size: 14px;">✗ {{ getNotAttendedDays(personel.employeeId) }}</td>
-            <td style="color: #ffc107; font-size: 14px;">🤒 {{ getSickDays(personel.employeeId) }}</td>
-            <td style="color: #5507ff; font-size: 14px;">
-              {{ personel.totalRemainingDays }} gün
-            </td>
-            <!-- <td>
-              <input type="number" [(ngModel)]="entitledDaysInput[personel.employeeId]" style="width: 50px;">
-            </td>
-            <td>
-              <button class="btn btn-success"
-                style="width: 40px; height: 30px; padding: 0 !important;; margin: 0 !important; "
-                (click)="addEntitledLeave(personel.employeeId)">Ekle</button>
-            </td> -->
-          </tr>
+      <div class="table-container">
+        <table class="timekeeping-table">
+          <thead>
+            <tr>
+              <th class="employee-column">Personel Listesi</th>
+              <th *ngFor="let day of days; let i = index">
+                <div class="day-header">
+                  <span class="day-number">{{day}}</span>
+                  <input type="checkbox" 
+                         class="select-all-btn" 
+                         (click)="selectAll(i)">
+                </div>
+              </th>
+              <th class="stats-column">Geldi</th>
+              <th class="stats-column">İzinli</th>
+              <th class="stats-column">Raporlu</th>
+              <th class="stats-column">İzin Hakkı</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let personel of items">
+              <td class="employee-cell" 
+                  (click)="goToEmployeePage(personel.employeeId)">
+                {{personel.firstName}} {{personel.lastName}}
+              </td>
+              <td *ngFor="let day of days; let i = index" class="day-cell">
+                <span class="status-icon" 
+                      (click)="toggleTimekeeping(personel.employeeId, i)"
+                      [ngClass]="{
+                        'status-attended': timekeepingStatus[personel.employeeId] && timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Attended,
+                        'status-absent': timekeepingStatus[personel.employeeId] && timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Absent,
+                        'status-sick': timekeepingStatus[personel.employeeId] && timekeepingStatus[personel.employeeId][i] === timekeepingStatus.OnSickLeave,
+                        'status-notset': !timekeepingStatus[personel.employeeId] || timekeepingStatus[personel.employeeId][i] === timekeepingStatus.NotSet || timekeepingStatus[personel.employeeId][i] === null
+                      }">
+                  {{ 
+                    timekeepingStatus[personel.employeeId] && timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Attended ? '✓' :
+                    timekeepingStatus[personel.employeeId] && timekeepingStatus[personel.employeeId][i] === timekeepingStatus.Absent ? '✗' :
+                    timekeepingStatus[personel.employeeId] && timekeepingStatus[personel.employeeId][i] === timekeepingStatus.OnSickLeave ? '🤒' : '-' 
+                  }}
+                </span>
+              </td>
+              <td class="stats-cell attended">
+                <i class="fas fa-check-circle"></i> {{getAttendedDays(personel.employeeId)}}
+              </td>
+              <td class="stats-cell absent">
+                <i class="fas fa-times-circle"></i> {{getNotAttendedDays(personel.employeeId)}}
+              </td>
+              <td class="stats-cell sick">
+                <i class="fas fa-user-injured"></i> {{getSickDays(personel.employeeId)}}
+              </td>
+              <td class="stats-cell remaining">
+                <i class="fas fa-calendar-alt"></i> {{personel.totalRemainingDays}} gün
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
-      <button class="btn btn-success" (click)="openConfirmModal()">Kaydet</button>
     </div>
-  </div>
-</div>
 
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="confirmModalLabel">Puantaj Kaydedilsin mi?</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Empty State -->
+    <div class="timekeeping-section" *ngIf="!items || items.length === 0">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-calendar-times"></i>
+        </div>
+        <h3>Personel bulunamadı</h3>
+        <p>Bu ay için personel verisi bulunamadı veya arama kriterlerinize uygun sonuç yok.</p>
       </div>
-      <div class="modal-body">
-        Bu işlemi onaylıyor musunuz?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Hayır</button>
-        <button type="button" class="btn btn-success" (click)="saveChanges()">Evet</button>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modern-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">
+            <i class="fas fa-save"></i>
+            Puantaj Kaydedilsin mi?
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Puantaj değişikliklerini kaydetmek istediğinize emin misiniz?</p>
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Bu işlem geri alınamaz ve tüm değişiklikler kalıcı olarak kaydedilecektir.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i>
+            Hayır
+          </button>
+          <button type="button" class="btn btn-success" (click)="saveChanges()">
+            <i class="fas fa-check"></i>
+            Evet, Kaydet
+          </button>
+        </div>
       </div>
     </div>
   </div>
+
 </div>

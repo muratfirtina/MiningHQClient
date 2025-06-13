@@ -1,182 +1,352 @@
-<div class="row">
-    <div class=" col-md-2"></div>
-    <div class="col-md-8">
+<div class="modern-overtime-management-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-clock"></i>
+          Mesai Yönetimi
+        </h1>
+        <p class="page-subtitle">Personel mesai saatlerini takip edin ve yönetin</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{employees.length}}</span>
+            <span class="stat-label">Toplam Personel</span>
+          </div>
+        </div>
+        <div class="stat-card" *ngIf="totalOvertimeHours > 0">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{totalOvertimeHours}}</span>
+            <span class="stat-label">Toplam Mesai</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <H2 style="display:flex; justify-content: center; margin: 50px;">Mesai Ekle</H2>
-
-        <form [formGroup]="addOvertimeForm">
-            <!-- Mevcut form elemanları -->
-
-            <div class="labelClass" style="display: flex; justify-content: center;">
+  <div class="container-custom">
+    
+    <div class="main-content">
+      <div class="content-layout">
+        
+        <!-- Forms Section -->
+        <div class="forms-section">
+          
+          <!-- Add Overtime Form -->
+          <div class="form-card add-overtime-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-plus-circle"></i>
+                <h3>Mesai Ekle</h3>
+              </div>
+              <p class="card-subtitle">Personel mesai saatlerini kaydedin</p>
+            </div>
+            
+            <form [formGroup]="addOvertimeForm" class="modern-form">
+              <div class="form-grid">
                 
-                <div class="col-md-3"></div>
-                <div class="col-md-3">
-                    <label for="overtimeDate" class="form-label">Mesai Tarihi</label>
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-user"></i>
+                    Personel
+                  </label>
+                  <select formControlName="employeeId" class="form-select">
+                    <option value="">Personel Seçin</option>
+                    <option *ngFor="let employee of employees" [value]="employee.id">
+                      {{employee.firstName}} {{employee.lastName}}
+                    </option>
+                  </select>
                 </div>
 
-                <div class="col-md-3">
-                    <label for="overtimeHours" class="form-label">Mesai Süresi</label>
-                    
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-calendar"></i>
+                    Mesai Tarihi
+                  </label>
+                  <input type="date" 
+                         formControlName="overtimeDate"
+                         class="form-input">
                 </div>
+
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-clock"></i>
+                    Mesai Süresi (Saat)
+                  </label>
+                  <input type="number" 
+                         formControlName="overtimeHours"
+                         class="form-input"
+                         placeholder="Saat sayısı"
+                         min="1">
+                  <div *ngIf="addOvertimeForm.get('overtimeHours')?.errors?.['min']" 
+                       class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Mesai süresi 0'dan büyük olmalıdır.
+                  </div>
+                </div>
+
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" 
+                        class="action-btn primary" 
+                        (click)="openOvertimeAddModal()"
+                        [disabled]="!addOvertimeForm.valid">
+                  <i class="fas fa-save"></i>
+                  Mesai Ekle
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- List Overtime Form -->
+          <div class="form-card list-overtime-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-search"></i>
+                <h3>Mesai Listesi</h3>
+              </div>
+              <p class="card-subtitle">Mesai kayıtlarını filtreleyin ve görüntüleyin</p>
             </div>
-
-            <div class="inputClass" style="display: flex; justify-content: center;">
-                <div class="col-md-3">
-                    <select formControlName="employeeId" class="form-select" id="employeeSelect">
-                        <option value="">Personel Seçin</option>
-                        <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-                            {{employee.lastName}}</option>
-                    </select>
+            
+            <form [formGroup]="listOvertimeForm" class="modern-form">
+              <div class="form-grid">
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-user"></i>
+                    Personel
+                  </label>
+                  <select formControlName="employeeId" class="form-select">
+                    <option value="">Personel Seçin</option>
+                    <option *ngFor="let employee of employees" [value]="employee.id">
+                      {{employee.firstName}} {{employee.lastName}}
+                    </option>
+                  </select>
                 </div>
 
-                <div class="col-md-3">
-                    <input type="date" formControlName="overtimeDate" class="form-control" id="overtimeDate">
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Başlangıç Tarihi
+                  </label>
+                  <input type="date" 
+                         formControlName="startDate"
+                         class="form-input">
                 </div>
 
-                <div class="col-md-3">
-                    <input type="number" formControlName="overtimeHours" class="form-control" id="overtimeHours">
-                    <div *ngIf="addOvertimeForm.get('overtimeHours').errors?.['min']" style="color: red;">
-                        Mesai süresi 0'dan büyük olmalıdır.
-                      </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-calendar-check"></i>
+                    Bitiş Tarihi
+                  </label>
+                  <input type="date" 
+                         formControlName="endDate"
+                         class="form-input">
                 </div>
 
-                <div class="col-md-1">
-                    <button type="button" class="btn btn-success" (click)="openOvertimeAddModal()" [disabled]="!addOvertimeForm.valid">Ekle</button>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" 
+                        class="action-btn warning"
+                        (click)="getOvertimeListByEmployeeId()">
+                  <i class="fas fa-search"></i>
+                  Listele
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" *ngIf="pageOvertime && pageOvertime.length > 0">
+          
+          <!-- Overtime Table -->
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">
+                <h3>
+                  <i class="fas fa-list"></i>
+                  Mesai Kayıtları
+                </h3>
+                <div class="total-hours" *ngIf="totalOvertimeHours > 0">
+                  <span class="total-label">Toplam Mesai Süresi:</span>
+                  <span class="total-number">{{totalOvertimeHours}} saat</span>
                 </div>
+              </div>
             </div>
-        </form>
-
-
-        <H2 style="display:flex; justify-content: center; margin: 50px;">Mesai Listesi</H2>
-
-        <form [formGroup]="listOvertimeForm">
-            <!-- Mevcut form elemanları -->
-
-            <div class="labelClass" style="display: flex; justify-content: center;">
-
-                <div class="col-md-3"></div>
-                <div class="col-md-3">
-                    <label for="startDate" class="form-label">Başlangıç Tarihi</label>
-                </div>
-
-                <div class="col-md-3">
-                    <label for="endDate" class="form-label">Bitiş Tarihi</label>
-                </div>
-
-            </div>
-
-            <div class="inputClass" style="display: flex; justify-content: center;">
-
-                <div class="col-md-3">
-                    <select formControlName="employeeId" class="form-select" id="employeeSelect">
-                        <option value="">Personel Seçin</option>
-                        <option *ngFor="let employee of employees" [value]="employee.id">{{employee.firstName}}
-                            {{employee.lastName}}</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-
-                    <input type="date" formControlName="startDate" class="form-control" id="startDate">
-                </div>
-
-                <div class="col-md-3">
-
-                    <input type="date" formControlName="endDate" class="form-control" id="endDate">
-                </div>
-
-                <div class="col-md-1">
-                    <button type="button" class="btn btn-warning"
-                        (click)="getOvertimeListByEmployeeId()">Listele</button>
-                </div>
-            </div>
-        </form>
-
-        <div style="margin-top: 30px; display: flex; justify-content: center;">
-
-            <!-- Sonuçları göstermek için tablo -->
-            <table class="table" *ngIf="pageOvertime && pageOvertime.length"
-                style="max-width: 300px; min-width: 300px; text-align: center;">
+            
+            <div class="table-container">
+              <table class="modern-table">
                 <thead>
-                    <tr>
-                        <th>Mesai Tarihi</th>
-                        <th>Mesai Süresi</th>
-                        <th>Toplam Mesai Süresi: {{totalOvertimeHours}}</th>
-                    </tr>
+                  <tr>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-calendar"></i>
+                        Mesai Tarihi
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-clock"></i>
+                        Mesai Süresi
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-cog"></i>
+                        İşlemler
+                      </div>
+                    </th>
+                  </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let overtime of pageOvertime">
-                        <td>{{ overtime.overtimeDate | date: 'dd/MM/yyyy' }}</td>
-                        <td>{{ overtime.overtimeHours }}</td>
-                        <td>
-                            <button class="btn btn-danger" (click)="deleteOvertime(overtime.id)">Sil</button>
-                        </td>
-                    </tr>
+                  <tr *ngFor="let overtime of pageOvertime" class="table-row">
+                    <td>
+                      <span class="date-badge">{{ overtime.overtimeDate | date:'dd/MM/yyyy' }}</span>
+                    </td>
+                    <td>
+                      <span class="hours-badge">{{ overtime.overtimeHours }} saat</span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-icon-btn delete" 
+                                (click)="deleteOvertime(overtime.id)"
+                                title="Sil">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
-            </table>
-        </div>
+              </table>
+            </div>
 
-        <div>
-            <!-- Pagination for Entitled Leaves could go here -->
-            <nav aria-label="Page navigation example" *ngIf="pageOvertime && pageOvertime.length">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                        <a class="page-link" (click)="changePage(1)">&laquo;</a>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                        <a class="page-link" (click)="changePage(currentPageNo - 1)">Previous</a>
-                    </li>
-                    <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
-                        <a class="page-link" (click)="changePage(pageNo)">{{ pageNo }}</a>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                        <a class="page-link" (click)="changePage(currentPageNo + 1)">Next</a>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                        <a class="page-link" (click)="changePage(pages)">&raquo;</a>
-                    </li>
+            <!-- Pagination -->
+            <div class="pagination-section" *ngIf="pages > 1">
+              <nav class="pagination-nav">
+                <ul class="pagination">
+                  <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                    <a class="page-link" (click)="changePage(1)">
+                      <i class="fas fa-angle-double-left"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                    <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                      <i class="fas fa-angle-left"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" 
+                      *ngFor="let pageNo of pageList" 
+                      [class.active]="pageNo === currentPageNo">
+                    <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                    <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                      <i class="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                    <a class="page-link" (click)="changePage(pages)">
+                      <i class="fas fa-angle-double-right"></i>
+                    </a>
+                  </li>
                 </ul>
-            </nav>
+              </nav>
+            </div>
+          </div>
+
         </div>
 
-    </div>
-</div>
-
-<div class="modal fade" id="deleteOvertimeModal" tabindex="-1" aria-labelledby="deleteOvertimeModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteOvertimeModalLabel">Mesai silinsin mi?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Empty State -->
+        <div class="results-section" *ngIf="pageOvertime && pageOvertime.length === 0 && listOvertimeForm.get('employeeId')?.value">
+          <div class="table-card">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <h3>Mesai kaydı bulunamadı</h3>
+              <p>Seçilen kriterlere uygun mesai kaydı bulunamadı.</p>
             </div>
-            <div class="modal-body">
-                Bu işlemi onaylıyor musunuz?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hayır</button>
-                <button id="confirmYes" type="button" class="btn btn-success" data-bs-dismiss="modal">Evet</button>
-            </div>
+          </div>
         </div>
-    </div>
-</div>
 
-<div class="modal fade" id="overtimeAddModal" tabindex="-1" aria-labelledby="overtimeAddModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="overtimeAddModalLabel">Mesai Ekle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Mesai eklemek istediğinize emin misiniz?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                    (click)="onOvertimeAddModalConfirm()">Evet, Ekle</button>
-            </div>
-        </div>
+      </div>
     </div>
+
+  </div>
+
+  <!-- Modals -->
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteOvertimeModal" tabindex="-1" aria-labelledby="deleteOvertimeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modern-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteOvertimeModalLabel">
+            <i class="fas fa-exclamation-triangle"></i>
+            Mesai Silme Onayı
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bu mesai kaydını silmek istediğinize emin misiniz?</p>
+          <p class="warning-text">Bu işlem geri alınamaz.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i>
+            Hayır
+          </button>
+          <button id="confirmYes" type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <i class="fas fa-trash"></i>
+            Evet, Sil
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Overtime Modal -->
+  <div class="modal fade" id="overtimeAddModal" tabindex="-1" aria-labelledby="overtimeAddModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content modern-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="overtimeAddModalLabel">
+            <i class="fas fa-plus-circle"></i>
+            Mesai Ekle
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Mesai kaydını oluşturmak istediğinize emin misiniz?</p>
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Bu işlem personelin mesai saatlerini artıracaktır.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i>
+            İptal
+          </button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" (click)="onOvertimeAddModalConfirm()">
+            <i class="fas fa-check"></i>
+            Evet, Ekle
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
