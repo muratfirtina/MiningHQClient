@@ -39,6 +39,9 @@ const routes: Routes = [
       {path:'department',loadComponent:()=>import('./admin/components/department/department.component').then(m=>m.DepartmentComponent)},
       {path:'department/department-list',loadComponent:()=>import('./admin/components/department/department-list/department-list.component').then(m=>m.DepartmentListComponent)},
       {path:'department/department-list/:pageNo',loadComponent:()=>import('./admin/components/department/department-list/department-list.component').then(m=>m.DepartmentListComponent)},
+      {path:'leave-types',loadComponent:()=>import('./admin/components/leave-types/leave-types.component').then(m=>m.LeaveTypesComponent)},
+      {path:'leave-types/leave-type-list',loadComponent:()=>import('./admin/components/leave-types/leave-type-list/leave-type-list.component').then(m=>m.LeaveTypeListComponent)},
+      {path:'leave-types/leave-type-list/:pageNo',loadComponent:()=>import('./admin/components/leave-types/leave-type-list/leave-type-list.component').then(m=>m.LeaveTypeListComponent)}
 
       
       

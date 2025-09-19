@@ -1,198 +1,405 @@
-<div class="flex-shrink-0 p-3" style="width: 280px;">
-  
-  <ul class="list-unstyled ps-0">
-    <li class="mb-1" *ngFor="let item of items">
-      
-      <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0"
-              [attr.aria-expanded]="item.isCollapsed ? 'false' : 'true'"
-              (click)="toggleCollapse(item)">
-              <div id="minisvg">
-                <ng-container *ngIf="item.name === 'Yetkili Kullanıcılar'">
-                  <img src="../../../../../assets/icons/authorizedPersonnel-mini.svg" >
-                </ng-container>
+<!-- sidebar.component.html - Güncellenmiş versiyon -->
+<div class="modern-sidebar">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <h2 class="sidebar-title">Yönetim Paneli</h2>
+    <p class="sidebar-subtitle">Sistem Kontrolü</p>
+  </div>
 
-              <ng-container *ngIf="item.name === 'Çalışanlar'">
-                <img src="../../../../../assets/icons/employee-mini.svg" >
-              </ng-container>
+  <!-- Sidebar Menu -->
+  <div class="sidebar-content">
+    <ul class="modern-menu">
+      <li class="menu-item" *ngFor="let item of items">
 
-              <ng-container *ngIf="item.name === 'Gösterge Paneli'">
-                <img src="../../../../../assets/icons/dashboard-mini.svg">
-              </ng-container>
+        <button class="menu-button" [class.active]="!item.isCollapsed"
+          [attr.aria-expanded]="item.isCollapsed ? 'false' : 'true'" (click)="toggleCollapse(item)">
 
-              <ng-container *ngIf="item.name === 'Makinalar'">
-                <img src="../../../../../assets/icons/machines-mini.svg" >
-              </ng-container>
+          <!-- Icon Container -->
+          <div class="menu-icon-container">
+            <ng-container *ngIf="item.name === 'Yetkili Kullanıcılar'">
+              <i class="fas fa-users-cog"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Çalışanlar'">
+              <i class="fas fa-user-tie"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Gösterge Paneli'">
+              <i class="fas fa-chart-pie"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Makinalar'">
+              <i class="fas fa-cogs"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Departmanlar'">
+              <i class="fas fa-building"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Meslekler'">
+              <i class="fas fa-briefcase"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Ocaklar'">
+              <i class="fas fa-mountain"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Markalar'">
+              <i class="fas fa-tags"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Modeller'">
+              <i class="fas fa-cube"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'Makina Tipleri'">
+              <i class="fas fa-industry"></i>
+            </ng-container>
+            <ng-container *ngIf="item.name === 'İzin Türleri'">
+              <i class="fas fa-calendar-alt"></i>
+            </ng-container>
+          </div>
 
-              <ng-container *ngIf="item.name === 'Departmanlar'">
-                <img src="../../../../../assets/icons/machines-mini.svg" >
-              </ng-container>
+          <span class="menu-text">{{ item.name }}</span>
+          <i class="fas fa-chevron-right menu-arrow"></i>
+        </button>
 
-              <ng-container *ngIf="item.name === 'Meslekler'">
-                 <img src="../../../../../assets/icons/machines-mini.svg" >
-              </ng-container>
+        <!-- Submenu -->
+        <ul class="submenu" [class.show]="!item.isCollapsed" *ngIf="!item.isCollapsed">
 
-              <ng-container *ngIf="item.name === 'Ocaklar'">
-                <img src="../../../../../assets/icons/machines-mini.svg" >
-             </ng-container>
+          <!-- Yetkili Kullanıcılar -->
+          <li *ngIf="item.name === 'Yetkili Kullanıcılar'" class="submenu-item">
+            <a routerLink="users" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Kullanıcı Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Yetkili Kullanıcılar'" class="submenu-item">
+            <a href="#" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Updates
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Yetkili Kullanıcılar'" class="submenu-item">
+            <a href="#" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Reports
+            </a>
+          </li>
 
-              <ng-container *ngIf="item.name === 'Markalar'">
-                <img src="../../../../../assets/icons/machines-mini.svg" >
-             </ng-container>
+          <!-- Çalışanlar -->
+          <li *ngIf="item.name === 'Çalışanlar'" class="submenu-item">
+            <a routerLink="employees" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Çalışan Listesi
+            </a>
+          </li>
 
-             <ng-container *ngIf="item.name === 'Modeller'">
-              <img src="../../../../../assets/icons/machines-mini.svg" >
-           </ng-container>
-              
-              <ng-container *ngIf="item.name === 'Makina Tipleri'">
-                <img src="../../../../../assets/icons/machines-mini.svg" >
-             </ng-container>
-              
-            </div>
-        {{ item.name }}
-        
-      </button>
-      <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" *ngIf="!item.isCollapsed">
-        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a routerLink="users" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Kullanıcı Listesi</a></li>
-        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Updates</a></li>
-        <li *ngIf="item.name === 'Yetkili Kullanıcılar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Reports</a></li>
+          <!-- Gösterge Paneli -->
+          <li *ngIf="item.name === 'Gösterge Paneli'" class="submenu-item">
+            <a routerLink="dashboard" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Ana Dashboard
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Çalışanlar'"><a routerLink="employees" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Çalışan</a></li>
+          <!-- Makinalar -->
+          <li *ngIf="item.name === 'Makinalar'" class="submenu-item">
+            <a routerLink="machines/machine-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Makina Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Makinalar'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#machineAddModal">
+              <span class="submenu-dot"></span>
+              Makina Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Gösterge Paneli'"><a routerLink="dashboard" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Gösterge Paneli</a></li>
+          <!-- Ocaklar -->
+          <li *ngIf="item.name === 'Ocaklar'" class="submenu-item">
+            <a routerLink="quarries/quarry-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Ocak Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Ocaklar'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#quarryAddModal">
+              <span class="submenu-dot"></span>
+              Ocak Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Makinalar'"><a routerLink="machines/machine-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Makina Listesi</a></li>
-        <li *ngIf="item.name === 'Makinalar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#machineAddModal">Makina Ekle</a></li>
+          <!-- Markalar -->
+          <li *ngIf="item.name === 'Markalar'" class="submenu-item">
+            <a routerLink="brands/brand-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Marka Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Markalar'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#brandAddModal">
+              <span class="submenu-dot"></span>
+              Marka Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Ocaklar'"><a routerLink="quarries/quarry-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Ocak Listesi</a></li>
-        <li *ngIf="item.name === 'Ocaklar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#quarryAddModal">Ocak Ekle</a></li>
+          <!-- Modeller -->
+          <li *ngIf="item.name === 'Modeller'" class="submenu-item">
+            <a routerLink="models/model-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Model Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Modeller'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#modelAddModal">
+              <span class="submenu-dot"></span>
+              Model Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Markalar'"><a routerLink="brands/brand-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Marka Listesi</a></li>
-        <li *ngIf="item.name === 'Markalar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#brandAddModal">Marka Ekle</a></li>
+          <!-- Makina Tipleri -->
+          <li *ngIf="item.name === 'Makina Tipleri'" class="submenu-item">
+            <a routerLink="machine-types/machine-type-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Makina Tipi Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Makina Tipleri'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#machineTypeAddModal">
+              <span class="submenu-dot"></span>
+              Makina Tipi Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Modeller'"><a routerLink="models/model-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Model Listesi</a></li>
-        <li *ngIf="item.name === 'Modeller'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#modelAddModal">Model Ekle</a></li>
+          <!-- Departmanlar -->
+          <li *ngIf="item.name === 'Departmanlar'" class="submenu-item">
+            <a routerLink="department/department-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Departman Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Departmanlar'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#departmentAddModal">
+              <span class="submenu-dot"></span>
+              Departman Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Makina Tipleri'"><a routerLink="machine-types/machine-type-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Makina Tipi Listesi</a></li>
-        <li *ngIf="item.name === 'Makina Tipleri'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#machineTypeAddModal">Makina Tipi Ekle</a></li>
+          <!-- Meslekler -->
+          <li *ngIf="item.name === 'Meslekler'" class="submenu-item">
+            <a routerLink="jobs/job-list" class="submenu-link">
+              <span class="submenu-dot"></span>
+              Meslek Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'Meslekler'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#jobAddModal">
+              <span class="submenu-dot"></span>
+              Meslek Ekle
+            </a>
+          </li>
 
-        <li *ngIf="item.name === 'Departmanlar'"><a routerLink="department/department-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Departman Listesi</a></li>
-        <li *ngIf="item.name === 'Departmanlar'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#departmentAddModal">Departman Ekle</a></li>
-
-        <li *ngIf="item.name === 'Meslekler'"><a routerLink="jobs/job-list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Meslek Listesi</a></li>
-        <li *ngIf="item.name === 'Meslekler'"><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded" data-bs-toggle="modal" data-bs-target="#jobAddModal">Meslek Ekle</a></li>
-      </ul>
-    </li>
-    <li class="border-top my3"></li>
-  </ul>
+          <!-- İzin Türleri -->
+          <li *ngIf="item.name === 'İzin Türleri'" class="submenu-item">
+            <a routerLink="leave-types/leave-type-list" class="submenu-link" (click)="onSubmenuClick()">
+              <span class="submenu-dot"></span>
+              İzin Türü Listesi
+            </a>
+          </li>
+          <li *ngIf="item.name === 'İzin Türleri'" class="submenu-item">
+            <a href="#" class="submenu-link" data-bs-toggle="modal" data-bs-target="#leaveTypeAddModal"
+              (click)="onSubmenuClick()">
+              <span class="submenu-dot"></span>
+              İzin Türü Ekle
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
 </div>
 
-<div class="modal fade" id="jobAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<!-- Modals - Güncellenmiş tasarım -->
+<div class="modal fade" id="jobAddModal" tabindex="-1" aria-labelledby="jobModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Meslek Ekle</h1>
+        <h1 class="modal-title fs-5" id="jobModalLabel">
+          <i class="fas fa-briefcase me-2"></i>
+          Meslek Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-job-add></app-job-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="departmentAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="departmentAddModal" tabindex="-1" aria-labelledby="departmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Departman Ekle</h1>
+        <h1 class="modal-title fs-5" id="departmentModalLabel">
+          <i class="fas fa-building me-2"></i>
+          Departman Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-department-add></app-department-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="machineAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="machineAddModal" tabindex="-1" aria-labelledby="machineModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Makina Ekle</h1>
+        <h1 class="modal-title fs-5" id="machineModalLabel">
+          <i class="fas fa-cogs me-2"></i>
+          Makina Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-machine-add></app-machine-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="quarryAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="quarryAddModal" tabindex="-1" aria-labelledby="quarryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Ocak Ekle</h1>
+        <h1 class="modal-title fs-5" id="quarryModalLabel">
+          <i class="fas fa-mountain me-2"></i>
+          Ocak Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-quarry-add></app-quarry-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="brandAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="brandAddModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Marka Ekle</h1>
+        <h1 class="modal-title fs-5" id="brandModalLabel">
+          <i class="fas fa-tags me-2"></i>
+          Marka Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-brand-add></app-brand-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="modelAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="modelAddModal" tabindex="-1" aria-labelledby="modelModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Model Ekle</h1>
+        <h1 class="modal-title fs-5" id="modelModalLabel">
+          <i class="fas fa-cube me-2"></i>
+          Model Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-model-add></app-model-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="machineTypeAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
+<div class="modal fade" id="machineTypeAddModal" tabindex="-1" aria-labelledby="machineTypeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Makina Tipi Ekle</h1>
+        <h1 class="modal-title fs-5" id="machineTypeModalLabel">
+          <i class="fas fa-industry me-2"></i>
+          Makina Tipi Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding-bottom: 1px;">
         <app-machine-type-add></app-machine-type-add>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="leaveTypeAddModal" tabindex="-1" aria-labelledby="leaveTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content modern-modal">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="leaveTypeModalLabel">
+          <i class="fas fa-calendar-alt me-2"></i>
+          İzin Türü Ekle
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding-bottom: 1px;">
+        <app-leave-type-add></app-leave-type-add>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary">
+          <i class="fas fa-save me-1"></i>
+          Kaydet
+        </button>
       </div>
     </div>
   </div>

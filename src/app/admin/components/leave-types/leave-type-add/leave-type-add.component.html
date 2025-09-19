@@ -1,0 +1,109 @@
+<!-- leave-type-add.component.html -->
+<form #leaveTypeForm="ngForm" (ngSubmit)="onSubmit(leaveTypeForm)" novalidate>
+  
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="fas fa-check-circle me-2"></i>
+    {{ successMessage }}
+    <button type="button" class="btn-close" (click)="successMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <!-- Form Fields -->
+  <div class="row">
+    <div class="col-12">
+      <!-- İzin Türü Adı -->
+      <div class="mb-4">
+        <label for="leaveTypeName" class="form-label fw-semibold">
+          <i class="fas fa-calendar-alt text-primary me-1"></i>
+          İzin Türü Adı
+          <span class="text-danger">*</span>
+        </label>
+        <input 
+          type="text" 
+          class="form-control form-control-lg"
+          [class.is-invalid]="isFieldInvalid(leaveTypeName)"
+          [class.is-valid]="leaveTypeName.valid && leaveTypeName.dirty"
+          id="leaveTypeName"
+          name="leaveTypeName"
+          #leaveTypeName="ngModel"
+          [(ngModel)]="leaveType.name"
+          (input)="onNameInput($event)"
+          required
+          minlength="2"
+          maxlength="100"
+          placeholder="Örn: Yıllık İzin, Hastalık İzni, Mazeret İzni..."
+          [disabled]="isSubmitting">
+        
+        <!-- Field Help Text -->
+        <div class="form-text">
+          <i class="fas fa-info-circle text-muted me-1"></i>
+          İzin türü adı 2-100 karakter arasında olmalıdır.
+        </div>
+
+        <!-- Validation Messages -->
+        <div *ngIf="isFieldInvalid(leaveTypeName)" class="invalid-feedback">
+          {{ getFieldErrorMessage(leaveTypeName, 'İzin türü adı') }}
+        </div>
+        
+        <div *ngIf="leaveTypeName.valid && leaveTypeName.dirty" class="valid-feedback">
+          Geçerli bir izin türü adı girdiniz.
+        </div>
+      </div>
+
+      <!-- Form Info Box -->
+      <div class="alert alert-info border-0 bg-light">
+        <div class="d-flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-lightbulb text-info"></i>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h6 class="alert-heading mb-1">İpucu</h6>
+            <p class="mb-0 small">
+              İzin türü adı, personelin izin taleplerinde görüneceği için anlaşılır ve açık olmalıdır. 
+              Örnek izin türleri: Yıllık İzin, Hastalık İzni, Doğum İzni, Mazeret İzni, Ücretsiz İzin.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+    <button 
+      type="button" 
+      class="btn btn-secondary"
+      [disabled]="isSubmitting"
+      (click)="closeModal()">
+      <i class="fas fa-times me-1"></i>
+      İptal
+    </button>
+    
+    <button 
+      type="button" 
+      class="btn btn-outline-warning"
+      [disabled]="isSubmitting"
+      (click)="resetForm(leaveTypeForm)">
+      <i class="fas fa-undo me-1"></i>
+      Temizle
+    </button>
+    
+    <button 
+      type="submit" 
+      class="btn btn-primary"
+      [disabled]="leaveTypeForm.invalid || isSubmitting">
+      <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status">
+        <span class="visually-hidden">Yükleniyor...</span>
+      </span>
+      <i *ngIf="!isSubmitting" class="fas fa-save me-1"></i>
+      {{ isSubmitting ? 'Kaydediliyor...' : 'Kaydet' }}
+    </button>
+  </div>
+</form>

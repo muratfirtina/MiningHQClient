@@ -1,0 +1,170 @@
+<!-- leave-type-list.component.html -->
+<div class="container-fluid px-4">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h3 mb-0 text-gray-800">
+        <i class="fas fa-calendar-alt text-primary me-2"></i>
+        İzin Türleri
+      </h1>
+      <p class="text-muted mb-0">Sistemdeki izin türlerini yönetin</p>
+    </div>
+    <button 
+      type="button" 
+      class="btn btn-primary"
+      (click)="openAddModal()">
+      <i class="fas fa-plus me-1"></i>
+      Yeni İzin Türü
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                Toplam İzin Türü
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalLeaveTypeCount || 0 }}</div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Yükleniyor...</span>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div *ngIf="!isLoading" class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+      <h6 class="m-0 font-weight-bold text-primary">İzin Türleri Listesi</h6>
+      <div class="text-muted small">
+        <i class="fas fa-info-circle me-1"></i>
+        Toplam {{ totalLeaveTypeCount || 0 }} kayıt
+      </div>
+    </div>
+    
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+          <thead class="table-light">
+            <tr>
+              <th class="text-center" style="width: 60px;">#</th>
+              <th>İzin Türü Adı</th>
+              <th class="text-center" style="width: 120px;">İşlemler</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let leaveType of leaveTypes || []; let i = index" 
+                class="align-middle">
+              <td class="text-center text-muted">
+                {{ ((currentPageNo - 1) * pageSize) + i + 1 }}
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-sm me-3">
+                    <div class="avatar-title bg-primary bg-opacity-10 text-primary rounded-circle">
+                      <i class="fas fa-calendar-alt"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <h6 class="mb-0">{{ leaveType.name }}</h6>
+                    <small class="text-muted">ID: {{ leaveType.id }}</small>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group">
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="openEditModal(leaveType)"
+                    title="Düzenle">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="delete(leaveType.id, leaveType.name)"
+                    title="Sil">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            
+            <!-- Empty State -->
+            <tr *ngIf="!leaveTypes || leaveTypes.length === 0">
+              <td colspan="3" class="text-center py-5">
+                <div class="text-muted">
+                  <i class="fas fa-calendar-alt fa-3x mb-3 text-gray-300"></i>
+                  <h5>Henüz izin türü bulunmuyor</h5>
+                  <p>Yeni bir izin türü eklemek için yukarıdaki butona tıklayın.</p>
+                  <button 
+                    type="button" 
+                    class="btn btn-primary"
+                    (click)="openAddModal()">
+                    <i class="fas fa-plus me-1"></i>
+                    İlk İzin Türünü Ekle
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <nav *ngIf="totalPageCount && totalPageCount > 1" class="d-flex justify-content-between align-items-center mt-4">
+        <div class="text-muted small">
+          Sayfa {{ currentPageNo }} / {{ totalPageCount || 0 }} 
+          ({{ totalLeaveTypeCount || 0 }} kayıt)
+        </div>
+        
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="isPreviousDisabled()">
+            <a 
+              class="page-link" 
+              [routerLink]="['/admin/leave-types/leave-type-list', goToPreviousPage()]"
+              [class.disabled]="isPreviousDisabled()">
+              <i class="fas fa-chevron-left"></i>
+              Önceki
+            </a>
+          </li>
+          
+          <li *ngFor="let pageNo of pageList || []" 
+              class="page-item" 
+              [class.active]="currentPageNo === pageNo">
+            <a 
+              class="page-link" 
+              [routerLink]="['/admin/leave-types/leave-type-list', pageNo]">
+              {{ pageNo }}
+            </a>
+          </li>
+          
+          <li class="page-item" [class.disabled]="isNextDisabled()">
+            <a 
+              class="page-link" 
+              [routerLink]="['/admin/leave-types/leave-type-list', goToNextPage()]"
+              [class.disabled]="isNextDisabled()">
+              Sonraki
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
