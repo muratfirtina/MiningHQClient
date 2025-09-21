@@ -1,5 +1,7 @@
 import { ListImageFile } from "../list-image-file";
 import { TypeOfBlood } from "../typeOfBlood";
+import { LicenseTypes } from "../licenseTypes";
+import { OperatorLicense } from "../operatorLicense";
 
 export class SingleEmployee {
     id:string;
@@ -16,8 +18,9 @@ export class SingleEmployee {
     address:string;
     hireDate:Date;
     departureDate:Date;
-    licenseType:string;
-    typeOfBlood:string;
+    licenseType?:LicenseTypes;
+    operatorLicense?:OperatorLicense;
+    typeOfBlood?:TypeOfBlood;
     emergencyContact:string;
     employeeFiles:ListImageFile[];
     puantajDurumu:Map<string,boolean>;

@@ -1,4 +1,6 @@
 import { TypeOfBlood } from "../typeOfBlood";
+import { LicenseTypes } from "../licenseTypes";
+import { OperatorLicense } from "../operatorLicense";
 
 export class CreateEmployee {
     firstName:string;
@@ -11,7 +13,8 @@ export class CreateEmployee {
     phone:string;
     address:string;
     hireDate:Date;
-    licenseType:string;
-    typeOfBlood:TypeOfBlood;
+    licenseType?:LicenseTypes;
+    operatorLicense?:OperatorLicense;
+    typeOfBlood?:TypeOfBlood;
     emergencyContact:string;
 }

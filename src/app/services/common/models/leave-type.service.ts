@@ -16,15 +16,23 @@ export class LeaveTypeService {
   }
 
   async read(pageIndex: number = 0, pageSize: number = 5, successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Promise<{ totalLeaveTypeCount: number; leaveTypes: List_LeaveType[] }> {
-    const promiseData: Promise<{ totalLeaveTypeCount: number; leaveTypes: List_LeaveType[] }> = this.httpClientService.get<{ totalLeaveTypeCount: number; leaveTypes: List_LeaveType[] }>({
-      controller: "leaveTypes",
-      queryString: `pageIndex=${pageIndex}&pageSize=${pageSize}`
-    }).toPromise() as Promise<{ totalLeaveTypeCount: number; leaveTypes: List_LeaveType[] }>;
+    try {
+      const response = await this.httpClientService.get<{ items: List_LeaveType[], count: number }>({
+        controller: "leaveTypes",
+        queryString: `pageIndex=${pageIndex}&pageSize=${pageSize}`
+      }).toPromise();
 
-    promiseData.then(d => successCallBack && successCallBack())
-      .catch((errorResponse: any) => errorCallBack && errorCallBack(errorResponse.error));
+      const mappedData = {
+        totalLeaveTypeCount: response.count,
+        leaveTypes: response.items
+      };
 
-    return await promiseData;
+      successCallBack && successCallBack();
+      return mappedData;
+    } catch (errorResponse: any) {
+      errorCallBack && errorCallBack(errorResponse.error);
+      throw errorResponse;
+    }
   }
 
   async getAllLeaveTypes(successCallBack?: () => void, errorCallBack?: (errorMessage: string) => void): Promise<List_LeaveType[]> {

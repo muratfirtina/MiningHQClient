@@ -1,6 +1,4 @@
 <div class="modern-employee-add-page">
-  
-  <!-- Header Section -->
   <div class="page-header">
     <div class="header-content">
       <h1 class="page-title">
@@ -12,10 +10,8 @@
   </div>
 
   <div class="container-custom">
-    
     <div class="main-content">
       <div class="form-section">
-        
         <div class="form-card">
           <div class="card-header">
             <div class="card-title">
@@ -24,12 +20,9 @@
             </div>
             <p class="card-subtitle">Lütfen tüm alanları eksiksiz doldurun</p>
           </div>
-          
-          <form [formGroup]="employeeForm" 
-                (ngSubmit)="addEmployee(employeeForm.value)" 
-                class="modern-form">
-            
-            <!-- Kişisel Bilgiler -->
+
+          <form [formGroup]="employeeForm" (ngSubmit)="addEmployee(employeeForm.value)" class="modern-form">
+
             <div class="form-section-divider">
               <div class="divider-line"></div>
               <div class="divider-text">
@@ -38,32 +31,22 @@
               </div>
               <div class="divider-line"></div>
             </div>
-            
+
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-user"></i>
                   Adı
                 </label>
-                <input type="text" 
-                       formControlName="firstName"
-                       class="form-input"
-                       placeholder="Personel adını girin"
-                       appUppercaseinput
-                       required>
+                <input type="text" formControlName="firstName" class="form-input" placeholder="Personel adını girin" appUppercaseinput required>
               </div>
-              
+
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-user"></i>
                   Soyadı
                 </label>
-                <input type="text" 
-                       formControlName="lastName"
-                       class="form-input"
-                       placeholder="Personel soyadını girin"
-                       appUppercaseinput
-                       required>
+                <input type="text" formControlName="lastName" class="form-input" placeholder="Personel soyadını girin" appUppercaseinput required>
               </div>
             </div>
 
@@ -73,22 +56,15 @@
                   <i class="fas fa-birthday-cake"></i>
                   Doğum Tarihi
                 </label>
-                <input type="date" 
-                       formControlName="birthDate"
-                       class="form-input"
-                       required>
+                <input type="date" formControlName="birthDate" class="form-input" required>
               </div>
-              
+
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-phone"></i>
                   Telefon
                 </label>
-                <input type="tel" 
-                       formControlName="phone"
-                       class="form-input"
-                       placeholder="0555 123 45 67"
-                       required>
+                <input type="tel" formControlName="phone" class="form-input" placeholder="0555 123 45 67" required>
               </div>
             </div>
 
@@ -97,13 +73,9 @@
                 <i class="fas fa-home"></i>
                 Ev Adresi
               </label>
-              <textarea formControlName="address"
-                        class="form-textarea"
-                        placeholder="Tam adres bilgisini girin"
-                        required></textarea>
+              <textarea formControlName="address" class="form-textarea" placeholder="Tam adres bilgisini girin" required></textarea>
             </div>
 
-            <!-- İş Bilgileri -->
             <div class="form-section-divider">
               <div class="divider-line"></div>
               <div class="divider-text">
@@ -119,14 +91,12 @@
                   <i class="fas fa-briefcase"></i>
                   Meslek
                 </label>
-                <select formControlName="jobName" class="form-select" required>
+                <select formControlName="jobName" class="form-select" required #jobSelect (change)="onJobChange(jobSelect.value)">
                   <option value="">Meslek seçin</option>
-                  <option *ngFor="let job of jobs" [value]="job.name">
-                    {{job.name}}
-                  </option>
+                  <option *ngFor="let job of jobs" [value]="job.name">{{job.name}}</option>
                 </select>
               </div>
-              
+
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-map-marker-alt"></i>
@@ -134,9 +104,7 @@
                 </label>
                 <select formControlName="quarryName" class="form-select" required>
                   <option value="">Ocak seçin</option>
-                  <option *ngFor="let quarry of quarries" [value]="quarry.name">
-                    {{quarry.name}}
-                  </option>
+                  <option *ngFor="let quarry of quarries" [value]="quarry.name">{{quarry.name}}</option>
                 </select>
               </div>
             </div>
@@ -147,27 +115,19 @@
                   <i class="fas fa-calendar-plus"></i>
                   İşe Giriş Tarihi
                 </label>
-                <input type="date" 
-                       formControlName="hireDate"
-                       class="form-input"
-                       required>
+                <input type="date" formControlName="hireDate" class="form-input" required>
               </div>
-              
+
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-phone-alt"></i>
                   Acil Durum İletişim
                 </label>
-                <input type="tel" 
-                       formControlName="emergencyContact"
-                       class="form-input"
-                       placeholder="0555 987 65 43"
-                       required>
+                <input type="tel" formControlName="emergencyContact" class="form-input" placeholder="0555 987 65 43" required>
               </div>
             </div>
 
-            <!-- İsteğe Bağlı Alanlar (Comment olarak bırakılan alanlar) -->
-            <div class="form-section-divider" style="display: none;">
+            <div class="form-section-divider">
               <div class="divider-line"></div>
               <div class="divider-text">
                 <i class="fas fa-id-card"></i>
@@ -176,48 +136,49 @@
               <div class="divider-line"></div>
             </div>
 
-            <!-- Bu alanlar component'te comment olduğu için gizli bırakıyorum -->
-            <div style="display: none;">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">
-                    <i class="fas fa-id-card"></i>
-                    Ehliyet Tipi
-                  </label>
-                  <input type="text" 
-                         formControlName="licenseType"
-                         class="form-input"
-                         placeholder="Ehliyet tipi">
-                </div>
-                
-                <div class="form-group">
-  <label for="typeOfBlood" class="form-label">
-    <i class="fas fa-tint"></i>
-    Kan Grubu
-  </label>
-  <select id="typeOfBlood" 
-          formControlName="typeOfBlood" 
-          class="form-select">
-    <option value="">Kan grubu seçiniz</option>
-    <option *ngFor="let option of bloodTypeOptions" [value]="option.key">
-      {{option.display}}
-    </option>
-  </select>
-</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-id-card"></i>
+                  Ehliyet Tipi
+                </label>
+                <select formControlName="licenseType" class="form-select" required>
+                  <option *ngFor="let option of licenseTypeOptions" [value]="option.key">{{option.display}}</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="typeOfBlood" class="form-label">
+                  <i class="fas fa-tint"></i>
+                  Kan Grubu
+                </label>
+                <select id="typeOfBlood" formControlName="typeOfBlood" class="form-select">
+                  <option *ngFor="let option of bloodTypeOptions" [value]="option.key">{{option.display}}</option>
+                </select>
               </div>
             </div>
 
-            <!-- Form Actions -->
+            <div class="form-row" *ngIf="isOperatorJob">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-cogs"></i>
+                  Operatör Lisansı
+                </label>
+                <select formControlName="operatorLicense" class="form-select">
+                  <option *ngFor="let option of operatorLicenseOptions" [value]="option.key">{{option.display}}</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+              </div>
+            </div>
+
             <div class="form-actions">
-              <button type="button" 
-                      class="action-btn secondary"
-                      (click)="router.navigate(['/personeller'])">
+              <button type="button" class="action-btn secondary" (click)="router.navigate(['/personeller'])">
                 <i class="fas fa-times"></i>
                 İptal
               </button>
-              <button type="submit" 
-                      class="action-btn primary"
-                      [disabled]="!employeeForm.valid">
+              <button type="submit" class="action-btn primary" [disabled]="!employeeForm.valid">
                 <i class="fas fa-save"></i>
                 Kaydet
               </button>
@@ -225,10 +186,7 @@
 
           </form>
         </div>
-
       </div>
     </div>
-
   </div>
-
 </div>

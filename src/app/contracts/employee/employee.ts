@@ -1,3 +1,7 @@
+import { TypeOfBlood } from "../typeOfBlood";
+import { LicenseTypes } from "../licenseTypes";
+import { OperatorLicense } from "../operatorLicense";
+
 export class Employee {
     
     id:string;
@@ -6,13 +10,14 @@ export class Employee {
     jobName: string;
     departmentName: string;
     quarryName: string;
-    typeOfBlood: string;
+    typeOfBlood?: TypeOfBlood;
     birthDate: Date;
     phone: string;
     address: string;
     hireDate: Date;
     departureDate: Date;
-    licenseType: string;
+    licenseType?: LicenseTypes;
+    operatorLicense?: OperatorLicense;
     emergencyContact: string;
     
 }

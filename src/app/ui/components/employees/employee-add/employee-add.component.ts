@@ -14,11 +14,14 @@ import { Quarry } from 'src/app/contracts/quarry/quarry';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
 import { UppercaseinputDirective } from 'src/app/directives/common/uppercaseinput.directive';
 import { BloodTypeDisplayPipe } from 'src/app/pipes/bloodTypeDisplay.pipe';
+import { LicenseTypes } from 'src/app/contracts/licenseTypes';
+import { OperatorLicense } from 'src/app/contracts/operatorLicense';
+import { TypeOfBlood } from 'src/app/contracts/typeOfBlood';
 
 @Component({
   selector: 'app-employee-add',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, UppercaseinputDirective, BloodTypeDisplayPipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, UppercaseinputDirective],
   templateUrl: './employee-add.component.html',
   styleUrls: ['./employee-add.component.scss','../../../../../styles.scss']
 })
@@ -34,15 +37,50 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
 
   // Kan grubu seçenekleri
   bloodTypeOptions = [
-    { key: 'APositive', display: 'A Rh+' },
-    { key: 'ANegative', display: 'A Rh-' },
-    { key: 'BPositive', display: 'B Rh+' },
-    { key: 'BNegative', display: 'B Rh-' },
-    { key: 'ABPositive', display: 'AB Rh+' },
-    { key: 'ABNegative', display: 'AB Rh-' },
-    { key: 'OPositive', display: 'O Rh+' },
-    { key: 'ONegative', display: 'O Rh-' }
+    { key: TypeOfBlood.None, display: 'Seçiniz' },
+    { key: TypeOfBlood.APositive, display: 'A Rh+' },
+    { key: TypeOfBlood.ANegative, display: 'A Rh-' },
+    { key: TypeOfBlood.BPositive, display: 'B Rh+' },
+    { key: TypeOfBlood.BNegative, display: 'B Rh-' },
+    { key: TypeOfBlood.ABPositive, display: 'AB Rh+' },
+    { key: TypeOfBlood.ABNegative, display: 'AB Rh-' },
+    { key: TypeOfBlood.OPositive, display: 'O Rh+' },
+    { key: TypeOfBlood.ONegative, display: 'O Rh-' }
   ];
+
+  // Ehliyet tipi seçenekleri
+  licenseTypeOptions = [
+    { key: LicenseTypes.None, display: 'Seçiniz' },
+    { key: LicenseTypes.A1, display: 'A1 - Motosiklet (125cc\'ye kadar)' },
+    { key: LicenseTypes.A2, display: 'A2 - Motosiklet (35kW\'a kadar)' },
+    { key: LicenseTypes.A, display: 'A - Motosiklet (sınırsız)' },
+    { key: LicenseTypes.B1, display: 'B1 - Hafif araç' },
+    { key: LicenseTypes.B, display: 'B - Otomobil' },
+    { key: LicenseTypes.BE, display: 'BE - Otomobil + römorkluk' },
+    { key: LicenseTypes.C1, display: 'C1 - Orta kamyon (3.5-7.5 ton)' },
+    { key: LicenseTypes.C1E, display: 'C1E - Orta kamyon + römorkluk' },
+    { key: LicenseTypes.C, display: 'C - Kamyon (7.5 ton üzeri)' },
+    { key: LicenseTypes.CE, display: 'CE - Kamyon + römorkluk' },
+    { key: LicenseTypes.D1, display: 'D1 - Küçük otobüs (16 kişiye kadar)' },
+    { key: LicenseTypes.D1E, display: 'D1E - Küçük otobüs + römorkluk' },
+    { key: LicenseTypes.D, display: 'D - Otobüs (16 kişi üzeri)' },
+    { key: LicenseTypes.DE, display: 'DE - Otobüs + römorkluk' },
+    { key: LicenseTypes.F, display: 'F - Traktör' },
+    { key: LicenseTypes.G, display: 'G - İş makinesi' },
+    { key: LicenseTypes.M, display: 'M - Moped' }
+  ];
+
+  // Operatör lisans seçenekleri
+  operatorLicenseOptions = [
+    { key: OperatorLicense.None, display: 'Seçiniz' },
+    { key: OperatorLicense.Loader, display: 'Yükleyici' },
+    { key: OperatorLicense.Excavator, display: 'Ekskavatör' },
+    { key: OperatorLicense.LoaderAndExcavator, display: 'Yükleyici + Ekskavatör' },
+    { key: OperatorLicense.Drill, display: 'Delici' }
+  ];
+
+  // Seçilen job'ın operatör olup olmadığını kontrol et
+  isOperatorJob = false;
 
   constructor(
     spinner: NgxSpinnerService,
@@ -63,9 +101,10 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
       birthDate: [''],
       emergencyContact: [''],
       hireDate: [''],
-      licenseType: [''],
+      licenseType: [null],
+      operatorLicense: [null],
       phone: [''],
-      typeOfBlood: [''],
+      typeOfBlood: [null],
       address: ['']
     });
   }
@@ -85,12 +124,18 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
       emergencyContact: formValue.emergencyContact,
       address: formValue.address,
       hireDate: new Date(formValue.hireDate),
-      licenseType: formValue.licenseType,
+      licenseType: formValue.licenseType && Number(formValue.licenseType) !== 0 ? Number(formValue.licenseType) : null,
+      operatorLicense: this.isOperatorJob && formValue.operatorLicense && Number(formValue.operatorLicense) !== 0 ? Number(formValue.operatorLicense) : null,
       phone: formValue.phone,
-      typeOfBlood: formValue.typeOfBlood,
+      typeOfBlood: formValue.typeOfBlood && Number(formValue.typeOfBlood) !== 0 ? Number(formValue.typeOfBlood) : null,
       jobId: this.getIdFromItems(this.jobs, formValue.jobName),
       quarryId: this.getIdFromItems(this.quarries, formValue.quarryName),
     };
+
+    console.log('Gönderilen veri:', create_employee);
+    console.log('LicenseType:', typeof create_employee.licenseType, create_employee.licenseType);
+    console.log('TypeOfBlood:', typeof create_employee.typeOfBlood, create_employee.typeOfBlood);
+    console.log('OperatorLicense:', typeof create_employee.operatorLicense, create_employee.operatorLicense);
 
     this.employeeService.add(create_employee, () => {
       this.toastr.success(create_employee.firstName + ' ' + create_employee.lastName + ' Başarıyla Eklendi');
@@ -99,6 +144,7 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
       }, 1500);
     }, (errorMessage: string) => {
       this.toastr.error("Kayıt Başarısız");
+      console.error('Hata detayı:', errorMessage);
     });
   }
 
@@ -127,6 +173,18 @@ export class EmployeeAddComponent extends BaseComponent implements OnInit {
     const value = this.employeeForm.get(fieldName)?.value;
     if (value) {
       this.employeeForm.get(fieldName)?.setValue(value.toLocaleUpperCase('tr-TR'), { emitEvent: false });
+    }
+  }
+
+  // Meslek değiştiğinde operatör kontrolü yap
+  onJobChange(jobName: string): void {
+    this.isOperatorJob = jobName.toLowerCase().includes('operatör') || 
+                        jobName.toLowerCase().includes('operator') ||
+                        jobName.toLowerCase().includes('makinist');
+    
+    // Eğer operatör değilse operatör lisansını sıfırla
+    if (!this.isOperatorJob) {
+      this.employeeForm.get('operatorLicense')?.setValue(null);
     }
   }
 }

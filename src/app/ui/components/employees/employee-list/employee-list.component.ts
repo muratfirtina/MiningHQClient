@@ -71,7 +71,7 @@ export class EmployeeListComponent extends BaseComponent implements OnInit {
         employee.hireDate?.toString().toLocaleLowerCase().includes(searchTerm) ||
         employee.departureDate?.toString().toLocaleLowerCase().includes(searchTerm) ||
         employee.birthDate?.toString().toLocaleLowerCase().includes(searchTerm) ||
-        employee.licenseType?.toLocaleLowerCase().includes(searchTerm) ||
+        employee.licenseType?.toString().toLocaleLowerCase().includes(searchTerm) ||
         employee.phone?.toLocaleLowerCase().includes(searchTerm) ||
         employee.typeOfBlood?.toString().toLocaleLowerCase().includes(searchTerm)||
         employee.id.toString().toLocaleLowerCase() === searchTerm

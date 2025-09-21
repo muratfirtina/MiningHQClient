@@ -185,11 +185,25 @@
 
               <div class="form-group">
                 <label for="licenseType">Ehliyet Tipi</label>
-                <input type="text" 
-                       id="licenseType" 
-                       formControlName="licenseType" 
-                       class="form-input"
-                       placeholder="B, C, CE vs.">
+                <select id="licenseType" 
+                        formControlName="licenseType" 
+                        class="form-select">
+                  <option *ngFor="let option of licenseTypeOptions" [value]="option.key">
+                    {{option.display}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Operatör Lisansı (sadece operatör mesleği için göster) -->
+              <div class="form-group" *ngIf="isOperatorJob()">
+                <label for="operatorLicense">Operatör Lisansı</label>
+                <select id="operatorLicense" 
+                        formControlName="operatorLicense" 
+                        class="form-select">
+                  <option *ngFor="let option of operatorLicenseOptions" [value]="option.key">
+                    {{option.display}}
+                  </option>
+                </select>
               </div>
             </div>
           </div>
@@ -207,7 +221,6 @@
                 <select id="typeOfBlood" 
                         formControlName="typeOfBlood" 
                         class="form-select">
-                  <option value="">Kan grubu seçiniz</option>
                   <option *ngFor="let option of bloodTypeOptions" [value]="option.key">
                     {{option.display}}
                   </option>

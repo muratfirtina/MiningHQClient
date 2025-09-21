@@ -42,15 +42,15 @@ export class LeaveTypeListComponent implements OnInit {
       const allData: { totalLeaveTypeCount: number; leaveTypes: List_LeaveType[] } = 
         await this.leaveTypeService.read(this.currentPageNo - 1, this.pageSize, 
           () => {
-            // Success callback
+            console.log('İzin türleri başarıyla yüklendi');
           }, 
           errorMessage => {
             console.error('İzin türleri yüklenirken hata oluştu:', errorMessage);
           }
         );
 
-      this.leaveTypes = allData.leaveTypes;
-      this.totalLeaveTypeCount = allData.totalLeaveTypeCount;
+      this.leaveTypes = allData.leaveTypes || [];
+      this.totalLeaveTypeCount = allData.totalLeaveTypeCount || 0;
       this.totalPageCount = Math.ceil(this.totalLeaveTypeCount / this.pageSize);
       this.totalPagesCount = this.totalPageCount;
       this.count = Math.ceil(this.totalLeaveTypeCount / this.pageSize);
@@ -61,8 +61,13 @@ export class LeaveTypeListComponent implements OnInit {
           this.pageList.push(i);
         }
       }
+      
+      console.log('Yüklenen izin türleri:', this.leaveTypes);
+      console.log('Toplam kayıt sayısı:', this.totalLeaveTypeCount);
     } catch (error) {
       console.error('İzin türleri yüklenirken hata oluştu:', error);
+      this.leaveTypes = [];
+      this.totalLeaveTypeCount = 0;
     } finally {
       this.isLoading = false;
     }

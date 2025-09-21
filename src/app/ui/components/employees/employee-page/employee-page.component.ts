@@ -30,6 +30,8 @@ import { TypeOfBlood } from 'src/app/contracts/typeOfBlood';
 import { BloodTypeDisplayPipe } from 'src/app/pipes/bloodTypeDisplay.pipe';
 import { Department } from 'src/app/contracts/department/department';
 import { DepartmentService } from 'src/app/services/common/models/department.service';
+import { LicenseTypes } from 'src/app/contracts/licenseTypes';
+import { OperatorLicense } from 'src/app/contracts/operatorLicense';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { ListDepartment } from 'src/app/contracts/department/listDepartment';
 import {
@@ -73,14 +75,46 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
 
   // Kan grubu seçenekleri
   bloodTypeOptions = [
-    { key: 'APositive', display: 'A Rh+' },
-    { key: 'ANegative', display: 'A Rh-' },
-    { key: 'BPositive', display: 'B Rh+' },
-    { key: 'BNegative', display: 'B Rh-' },
-    { key: 'ABPositive', display: 'AB Rh+' },
-    { key: 'ABNegative', display: 'AB Rh-' },
-    { key: 'OPositive', display: 'O Rh+' },
-    { key: 'ONegative', display: 'O Rh-' },
+    { key: TypeOfBlood.None, display: 'Seçiniz' },
+    { key: TypeOfBlood.APositive, display: 'A Rh+' },
+    { key: TypeOfBlood.ANegative, display: 'A Rh-' },
+    { key: TypeOfBlood.BPositive, display: 'B Rh+' },
+    { key: TypeOfBlood.BNegative, display: 'B Rh-' },
+    { key: TypeOfBlood.ABPositive, display: 'AB Rh+' },
+    { key: TypeOfBlood.ABNegative, display: 'AB Rh-' },
+    { key: TypeOfBlood.OPositive, display: 'O Rh+' },
+    { key: TypeOfBlood.ONegative, display: 'O Rh-' },
+  ];
+
+  // Ehliyet tipi seçenekleri
+  licenseTypeOptions = [
+    { key: LicenseTypes.None, display: 'Seçiniz' },
+    { key: LicenseTypes.A1, display: 'A1 - Motosiklet (125cc\'ye kadar)' },
+    { key: LicenseTypes.A2, display: 'A2 - Motosiklet (35kW\'a kadar)' },
+    { key: LicenseTypes.A, display: 'A - Motosiklet (sınırsız)' },
+    { key: LicenseTypes.B1, display: 'B1 - Hafif araç' },
+    { key: LicenseTypes.B, display: 'B - Otomobil' },
+    { key: LicenseTypes.BE, display: 'BE - Otomobil + römorkluk' },
+    { key: LicenseTypes.C1, display: 'C1 - Orta kamyon (3.5-7.5 ton)' },
+    { key: LicenseTypes.C1E, display: 'C1E - Orta kamyon + römorkluk' },
+    { key: LicenseTypes.C, display: 'C - Kamyon (7.5 ton üzeri)' },
+    { key: LicenseTypes.CE, display: 'CE - Kamyon + römorkluk' },
+    { key: LicenseTypes.D1, display: 'D1 - Küçük otobüs (16 kişiye kadar)' },
+    { key: LicenseTypes.D1E, display: 'D1E - Küçük otobüs + römorkluk' },
+    { key: LicenseTypes.D, display: 'D - Otobüs (16 kişi üzeri)' },
+    { key: LicenseTypes.DE, display: 'DE - Otobüs + römorkluk' },
+    { key: LicenseTypes.F, display: 'F - Traktör' },
+    { key: LicenseTypes.G, display: 'G - İş makinesi' },
+    { key: LicenseTypes.M, display: 'M - Moped' }
+  ];
+
+  // Operatör lisans seçenekleri
+  operatorLicenseOptions = [
+    { key: OperatorLicense.None, display: 'Seçiniz' },
+    { key: OperatorLicense.Loader, display: 'Yükleyici' },
+    { key: OperatorLicense.Excavator, display: 'Ekskavatör' },
+    { key: OperatorLicense.LoaderAndExcavator, display: 'Yükleyici + Ekskavatör' },
+    { key: OperatorLicense.Drill, display: 'Delici' }
   ];
 
   constructor(
@@ -107,9 +141,10 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       departureDate: [''],
       emergencyContact: [''],
       hireDate: [''],
-      licenseType: [''],
+      licenseType: [null],
+      operatorLicense: [null],
       phone: [''],
-      typeOfBlood: [''],
+      typeOfBlood: [null],
       address: [''],
     });
   }
@@ -131,6 +166,10 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       .getEmployeeById(employeeId, () => {})
       .then((response) => {
         this.employee = response;
+        
+        console.log('Employee data loaded:', this.employee);
+        console.log('Employee typeOfBlood:', this.employee.typeOfBlood, typeof this.employee.typeOfBlood);
+        console.log('Employee licenseType:', this.employee.licenseType, typeof this.employee.licenseType);
 
         this.employeeForm.patchValue({
           firstName: this.employee.firstName,
@@ -143,10 +182,13 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
           emergencyContact: this.employee.emergencyContact,
           hireDate: this.formatDate(this.employee.hireDate),
           licenseType: this.employee.licenseType,
+          operatorLicense: this.employee.operatorLicense,
           phone: this.employee.phone,
           typeOfBlood: this.employee.typeOfBlood,
           address: this.employee.address,
         });
+        
+        console.log('Form patched values:', this.employeeForm.value);
       });
   }
 
@@ -164,9 +206,10 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       employeeFiles: this.employee.employeeFiles,
       address: formValue.address,
       hireDate: new Date(this.employeeForm.value.hireDate),
-      licenseType: formValue.licenseType,
+      licenseType: formValue.licenseType && Number(formValue.licenseType) !== 0 ? Number(formValue.licenseType) : null,
+      operatorLicense: formValue.operatorLicense && Number(formValue.operatorLicense) !== 0 ? Number(formValue.operatorLicense) : null,
       phone: formValue.phone,
-      typeOfBlood: formValue.typeOfBlood,
+      typeOfBlood: formValue.typeOfBlood && Number(formValue.typeOfBlood) !== 0 ? Number(formValue.typeOfBlood) : null,
       departmentId: this.getIdFromItems(
         this.departments,
         formValue.departmentName
@@ -176,6 +219,10 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       puantajDurumu: this.employee.puantajDurumu,
     };
 
+    console.log('Update edilecek veri:', update_employee);
+    console.log('LicenseType:', typeof update_employee.licenseType, update_employee.licenseType);
+    console.log('TypeOfBlood:', typeof update_employee.typeOfBlood, update_employee.typeOfBlood);
+
     await this.employeeService.update(
       update_employee,
       () => {
@@ -183,7 +230,8 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
         this.toastr.success('Çalışan başarıyla güncellendi.');
       },
       (errorMessage: string) => {
-        this.toastr.error(errorMessage);
+        this.toastr.error('Güncelleme başarısız: ' + errorMessage);
+        console.error('Update hatası:', errorMessage);
       }
     );
   }
@@ -501,8 +549,10 @@ async generatePDF() {
         this.employee.phone || '-',
       ],
       //['Doğum Yeri:', '-', 'Ev Telefonu:', '-'],
-      ['İşe Giriş Tarihi:', this.formatDisplayDate(this.employee.hireDate) || '-', 'Lisans Türü:', this.employee.licenseType || '-'],
-      ['Departman:', this.employee.departmentName || '-','Kan Grubu:',this.getBloodTypeDisplay(this.employee.typeOfBlood) || '-'],
+      ['İşe Giriş Tarihi:', this.formatDisplayDate(this.employee.hireDate) || '-', 'Ehliyet Tipi:', this.getLicenseTypeDisplay(this.employee.licenseType) || '-'],
+      ['Departman:', this.employee.departmentName || '-','Kan Grubu:',this.getBloodTypeDisplay(this.employee.typeOfBlood?.toString()) || '-'],
+      // Operatör lisansı sadece operatör ise göster
+      ...(this.isOperatorJob() && this.employee.operatorLicense ? [['Operatör Lisansı:', this.getOperatorLicenseDisplay(this.employee.operatorLicense), '', '']] : []),
       ['Acil Durum İletişim:', this.employee.emergencyContact || '-'],
       // ⭐ ADRES İÇİN AYRI SATIR - TAM GÖRÜNÜR
       [
@@ -856,5 +906,77 @@ private addPhotoPlaceholder(
     } else {
       this.router.navigate(['/personeller']);
     }
+  }
+
+  // Ehliyet tipi display helper
+  getLicenseTypeDisplay(licenseType: LicenseTypes): string {
+    if (!licenseType && licenseType !== 0) return '';
+    
+    const licenseTypeMap: { [key: number]: string } = {
+      [LicenseTypes.None]: 'Seçiniz',
+      [LicenseTypes.A1]: 'A1 - Motosiklet (125cc\'ye kadar)',
+      [LicenseTypes.A2]: 'A2 - Motosiklet (35kW\'a kadar)',
+      [LicenseTypes.A]: 'A - Motosiklet (sınırsız)',
+      [LicenseTypes.B1]: 'B1 - Hafif araç',
+      [LicenseTypes.B]: 'B - Otomobil',
+      [LicenseTypes.BE]: 'BE - Otomobil + römorkluk',
+      [LicenseTypes.C1]: 'C1 - Orta kamyon (3.5-7.5 ton)',
+      [LicenseTypes.C1E]: 'C1E - Orta kamyon + römorkluk',
+      [LicenseTypes.C]: 'C - Kamyon (7.5 ton üzeri)',
+      [LicenseTypes.CE]: 'CE - Kamyon + römorkluk',
+      [LicenseTypes.D1]: 'D1 - Küçük otobüs (16 kişiye kadar)',
+      [LicenseTypes.D1E]: 'D1E - Küçük otobüs + römorkluk',
+      [LicenseTypes.D]: 'D - Otobüs (16 kişi üzeri)',
+      [LicenseTypes.DE]: 'DE - Otobüs + römorkluk',
+      [LicenseTypes.F]: 'F - Traktör',
+      [LicenseTypes.G]: 'G - İş makinesi',
+      [LicenseTypes.M]: 'M - Moped'
+    };
+    
+    return licenseTypeMap[licenseType] || `${licenseType}`;
+  }
+
+  // Operatör lisans display helper
+  getOperatorLicenseDisplay(operatorLicense: OperatorLicense): string {
+    if (!operatorLicense && operatorLicense !== 0) return '';
+    
+    const operatorLicenseMap: { [key: number]: string } = {
+      [OperatorLicense.None]: 'Seçiniz',
+      [OperatorLicense.Loader]: 'Yükleyici',
+      [OperatorLicense.Excavator]: 'Ekskavatör',
+      [OperatorLicense.LoaderAndExcavator]: 'Yükleyici + Ekskavatör',
+      [OperatorLicense.Drill]: 'Delici'
+    };
+    
+    return operatorLicenseMap[operatorLicense] || `${operatorLicense}`;
+  }
+
+  // Operatör olup olmadığını kontrol et
+  isOperatorJob(): boolean {
+    if (!this.employee?.jobName) return false;
+    
+    const jobName = this.employee.jobName.toLowerCase();
+    return jobName.includes('operatör') || 
+           jobName.includes('operator') ||
+           jobName.includes('makinist');
+  }
+
+  // Kan grubu display helper
+  getTypeOfBloodDisplay(typeOfBlood: TypeOfBlood): string {
+    if (!typeOfBlood && typeOfBlood !== 0) return '';
+    
+    const typeOfBloodMap: { [key: number]: string } = {
+      [TypeOfBlood.None]: 'Seçiniz',
+      [TypeOfBlood.APositive]: 'A Rh+',
+      [TypeOfBlood.ANegative]: 'A Rh-',
+      [TypeOfBlood.BPositive]: 'B Rh+',
+      [TypeOfBlood.BNegative]: 'B Rh-',
+      [TypeOfBlood.ABPositive]: 'AB Rh+',
+      [TypeOfBlood.ABNegative]: 'AB Rh-',
+      [TypeOfBlood.OPositive]: 'O Rh+',
+      [TypeOfBlood.ONegative]: 'O Rh-'
+    };
+    
+    return typeOfBloodMap[typeOfBlood] || `${typeOfBlood}`;
   }
 }
