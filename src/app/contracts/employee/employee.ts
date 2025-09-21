@@ -4,6 +4,7 @@ export class Employee {
     firstName: string;
     lastName: string;
     jobName: string;
+    departmentName: string;
     quarryName: string;
     typeOfBlood: string;
     birthDate: Date;

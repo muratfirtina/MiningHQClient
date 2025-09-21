@@ -26,8 +26,89 @@
 
   <div class="container-custom">
     
+    <!-- Main Employee Selection Section -->
+    <div class="employee-selection-section">
+      <div class="selection-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-user-check"></i>
+            <h3>Personel Seçimi</h3>
+          </div>
+          <p class="card-subtitle">İzin işlemleri için personel seçin</p>
+        </div>
+        
+        <form [formGroup]="mainEmployeeSelectionForm" class="employee-selection-form">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fas fa-user"></i>
+              Personel
+            </label>
+            <select formControlName="selectedEmployeeId" 
+                    class="form-select"
+                    (change)="onEmployeeSelection()">
+              <option value="">Personel seçiniz</option>
+              <option *ngFor="let employee of employees" [value]="employee.id">
+                {{employee.firstName}} {{employee.lastName}}
+              </option>
+            </select>
+          </div>
+        </form>
+        
+        <!-- Selected Employee Info -->
+        <div class="selected-employee-info" *ngIf="selectedEmployee">
+          <div class="employee-card">
+            <div class="employee-avatar">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="employee-details">
+              <h4>{{selectedEmployee.firstName}} {{selectedEmployee.lastName}}</h4>
+              <p class="employee-role">{{selectedEmployee.departmentName}} - {{selectedEmployee.jobName}}</p>
+              <div class="employee-info">
+                <div class="info-item">
+                  <i class="fas fa-calendar-plus"></i>
+                  <span class="info-label">İşe Giriş:</span>
+                  <span class="info-value">{{ selectedEmployee.hireDate | date:'dd/MM/yyyy'}}</span>
+                </div>
+              </div>
+              <div class="employee-stats">
+                <div class="leave-stats-grid">
+                  <div class="stat-item">
+                    <div class="stat-icon entitled">
+                      <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div class="stat-content">
+                      <span class="stat-number">{{totalEntitledDays || 0}}</span>
+                      <span class="stat-label">Toplam Hakedilen</span>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-icon used">
+                      <i class="fas fa-calendar-minus"></i>
+                    </div>
+                    <div class="stat-content">
+                      <span class="stat-number">{{totalUsedDays || 0}}</span>
+                      <span class="stat-label">Toplam Kullanılan</span>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-icon remaining">
+                      <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                      <span class="stat-number">{{remainingDaysForSelectedEmployee || 0}}</span>
+                      <span class="stat-label">Kalan İzin</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Leave Entry Forms Section -->
-    <div class="forms-section">
+    <div class="forms-section" *ngIf="selectedEmployee">
       <div class="forms-grid">
         
         <!-- Entitled Leave Entry -->
@@ -43,19 +124,6 @@
           <form [formGroup]="entitledLeaveAddForm" class="modern-form">
             <div class="form-grid">
               
-              <div class="form-group">
-                <label class="form-label">
-                  <i class="fas fa-user"></i>
-                  Personel
-                </label>
-                <select formControlName="employeeId" class="form-select">
-                  <option value="">Personel seçiniz</option>
-                  <option *ngFor="let employee of employees" [value]="employee.id">
-                    {{employee.firstName}} {{employee.lastName}}
-                  </option>
-                </select>
-              </div>
-
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-tags"></i>
@@ -79,7 +147,7 @@
                        class="form-input"
                        placeholder="Gün sayısı"
                        min="1">
-                <div *ngIf="entitledLeaveAddForm.get('entitledDays').errors?.['min']" 
+                <div *ngIf="entitledLeaveAddForm.get('entitledDays')?.errors?.['min']" 
                      class="error-message">
                   <i class="fas fa-exclamation-triangle"></i>
                   Gün sayısı 0'dan büyük olmalıdır.
@@ -123,19 +191,6 @@
           <form [formGroup]="leaveUsageAddForm" class="modern-form">
             <div class="form-grid">
               
-              <div class="form-group">
-                <label class="form-label">
-                  <i class="fas fa-user"></i>
-                  Personel
-                </label>
-                <select formControlName="employeeId" class="form-select">
-                  <option value="">Personel seçiniz</option>
-                  <option *ngFor="let employee of employees" [value]="employee.id">
-                    {{employee.firstName}} {{employee.lastName}}
-                  </option>
-                </select>
-              </div>
-
               <div class="form-group">
                 <label class="form-label">
                   <i class="fas fa-tags"></i>
@@ -204,324 +259,353 @@
       </div>
     </div>
 
-    <!-- Filters Section -->
-    <div class="filters-section">
-      <div class="filter-card">
-        <div class="filter-header">
+    <!-- Leave Data Display Section -->
+    <div class="leave-data-section" *ngIf="selectedEmployee">
+      <div class="data-toggle-section">
+        <div class="toggle-header">
           <h3>
-            <i class="fas fa-filter"></i>
-            İzin Listesi Filtreleri
+            <i class="fas fa-list"></i>
+            İzin Verileri
           </h3>
+          <p>Personel izin bilgilerini görüntüleyin</p>
         </div>
         
-        <div class="filter-form">
-          <!-- Selection Form -->
-          <form [formGroup]="selectionForm" class="selection-form">
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-list"></i>
-                İzin Türü Seçimi
-              </label>
-              <select formControlName="selection" 
-                      class="form-select"
-                      (change)="onSelectionChange()">
-                <option value="">Seçim Yapın</option>
-                <option value="entitledLeaves">Hakedilen İzinler</option>
-                <option value="usedLeaves">Kullanılan İzinler</option>
-              </select>
-            </div>
-          </form>
+        <div class="data-type-tabs">
+          <button class="tab-btn" 
+                  [class.active]="currentDataType === 'entitled'"
+                  (click)="switchDataType('entitled')">
+            <i class="fas fa-calendar-plus"></i>
+            Hakedilen İzinler
+          </button>
+          <button class="tab-btn" 
+                  [class.active]="currentDataType === 'used'"
+                  (click)="switchDataType('used')">
+            <i class="fas fa-calendar-minus"></i>
+            Kullanılan İzinler
+          </button>
+        </div>
+      </div>
 
-          <!-- Dynamic Filter Form -->
-          <div *ngIf="selectionForm.get('selection').value" 
-               [formGroup]="selectionForm.get('selection').value === 'entitledLeaves' ? listByEmployeeIdForm : leaveUsageListByEmplooyeIdForm"
-               class="filter-grid">
-            
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-user"></i>
-                Personel
-              </label>
-              <select formControlName="employeeId" class="form-select">
-                <option value="">Personel Seçin</option>
-                <option *ngFor="let employee of employees" [value]="employee.id">
-                  {{employee.firstName}} {{employee.lastName}}
-                </option>
-              </select>
-            </div>
+      <!-- Optional Filters -->
+      <div class="optional-filters-section">
+        <div class="filter-card">
+          <!-- <div class="filter-header">
+            <h4>
+              <i class="fas fa-filter"></i>
+              İsteğe Bağlı Filtreler
+            </h4>
+            <button class="filter-toggle" (click)="toggleFilters()">
+              <i class="fas" [class.fa-chevron-down]="!showFilters" [class.fa-chevron-up]="showFilters"></i>
+            </button>
+          </div> -->
+          
+          <div class="filter-form" [class.show]="showFilters">
+            <form [formGroup]="currentDataType === 'entitled' ? listByEmployeeIdForm : leaveUsageListByEmplooyeIdForm" 
+                  class="optional-filter-form">
+              <div class="filter-grid">
+                
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-tags"></i>
+                    İzin Tipi
+                  </label>
+                  <select formControlName="leaveTypeId" class="form-select">
+                    <option value="">Tümü</option>
+                    <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">
+                      {{leaveType.name}}
+                    </option>
+                  </select>
+                </div>
 
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-tags"></i>
-                İzin Tipi
-              </label>
-              <select formControlName="leaveTypeId" class="form-select">
-                <option value="">Tümü</option>
-                <option *ngFor="let leaveType of leaveTypes" [value]="leaveType.id">
-                  {{leaveType.name}}
-                </option>
-              </select>
-            </div>
+                <!-- Date Range Filters -->
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-calendar"></i>
+                    <span *ngIf="currentDataType === 'entitled'">Başlangıç Tarihi</span>
+                    <span *ngIf="currentDataType === 'used'">Çıkış Tarihi (Den)</span>
+                  </label>
+                  <input type="date" 
+                         [formControlName]="currentDataType === 'entitled' ? 'startDate' : 'usageDate'"
+                         class="form-input">
+                </div>
 
-            <div class="form-group" *ngIf="selectionForm.get('selection').value === 'usedLeaves'">
-              <label class="form-label">
-                <i class="fas fa-calendar"></i>
-                Başlangıç Tarihi
-              </label>
-              <input type="date" formControlName="usageDate" class="form-input">
-            </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span *ngIf="currentDataType === 'entitled'">Bitiş Tarihi</span>
+                    <span *ngIf="currentDataType === 'used'">Dönüş Tarihi (e Kadar)</span>
+                  </label>
+                  <input type="date" 
+                         [formControlName]="currentDataType === 'entitled' ? 'endDate' : 'returnDate'"
+                         class="form-input">
+                </div>
 
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-sort"></i>
-                Sıralama
-              </label>
-              <select formControlName="sortDirection" class="form-select">
-                <option value="asc">Eskiden Yeniye</option>
-                <option value="desc">Yeniden Eskiye</option>
-              </select>
-            </div>
+                <div class="form-group">
+                  <label class="form-label">
+                    <i class="fas fa-sort"></i>
+                    Sıralama
+                  </label>
+                  <select formControlName="sortDirection" class="form-select">
+                    <option value="desc">Yeniden Eskiye</option>
+                    <option value="asc">Eskiden Yeniye</option>
+                  </select>
+                </div>
 
+                <div class="form-actions">
+                  <button type="button" class="action-btn clear" (click)="clearFilters()">
+                    <i class="fas fa-times"></i>
+                    Filtreleri Temizle
+                  </button>
+                </div>
+
+              </div>
+            </form>
           </div>
         </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section">
+        
+        <!-- Entitled Leaves Table -->
+        <div class="table-card" *ngIf="currentDataType === 'entitled' && pagedEntitledLeave.length > 0">
+          <div class="table-header">
+            <div class="table-title">
+              <h3>
+                <i class="fas fa-calendar-plus"></i>
+                {{selectedEmployee.firstName}} {{selectedEmployee.lastName}} - Hakedilen İzinler
+              </h3>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-calendar"></i>
+                      Tarih
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-tags"></i>
+                      İzin Türü
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-calendar-day"></i>
+                      Gün Sayısı
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-cog"></i>
+                      İşlemler
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let leave of pagedEntitledLeave" class="table-row">
+                  <td>
+                    <span class="date-badge">{{ leave.entitledDate | date:'dd/MM/yyyy' }}</span>
+                  </td>
+                  <td>
+                    <span class="type-badge">{{ leave.leaveTypeName }}</span>
+                  </td>
+                  <td>
+                    <span class="days-badge">{{ leave.entitledDays }} gün</span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-icon-btn delete" 
+                              (click)="deleteEntitledLeave(leave.id)"
+                              title="Sil">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-section">
+            <nav class="pagination-nav">
+              <ul class="pagination">
+                <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                  <a class="page-link" (click)="changePage(1)">
+                    <i class="fas fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                  <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                    <i class="fas fa-angle-left"></i>
+                  </a>
+                </li>
+                <li class="page-item" 
+                    *ngFor="let pageNo of pageList" 
+                    [class.active]="pageNo === currentPageNo">
+                  <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                  <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                    <i class="fas fa-angle-right"></i>
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                  <a class="page-link" (click)="changePage(pages)">
+                    <i class="fas fa-angle-double-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Used Leaves Table -->
+        <div class="table-card" *ngIf="currentDataType === 'used' && pageLeaveUsage.length > 0">
+          <div class="table-header">
+            <div class="table-title">
+              <h3>
+                <i class="fas fa-calendar-minus"></i>
+                {{selectedEmployee.firstName}} {{selectedEmployee.lastName}} - Kullanılan İzinler
+              </h3>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-play"></i>
+                      Çıkış Tarihi
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-stop"></i>
+                      Dönüş Tarihi
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-tags"></i>
+                      İzin Türü
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-calendar-day"></i>
+                      Gün
+                    </div>
+                  </th>
+                  <th>
+                    <div class="th-content">
+                      <i class="fas fa-cog"></i>
+                      İşlemler
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let usage of pageLeaveUsage" class="table-row">
+                  <td>
+                    <span class="date-badge">{{ usage.usageDate | date:'dd/MM/yyyy' }}</span>
+                  </td>
+                  <td>
+                    <span class="date-badge">{{ usage.returnDate | date:'dd/MM/yyyy' }}</span>
+                  </td>
+                  <td>
+                    <span class="type-badge">{{ usage.leaveTypeName }}</span>
+                  </td>
+                  <td>
+                    <span class="days-badge">{{ usage.usedDays }} gün</span>
+                  </td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-icon-btn delete" 
+                              (click)="deleteLeaveUsage(usage.id)"
+                              title="Sil">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                      <button class="action-icon-btn download primary" 
+                              (click)="generateRequestPDF(usage)"
+                              title="Talep PDF">
+                        <i class="fas fa-file-alt"></i>
+                      </button>
+                      <button class="action-icon-btn download secondary" 
+                              (click)="generateApprovalPDF(usage)"
+                              title="Onay PDF">
+                        <i class="fas fa-file-check"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-section">
+            <nav class="pagination-nav">
+              <ul class="pagination">
+                <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                  <a class="page-link" (click)="changePage(1)">
+                    <i class="fas fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                  <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                    <i class="fas fa-angle-left"></i>
+                  </a>
+                </li>
+                <li class="page-item" 
+                    *ngFor="let pageNo of pageList" 
+                    [class.active]="pageNo === currentPageNo">
+                  <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                  <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                    <i class="fas fa-angle-right"></i>
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                  <a class="page-link" (click)="changePage(pages)">
+                    <i class="fas fa-angle-double-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="selectedEmployee && ((currentDataType === 'entitled' && pagedEntitledLeave.length === 0) || (currentDataType === 'used' && pageLeaveUsage.length === 0))">
+          <div class="empty-icon">
+            <i class="fas fa-calendar-times"></i>
+          </div>
+          <h3>Veri bulunamadı</h3>
+          <p *ngIf="currentDataType === 'entitled'">{{selectedEmployee.firstName}} {{selectedEmployee.lastName}} için hakedilen izin kaydı bulunamadı.</p>
+          <p *ngIf="currentDataType === 'used'">{{selectedEmployee.firstName}} {{selectedEmployee.lastName}} için kullanılan izin kaydı bulunamadı.</p>
+        </div>
+
       </div>
     </div>
 
-    <!-- Results Section -->
-    <div class="results-section" *ngIf="selectionForm.get('selection').value">
-      
-      <!-- Entitled Leaves Table -->
-      <div class="table-card" *ngIf="selectionForm.get('selection').value === 'entitledLeaves' && pagedEntitledLeave.length > 0">
-        <div class="table-header">
-          <div class="table-title">
-            <h3>
-              <i class="fas fa-calendar-plus"></i>
-              Hakedilen İzinler
-            </h3>
-            <div class="remaining-days" *ngIf="remainingDaysForSelectedEmployee >= 0">
-              <span class="remaining-label">Mevcut İzin Hakkı:</span>
-              <span class="remaining-number">{{remainingDaysForSelectedEmployee}} gün</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="table-container">
-          <table class="modern-table">
-            <thead>
-              <tr>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-calendar"></i>
-                    Tarih
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-tags"></i>
-                    İzin Türü
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-calendar-day"></i>
-                    Gün Sayısı
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-cog"></i>
-                    İşlemler
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let leave of pagedEntitledLeave" class="table-row">
-                <td>
-                  <span class="date-badge">{{ leave.entitledDate | date:'dd/MM/yyyy' }}</span>
-                </td>
-                <td>
-                  <span class="type-badge">{{ leave.leaveTypeName }}</span>
-                </td>
-                <td>
-                  <span class="days-badge">{{ leave.entitledDays }} gün</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-icon-btn delete" 
-                            (click)="deleteEntitledLeave(leave.id)"
-                            title="Sil">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination-section">
-          <nav class="pagination-nav">
-            <ul class="pagination">
-              <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                <a class="page-link" (click)="changePage(1)">
-                  <i class="fas fa-angle-double-left"></i>
-                </a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                <a class="page-link" (click)="changePage(currentPageNo - 1)">
-                  <i class="fas fa-angle-left"></i>
-                </a>
-              </li>
-              <li class="page-item" 
-                  *ngFor="let pageNo of pageList" 
-                  [class.active]="pageNo === currentPageNo">
-                <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                <a class="page-link" (click)="changePage(currentPageNo + 1)">
-                  <i class="fas fa-angle-right"></i>
-                </a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                <a class="page-link" (click)="changePage(pages)">
-                  <i class="fas fa-angle-double-right"></i>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+    <!-- No Employee Selected State -->
+    <div class="no-employee-state" *ngIf="!selectedEmployee">
+      <div class="empty-icon">
+        <i class="fas fa-user-plus"></i>
       </div>
-
-      <!-- Used Leaves Table -->
-      <div class="table-card" *ngIf="selectionForm.get('selection').value === 'usedLeaves' && pageLeaveUsage.length > 0">
-        <div class="table-header">
-          <div class="table-title">
-            <h3>
-              <i class="fas fa-calendar-minus"></i>
-              Kullanılan İzinler
-            </h3>
-          </div>
-        </div>
-        
-        <div class="table-container">
-          <table class="modern-table">
-            <thead>
-              <tr>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-play"></i>
-                    Çıkış Tarihi
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-stop"></i>
-                    Dönüş Tarihi
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-tags"></i>
-                    İzin Türü
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-calendar-day"></i>
-                    Gün
-                  </div>
-                </th>
-                <th>
-                  <div class="th-content">
-                    <i class="fas fa-cog"></i>
-                    İşlemler
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let usage of pageLeaveUsage" class="table-row">
-                <td>
-                  <span class="date-badge">{{ usage.usageDate | date:'dd/MM/yyyy' }}</span>
-                </td>
-                <td>
-                  <span class="date-badge">{{ usage.returnDate | date:'dd/MM/yyyy' }}</span>
-                </td>
-                <td>
-                  <span class="type-badge">{{ usage.leaveTypeName }}</span>
-                </td>
-                <td>
-                  <span class="days-badge">{{ usage.usedDays }} gün</span>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-icon-btn delete" 
-                            (click)="deleteLeaveUsage(usage.id)"
-                            title="Sil">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                    <button class="action-icon-btn download primary" 
-                            (click)="generateRequestPDF(usage)"
-                            title="Talep PDF">
-                      <i class="fas fa-file-alt"></i>
-                    </button>
-                    <button class="action-icon-btn download secondary" 
-                            (click)="generateApprovalPDF(usage)"
-                            title="Onay PDF">
-                      <i class="fas fa-file-check"></i>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination-section">
-          <nav class="pagination-nav">
-            <ul class="pagination">
-              <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                <a class="page-link" (click)="changePage(1)">
-                  <i class="fas fa-angle-double-left"></i>
-                </a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPageNo <= 1">
-                <a class="page-link" (click)="changePage(currentPageNo - 1)">
-                  <i class="fas fa-angle-left"></i>
-                </a>
-              </li>
-              <li class="page-item" 
-                  *ngFor="let pageNo of pageList" 
-                  [class.active]="pageNo === currentPageNo">
-                <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                <a class="page-link" (click)="changePage(currentPageNo + 1)">
-                  <i class="fas fa-angle-right"></i>
-                </a>
-              </li>
-              <li class="page-item" [class.disabled]="currentPageNo >= pages">
-                <a class="page-link" (click)="changePage(pages)">
-                  <i class="fas fa-angle-double-right"></i>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="(selectionForm.get('selection').value === 'entitledLeaves' && pagedEntitledLeave.length === 0) || (selectionForm.get('selection').value === 'usedLeaves' && pageLeaveUsage.length === 0)">
-        <div class="empty-icon">
-          <i class="fas fa-calendar-times"></i>
-        </div>
-        <h3>Veri bulunamadı</h3>
-        <p>Seçilen kriterlere uygun izin kaydı bulunamadı.</p>
-      </div>
-
+      <h3>Personel Seçin</h3>
+      <p>İzin işlemlerine başlamak için yukarıdan bir personel seçin.</p>
     </div>
 
   </div>
@@ -568,7 +652,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Hakedilen izin kaydını oluşturmak istediğinize emin misiniz?</p>
+          <p>{{selectedEmployee?.firstName}} {{selectedEmployee?.lastName}} için hakedilen izin kaydını oluşturmak istediğinize emin misiniz?</p>
           <div class="info-text">
             <i class="fas fa-info-circle"></i>
             Bu işlem personelin izin hakkını artıracaktır.
@@ -600,7 +684,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>İzin kullanım kaydını oluşturmak istediğinize emin misiniz?</p>
+          <p>{{selectedEmployee?.firstName}} {{selectedEmployee?.lastName}} için izin kullanım kaydını oluşturmak istediğinize emin misiniz?</p>
           <div class="info-text">
             <i class="fas fa-info-circle"></i>
             Bu işlem personelin izin hakkını azaltacaktır.
