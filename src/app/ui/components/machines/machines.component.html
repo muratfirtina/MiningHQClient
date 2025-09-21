@@ -1,46 +1,344 @@
-<div>
-  <h2>Makinalar</h2>
-  <!-- Filtreleme Formu -->
-  <form #filterForm="ngForm" (ngSubmit)="searchMachines()">
-    <div>
-      <label for="field">Alan:</label>
-      <input type="text" id="field" [(ngModel)]="filter.field" name="field" required>
+<div class="modern-machines-list-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-cogs"></i>
+          Makina Yönetimi
+        </h1>
+        <p class="page-subtitle">Maden sahası makinalarını görüntüle, filtrele ve yönet</p>
+      </div>
+      <div class="header-actions">
+        <div class="action-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{machines?.count || 0}}</span>
+            <span class="stat-label">Makina</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <div>
-      <label for="value">Değer:</label>
-      <input type="text" id="value" [(ngModel)]="filter.value" name="value" required>
-    </div>
-    <div>
-      <label for="operator">Operatör:</label>
-      <input type="text" id="operator" [(ngModel)]="filter.operator" name="operator" required>
-    </div>
-    <button type="submit" [disabled]="!filterForm.valid">Filtrele</button>
-  </form>
+  </div>
 
-  <!-- Makinaların Listelendiği Tablo -->
-  <table *ngIf="machines?.items.length">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Adı</th>
-        <th>Makine Tipi</th>
-        <th>Marka</th>
-        <th>Model</th>
-        <th>Seri Numarası</th>
-        <th>Ocak Adı</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let machine of machines.items">
-        <td>{{ machine.id }}</td>
-        <td>{{ machine.name }}</td>
-        <td>{{ machine.machineTypeName }}</td>
-        <td>{{ machine.brandName }}</td>
-        <td>{{ machine.modelName }}</td>
-        <td>{{ machine.serialNumber }}</td>
-        <td>{{ machine.quarryName }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <p *ngIf="!machines?.items.length">Makina bulunamadı.</p>
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <div class="container-custom">
+      <div class="action-buttons">
+        
+        <button type="button" 
+                class="action-btn primary" 
+                (click)="viewMachineReports()">
+          <div class="btn-icon">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Makina Raporları</span>
+            <span class="btn-subtitle">Performans ve istatistikler</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn secondary" 
+                (click)="viewMaintenanceSchedule()">
+          <div class="btn-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Bakım Takvimi</span>
+            <span class="btn-subtitle">Bakım planları ve takip</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn accent" 
+                (click)="addNewMachine()">
+          <div class="btn-icon">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Yeni Makina</span>
+            <span class="btn-subtitle">Makina kaydı oluştur</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+      <div class="content-layout">
+        
+        <!-- Filters Sidebar -->
+        <div class="filters-sidebar">
+          <div class="filter-card">
+            <div class="filter-header">
+              <h3>
+                <i class="fas fa-filter"></i>
+                Filtreler
+              </h3>
+              <button class="clear-filters" type="button" (click)="clearFilters()">
+                <i class="fas fa-times"></i>
+                Temizle
+              </button>
+            </div>
+            
+            <form #filterForm="ngForm" (ngSubmit)="searchMachines()" class="filter-form">
+              
+              <!-- Search Field -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-search"></i>
+                  Arama Alanı
+                </label>
+                <select [(ngModel)]="filter.field" name="field" class="filter-select" required>
+                  <option value="name">Makina Adı</option>
+                  <option value="serialNumber">Seri Numarası</option>
+                  <option value="machineTypeName">Makina Tipi</option>
+                  <option value="brandName">Marka</option>
+                  <option value="modelName">Model</option>
+                  <option value="quarryName">Ocak Adı</option>
+                </select>
+              </div>
+
+              <!-- Operator -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-equals"></i>
+                  Operatör
+                </label>
+                <select [(ngModel)]="filter.operator" name="operator" class="filter-select" required>
+                  <option value="eq">Eşittir</option>
+                  <option value="ne">Eşit Değil</option>
+                  <option value="contains">İçerir</option>
+                  <option value="startswith">İle Başlar</option>
+                  <option value="endswith">İle Biter</option>
+                </select>
+              </div>
+
+              <!-- Search Value -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-keyboard"></i>
+                  Arama Değeri
+                </label>
+                <input type="text" 
+                       [(ngModel)]="filter.value" 
+                       name="value" 
+                       class="filter-input"
+                       placeholder="Aranacak değeri girin..."
+                       required>
+              </div>
+
+              <!-- Brand Filter -->
+              <div class="filter-group" *ngIf="brands.length > 0">
+                <label class="filter-label">
+                  <i class="fas fa-tag"></i>
+                  Marka
+                </label>
+                <select [(ngModel)]="selectedBrand" name="selectedBrand" class="filter-select">
+                  <option value="">Tüm Markalar</option>
+                  <option *ngFor="let brand of brands" [value]="brand.name">
+                    {{brand.name}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Machine Type Filter -->
+              <div class="filter-group" *ngIf="machineTypes.length > 0">
+                <label class="filter-label">
+                  <i class="fas fa-cogs"></i>
+                  Makina Tipi
+                </label>
+                <select [(ngModel)]="selectedMachineType" name="selectedMachineType" class="filter-select">
+                  <option value="">Tüm Tipler</option>
+                  <option *ngFor="let type of machineTypes" [value]="type.name">
+                    {{type.name}}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Quarry Filter -->
+              <div class="filter-group" *ngIf="quarries.length > 0">
+                <label class="filter-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Ocak
+                </label>
+                <select [(ngModel)]="selectedQuarry" name="selectedQuarry" class="filter-select">
+                  <option value="">Tüm Ocaklar</option>
+                  <option *ngFor="let quarry of quarries" [value]="quarry.name">
+                    {{quarry.name}}
+                  </option>
+                </select>
+              </div>
+
+              <button type="submit" class="filter-submit-btn" [disabled]="!filterForm.valid">
+                <i class="fas fa-search"></i>
+                Filtrele
+              </button>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Machine Table -->
+        <div class="table-section">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">
+                <h3>Makina Listesi</h3>
+                <span class="result-count">{{machines?.items?.length || 0}} makina bulundu</span>
+              </div>
+              <div class="table-actions">
+                <button class="table-action-btn" type="button" (click)="exportData()">
+                  <i class="fas fa-download"></i>
+                  Dışa Aktar
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-container" *ngIf="!isLoading">
+              <table class="modern-table" *ngIf="machines?.items?.length; else emptyState">
+                <thead>
+                  <tr>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-cogs"></i>
+                        Makina Adı
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-tag"></i>
+                        Marka / Model
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-wrench"></i>
+                        Tip
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-barcode"></i>
+                        Seri No
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Ocak
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-cog"></i>
+                        İşlemler
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let machine of machines.items; trackBy: trackByMachineId" 
+                      class="machine-row"
+                      (click)="viewMachineDetails(machine)">
+                    <td>
+                      <div class="machine-info">
+                        <div class="machine-avatar" [class.featured]="isFeaturedMachine(machine)">
+                          <i [class]="getMachineIcon(machine.machineTypeName)"></i>
+                        </div>
+                        <div class="machine-details">
+                          <span class="machine-name">{{machine.name}}</span>
+                          <span class="machine-meta">ID: {{machine.id.substring(0, 8)}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="brand-model-info">
+                        <span class="brand-badge">{{machine.brandName}}</span>
+                        <span class="model-text">{{machine.modelName}}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="machine-type-badge">{{machine.machineTypeName}}</span>
+                    </td>
+                    <td>
+                      <div class="serial-info">
+                        <i class="fas fa-barcode"></i>
+                        {{machine.serialNumber}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="quarry-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{machine.quarryName}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-icon-btn view" 
+                                (click)="$event.stopPropagation(); viewMachineDetails(machine)"
+                                title="Detayları Görüntüle">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-icon-btn edit" 
+                                (click)="$event.stopPropagation(); editMachine(machine)"
+                                title="Düzenle">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-icon-btn maintenance" 
+                                (click)="$event.stopPropagation(); viewMachineMaintenance(machine)"
+                                title="Bakım Geçmişi">
+                          <i class="fas fa-tools"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Empty State -->
+              <ng-template #emptyState>
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                  </div>
+                  <h3>Makina bulunamadı</h3>
+                  <p>Arama kriterlerinize uygun makina bulunamadı. Filtreleri kontrol edin.</p>
+                  <button class="empty-action-btn" (click)="clearFilters()">
+                    <i class="fas fa-refresh"></i>
+                    Filtreleri Temizle
+                  </button>
+                </div>
+              </ng-template>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="loading-state">
+              <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+              <p>Makinalar yükleniyor...</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section" *ngIf="machines?.items?.length && !isLoading">
+              <div class="pagination-info">
+                Toplam {{machines.count}} makinadan {{getDisplayRange()}} gösteriliyor
+              </div>
+              
+              <!-- Sayfalama kontrolleri gelecekte eklenebilir -->
+              
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
