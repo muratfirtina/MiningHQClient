@@ -5,4 +5,7 @@ export class ListImageFile {
     url: string;
     id: string;
     showcase: boolean;
+    size?: number; // File size in bytes
+    uploadDate?: string; // Upload date
+    contentType?: string; // MIME type
 }

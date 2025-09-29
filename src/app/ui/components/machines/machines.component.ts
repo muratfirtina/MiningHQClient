@@ -4,8 +4,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { DynamicQuery, Filter, Sort } from 'src/app/contracts/dynamic-query';
 import { MachineService } from 'src/app/services/common/models/machine.service';
-import { ListMachine } from 'src/app/contracts/machine/list-machine';
 import { Machine } from 'src/app/contracts/machine/machine';
+import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { from } from 'rxjs';
 
 // Additional services for filters
@@ -46,7 +46,7 @@ export class MachinesComponent extends BaseComponent implements OnInit {
   };
   
   // Data
-  machines: ListMachine;
+  machines: GetListResponse<Machine> = { items: [], count: 0, index: 0, size: 0, pages: 0, hasPrevious: false, hasNext: false };
   brands: Brand[] = [];
   quarries: Quarry[] = [];
   machineTypes: MachineType[] = [];
@@ -99,9 +99,15 @@ export class MachinesComponent extends BaseComponent implements OnInit {
     try {
       const data = await this.machineService.list(0, 100);
       this.machines = data;
+      
+      if (this.machines?.items?.length > 0) {
+        console.log(`${this.machines.items.length} makina yüklendi`);
+      } else {
+        console.warn('Hiç makina bulunamadı');
+      }
     } catch (error) {
       console.error('Makina listesi yüklenirken hata:', error);
-      this.machines = { items: [], count: 0 } as ListMachine;
+      this.machines = { items: [], count: 0, index: 0, size: 0, pages: 0, hasPrevious: false, hasNext: false };
     } finally {
       this.isLoading = false;
     }
@@ -147,77 +153,33 @@ export class MachinesComponent extends BaseComponent implements OnInit {
   }
 
   /**
-   * Search machines with filters
+   * Search machines with current filter
    */
   async searchMachines(): Promise<void> {
-    if (this.isSearching) return;
-    
-    if (!this.filter.field || !this.filter.operator || !this.filter.value) {
+    if (!this.filter.value || this.filter.value.trim() === '') {
       await this.loadAllMachines();
       return;
     }
 
-    this.isSearching = true;
     this.isLoading = true;
+    this.isSearching = true;
 
     try {
-      const filters: Filter[] = [];
-
-      // Add main search filter
-      if (this.filter.value.trim()) {
-        filters.push({
-          field: this.filter.field,
-          operator: this.filter.operator,
-          value: this.filter.value.trim()
-        });
-      }
-
-      // Add additional filters
-      if (this.selectedBrand) {
-        filters.push({
-          field: 'brandName',
-          operator: 'eq',
-          value: this.selectedBrand
-        });
-      }
-
-      if (this.selectedQuarry) {
-        filters.push({
-          field: 'quarryName',
-          operator: 'eq',
-          value: this.selectedQuarry
-        });
-      }
-
-      if (this.selectedMachineType) {
-        filters.push({
-          field: 'machineTypeName',
-          operator: 'eq',
-          value: this.selectedMachineType
-        });
-      }
-
-      // Combine filters
-      let dynamicFilter: Filter | undefined;
-      if (filters.length > 0) {
-        dynamicFilter = filters.length === 1 ? filters[0] : {
-          field: "",
-          operator: "",
-          logic: "and",
-          filters: filters
-        };
-      }
+      const sort: Sort = {
+        field: 'name',
+        dir: 'asc'
+      };
 
       const dynamicQuery: DynamicQuery = {
-        filter: dynamicFilter,
-        sort: [{ field: 'name', dir: 'asc' }]
+        filter: this.filter,
+        sort: [sort]
       };
 
       const data = await this.machineService.search(dynamicQuery);
       this.machines = data;
     } catch (error) {
       console.error('Makina arama hatası:', error);
-      this.machines = { items: [], count: 0 } as ListMachine;
+      this.machines = { items: [], count: 0, index: 0, size: 0, pages: 0, hasPrevious: false, hasNext: false };
     } finally {
       this.isLoading = false;
       this.isSearching = false;
@@ -240,61 +202,55 @@ export class MachinesComponent extends BaseComponent implements OnInit {
   }
 
   /**
-   * Navigation and action methods
+   * Navigation Methods
+   */
+  viewMachineReports(): void {
+    console.log('Navigate to machine reports');
+    // this.router.navigate(['/makinalar/raporlar']);
+  }
+
+  viewMaintenanceSchedule(): void {
+    console.log('Navigate to maintenance schedule');
+    // this.router.navigate(['/makinalar/bakim-takvimi']);
+  }
+
+  addNewMachine(): void {
+    this.router.navigate(['/makinalar/makina-ekle']);
+  }
+
+  /**
+   * Machine Actions
    */
   viewMachineDetails(machine: Machine): void {
-    console.log('Makina detayları:', machine);
-    // TODO: Navigate to machine detail page
-    // this.router.navigate(['/machines', machine.id]);
+    this.router.navigate(['/makinalar/makina', machine.id]);
   }
 
   editMachine(machine: Machine): void {
     console.log('Makina düzenleme:', machine);
-    // TODO: Navigate to machine edit page
-    // this.router.navigate(['/admin/machines/edit', machine.id]);
+    this.router.navigate(['/makinalar/makina-duzenle', machine.id]);
   }
 
   viewMachineMaintenance(machine: Machine): void {
     console.log('Makina bakım geçmişi:', machine);
-    // TODO: Navigate to maintenance history
-    // this.router.navigate(['/machines', machine.id, 'maintenance']);
-  }
-
-  addNewMachine(): void {
-    console.log('Yeni makina ekleme');
-    // TODO: Navigate to machine creation page
-    // this.router.navigate(['/admin/machines/add']);
-  }
-
-  viewMachineReports(): void {
-    console.log('Makina raporları');
-    // TODO: Navigate to machine reports
-    // this.router.navigate(['/reports/machines']);
-  }
-
-  viewMaintenanceSchedule(): void {
-    console.log('Bakım takvimi');
-    // TODO: Navigate to maintenance schedule
-    // this.router.navigate(['/maintenance/schedule']);
-  }
-
-  exportData(): void {
-    console.log('Veri dışa aktarma');
-    // TODO: Implement export functionality
+    this.router.navigate(['/makinalar/makina', machine.id, 'bakim']);
   }
 
   /**
-   * Helper methods
+   * Utility Methods
    */
+  exportData(): void {
+    console.log('Export data functionality');
+  }
+
+  trackByMachineId(index: number, machine: Machine): string {
+    return machine.id;
+  }
+
   isFeaturedMachine(machine: Machine): boolean {
     return machine.brandName?.toLowerCase().includes('caterpillar') || 
            machine.brandName?.toLowerCase().includes('cat') ||
            machine.brandName?.toLowerCase().includes('komatsu') ||
            machine.brandName?.toLowerCase().includes('volvo');
-  }
-
-  trackByMachineId(index: number, machine: Machine): string {
-    return machine.id;
   }
 
   getDisplayRange(): string {

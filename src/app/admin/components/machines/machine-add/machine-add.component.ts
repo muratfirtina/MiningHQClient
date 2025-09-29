@@ -97,13 +97,22 @@ export class MachineAddComponent extends BaseComponent implements OnInit {
   async getModelsByBrandId(brandId: string) {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     
-      const response = await this.modelService.listByBrandId(brandId, () =>
-      {},
+    try {
+      const response = await this.modelService.listByBrandId(brandId, () => {
+        this.hideSpinner(SpinnerType.BallSpinClockwise);
+      },
       (errorMessage: string) => {
         this.toastr.error(errorMessage);
+        this.hideSpinner(SpinnerType.BallSpinClockwise);
       });
+      
       this.models = response.items;
-    
+      this.hideSpinner(SpinnerType.BallSpinClockwise);
+      
+    } catch (error) {
+      this.hideSpinner(SpinnerType.BallSpinClockwise);
+      this.toastr.error('Modeller yüklenirken hata oluştu');
+    }
   }
 
   onBrandChange(brandId: string) {

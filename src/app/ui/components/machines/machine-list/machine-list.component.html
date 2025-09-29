@@ -1,0 +1,208 @@
+<div class="modern-machine-list-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-cogs"></i>
+          Makina Listesi
+        </h1>
+        <p class="page-subtitle">Maden sahası makinalarını listele ve yönet</p>
+      </div>
+      <div class="header-actions">
+        <div class="action-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{items?.length || 0}}</span>
+            <span class="stat-label">Makina</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <div class="container-custom">
+      <div class="action-buttons">
+        
+        <button type="button" 
+                class="action-btn primary" 
+                (click)="viewMachineReports()">
+          <div class="btn-icon">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Makina Raporları</span>
+            <span class="btn-subtitle">Performans ve istatistikler</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn secondary" 
+                (click)="viewMaintenanceSchedule()">
+          <div class="btn-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Bakım Takvimi</span>
+            <span class="btn-subtitle">Bakım planları ve takip</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn accent" 
+                (click)="addNewMachine()">
+          <div class="btn-icon">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Yeni Makina</span>
+            <span class="btn-subtitle">Makina kaydı oluştur</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+      
+      <!-- Search Section -->
+      <div class="search-section">
+        <div class="search-card">
+          <div class="search-header">
+            <h3>
+              <i class="fas fa-search"></i>
+              Makina Ara
+            </h3>
+          </div>
+          
+          <div class="search-form">
+            <div class="search-box">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" 
+                     class="search-input" 
+                     placeholder="Makina adı, seri no, marka, model veya tip ile ara..." 
+                     (input)="searchMachines($event)">
+              <button class="search-clear" (click)="clearSearch()" title="Temizle">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Machine Grid -->
+      <div class="machine-grid-section">
+        
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <p>Makinalar yükleniyor...</p>
+        </div>
+
+        <!-- Machine Grid -->
+        <div class="machine-grid" *ngIf="!isLoading && items?.length > 0">
+          <div class="machine-card" 
+               *ngFor="let machine of items; trackBy: trackByMachineId" 
+               (click)="goToMachinePage(machine.id)"
+               [class.featured]="isFeaturedMachine(machine)">
+            
+            <!-- Machine Header -->
+            <div class="machine-header">
+              <div class="machine-avatar" [class.featured]="isFeaturedMachine(machine)">
+                <i [class]="getMachineIcon(machine.machineTypeName)"></i>
+              </div>
+              <div class="machine-basic-info">
+                <h3 class="machine-name">{{machine.name}}</h3>
+                <p class="machine-serial">{{machine.serialNumber}}</p>
+              </div>
+              <div class="machine-actions">
+                <button class="action-btn edit" 
+                        (click)="editMachine(machine, $event)"
+                        title="Düzenle">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn maintenance" 
+                        (click)="viewMachineMaintenance(machine, $event)"
+                        title="Bakım Geçmişi">
+                  <i class="fas fa-tools"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Machine Details -->
+            <div class="machine-details">
+              <div class="detail-row">
+                <div class="detail-item">
+                  <i class="fas fa-tag"></i>
+                  <span class="detail-label">Marka:</span>
+                  <span class="detail-value">{{machine.brandName}}</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-cube"></i>
+                  <span class="detail-label">Model:</span>
+                  <span class="detail-value">{{machine.modelName}}</span>
+                </div>
+              </div>
+              
+              <div class="detail-row">
+                <div class="detail-item full-width">
+                  <i class="fas fa-wrench"></i>
+                  <span class="detail-label">Tip:</span>
+                  <span class="detail-value machine-type-badge">{{machine.machineTypeName}}</span>
+                </div>
+              </div>
+              
+              <div class="detail-row">
+                <div class="detail-item full-width">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span class="detail-label">Ocak:</span>
+                  <span class="detail-value quarry-name">{{machine.quarryName}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Machine Footer -->
+            <div class="machine-footer">
+              <div class="machine-status">
+                <span class="status-indicator active"></span>
+                <span class="status-text">Aktif</span>
+              </div>
+              <div class="machine-id">
+                ID: {{machine.id.substring(0, 8)}}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && items?.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>Makina bulunamadı</h3>
+          <p>Arama kriterlerinize uygun makina bulunamadı. Yeni bir makina ekleyin veya arama terimlerinizi değiştirin.</p>
+          <div class="empty-actions">
+            <button class="empty-action-btn primary" (click)="addNewMachine()">
+              <i class="fas fa-plus"></i>
+              Yeni Makina Ekle
+            </button>
+            <button class="empty-action-btn secondary" (click)="clearSearch()">
+              <i class="fas fa-refresh"></i>
+              Aramayı Temizle
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,335 @@
+<div class="modern-machine-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i [class]="getMachineIcon()"></i>
+          {{ machine?.name || 'Makina Detayları' }}
+        </h1>
+        <p class="page-subtitle" *ngIf="machine">
+          {{ machine.brandName }} {{ machine.modelName }} - {{ machine.machineTypeName }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Geri Dön
+        </button>
+        <button class="header-btn primary" (click)="toggleEditMode()" [disabled]="isUpdating">
+          <i class="fas fa-edit" *ngIf="!isEditMode"></i>
+          <i class="fas fa-times" *ngIf="isEditMode"></i>
+          {{ isEditMode ? 'İptal' : 'Düzenle' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-section">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p>Makina bilgileri yükleniyor...</p>
+      </div>
+
+      <!-- Machine Content -->
+      <div class="content-layout" *ngIf="!isLoading && machine">
+        
+        <!-- Left Column - Machine Details -->
+        <div class="left-column">
+          
+          <!-- Machine Info Card -->
+          <div class="machine-card">
+            <div class="card-header">
+              <div class="machine-avatar" [class.featured]="isFeaturedMachine(machine)">
+                <i [class]="getMachineIcon()"></i>
+              </div>
+              <div class="machine-title-info">
+                <h2>{{ machine.name }}</h2>
+                <div class="machine-badges">
+                  <span class="badge brand">{{ machine.brandName }}</span>
+                  <span class="badge model">{{ machine.modelName }}</span>
+                  <span class="badge type">{{ machine.machineTypeName }}</span>
+                </div>
+              </div>
+              <div class="machine-status">
+                <div class="status-indicator active"></div>
+                <span>Aktif</span>
+              </div>
+            </div>
+
+            <!-- View Mode -->
+            <div class="card-content" *ngIf="!isEditMode">
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-barcode"></i>
+                    Seri Numarası
+                  </div>
+                  <div class="info-value">{{ machine.serialNumber }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Çalıştığı Ocak
+                  </div>
+                  <div class="info-value">{{ machine.quarryName }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Satın Alma Tarihi
+                  </div>
+                  <div class="info-value">{{ formatDate(machine.purchaseDate) || 'Belirtilmemiş' }}</div>
+                </div>
+
+                <div class="info-item full-width" *ngIf="machine.description">
+                  <div class="info-label">
+                    <i class="fas fa-comment"></i>
+                    Açıklama
+                  </div>
+                  <div class="info-value">{{ machine.description }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit Mode -->
+            <div class="card-content" *ngIf="isEditMode">
+              <form [formGroup]="machineForm" (ngSubmit)="updateMachine()" class="edit-form">
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-tag"></i>
+                      Makina Adı *
+                    </label>
+                    <input 
+                      type="text" 
+                      formControlName="name" 
+                      class="form-input"
+                      [class.error]="hasFieldError('name')">
+                    <div class="error-message" *ngIf="hasFieldError('name')">
+                      {{ getFieldErrorMessage('name') }}
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-barcode"></i>
+                      Seri Numarası *
+                    </label>
+                    <input 
+                      type="text" 
+                      formControlName="serialNumber" 
+                      class="form-input"
+                      [class.error]="hasFieldError('serialNumber')">
+                    <div class="error-message" *ngIf="hasFieldError('serialNumber')">
+                      {{ getFieldErrorMessage('serialNumber') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-calendar-alt"></i>
+                      Satın Alma Tarihi
+                    </label>
+                    <input 
+                      type="date" 
+                      formControlName="purchaseDate" 
+                      class="form-input">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-map-marker-alt"></i>
+                      Çalışacağı Ocak *
+                    </label>
+                    <select 
+                      formControlName="quarryId" 
+                      class="form-select"
+                      [class.error]="hasFieldError('quarryId')">
+                      <option value="">Ocak seçin</option>
+                      <option *ngFor="let quarry of quarries" [value]="quarry.id">
+                        {{ quarry.name }}
+                      </option>
+                    </select>
+                    <div class="error-message" *ngIf="hasFieldError('quarryId')">
+                      {{ getFieldErrorMessage('quarryId') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group form-full">
+                    <label class="form-label">
+                      <i class="fas fa-comment"></i>
+                      Açıklama / Notlar
+                    </label>
+                    <textarea 
+                      formControlName="description" 
+                      class="form-textarea"
+                      rows="3"
+                      placeholder="Makina hakkında ek bilgiler..."></textarea>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="action-btn secondary" (click)="toggleEditMode()">
+                    <i class="fas fa-times"></i>
+                    İptal
+                  </button>
+                  <button type="submit" class="action-btn primary" [disabled]="machineForm.invalid || isUpdating">
+                    <i class="fas fa-spinner fa-spin" *ngIf="isUpdating"></i>
+                    <i class="fas fa-save" *ngIf="!isUpdating"></i>
+                    {{ isUpdating ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet' }}
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column - Quick Actions -->
+        <div class="right-column">
+          
+          <!-- Quick Actions Card -->
+          <div class="actions-card">
+            <div class="card-header">
+              <h3>
+                <i class="fas fa-bolt"></i>
+                Hızlı İşlemler
+              </h3>
+            </div>
+            
+            <div class="actions-list">
+              <button class="action-item" (click)="viewMachineFiles()">
+                <div class="action-icon">
+                  <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">Dosyalar</span>
+                  <span class="action-subtitle">Makina belgelerini görüntüle</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
+
+              <button class="action-item" (click)="viewMaintenanceHistory()">
+                <div class="action-icon">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">Bakım Geçmişi</span>
+                  <span class="action-subtitle">Bakım kayıtlarını incele</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
+
+              <button class="action-item" (click)="viewWorkData()">
+                <div class="action-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">İş Verileri</span>
+                  <span class="action-subtitle">Performans verilerini gör</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
+
+              <button class="action-item" (click)="viewFuelConsumption()">
+                <div class="action-icon">
+                  <i class="fas fa-gas-pump"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">Yakıt Tüketimi</span>
+                  <span class="action-subtitle">Yakıt analiz raporları</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Machine Stats Card -->
+          <div class="stats-card" *ngIf="machineStats">
+            <div class="card-header">
+              <h3>
+                <i class="fas fa-chart-bar"></i>
+                İstatistikler
+              </h3>
+            </div>
+            
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ machineStats.totalWorkDays || 0 }}</span>
+                  <span class="stat-label">Çalışma Günü</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ machineStats.totalWorkHours || 0 }}</span>
+                  <span class="stat-label">Çalışma Saati</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <i class="fas fa-gas-pump"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ machineStats.totalFuelUsed || 0 }}</span>
+                  <span class="stat-label">Toplam Yakıt (L)</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ machineStats.maintenanceCount || 0 }}</span>
+                  <span class="stat-label">Bakım Sayısı</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!isLoading && !machine" class="error-state">
+        <div class="error-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>Makina bulunamadı</h3>
+        <p>Aradığınız makina mevcut değil veya erişim yetkiniz bulunmuyor.</p>
+        <button class="error-action-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Geri Dön
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,275 @@
+<div class="modern-machine-add-page">
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-plus-circle"></i>
+        Yeni Makina Kayıt
+      </h1>
+      <p class="page-subtitle">Yeni makina bilgilerini girin ve sisteme kaydedin</p>
+    </div>
+  </div>
+
+  <div class="container-custom">
+    <div class="main-content">
+      <div class="form-section">
+        <div class="form-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fas fa-cogs"></i>
+              <h3>Makina Bilgileri</h3>
+            </div>
+            <p class="card-subtitle">Lütfen tüm alanları eksiksiz doldurun</p>
+          </div>
+
+          <form [formGroup]="machineForm" (ngSubmit)="addMachine()" class="modern-form">
+
+            <!-- Temel Bilgiler -->
+            <div class="form-section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-info-circle"></i>
+                Temel Bilgiler
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-tag"></i>
+                  Makina Adı *
+                </label>
+                <input 
+                  type="text" 
+                  formControlName="name" 
+                  class="form-input"
+                  [class.error]="hasFieldError('name')"
+                  placeholder="Makina adını girin"
+                  required>
+                <div class="error-message" *ngIf="hasFieldError('name')">
+                  {{ getFieldErrorMessage('name') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-barcode"></i>
+                  Seri Numarası *
+                </label>
+                <input 
+                  type="text" 
+                  formControlName="serialNumber" 
+                  class="form-input"
+                  [class.error]="hasFieldError('serialNumber')"
+                  placeholder="Seri numarasını girin"
+                  required>
+                <div class="error-message" *ngIf="hasFieldError('serialNumber')">
+                  {{ getFieldErrorMessage('serialNumber') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Marka ve Model -->
+            <div class="form-section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-industry"></i>
+                Marka ve Model
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-certificate"></i>
+                  Marka *
+                </label>
+                <select 
+                  formControlName="brandId" 
+                  class="form-select"
+                  [class.error]="hasFieldError('brandId')"
+                  required>
+                  <option value="">Marka seçin</option>
+                  <option *ngFor="let brand of brands" [value]="brand.id">
+                    {{ brand.name }}
+                  </option>
+                </select>
+                <div class="error-message" *ngIf="hasFieldError('brandId')">
+                  {{ getFieldErrorMessage('brandId') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-cube"></i>
+                  Model *
+                </label>
+                <select 
+                  formControlName="modelId" 
+                  class="form-select"
+                  [class.error]="hasFieldError('modelId')"
+                  [disabled]="!selectedBrandId"
+                  required>
+                  <option value="">{{selectedBrandId ? 'Model seçin' : 'Önce marka seçin'}}</option>
+                  <option *ngFor="let model of filteredModels" [value]="model.id">
+                    {{ model.name }}
+                  </option>
+                </select>
+                <div class="error-message" *ngIf="hasFieldError('modelId')">
+                  {{ getFieldErrorMessage('modelId') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Tip ve Lokasyon -->
+            <div class="form-section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-map-marked-alt"></i>
+                Tip ve Lokasyon
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-wrench"></i>
+                  Makina Tipi *
+                </label>
+                <select 
+                  formControlName="machineTypeId" 
+                  class="form-select"
+                  [class.error]="hasFieldError('machineTypeId')"
+                  required>
+                  <option value="">Makina tipi seçin</option>
+                  <option *ngFor="let machineType of machineTypes" [value]="machineType.id">
+                    {{ machineType.name }}
+                  </option>
+                </select>
+                <div class="error-message" *ngIf="hasFieldError('machineTypeId')">
+                  {{ getFieldErrorMessage('machineTypeId') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Çalışacağı Ocak *
+                </label>
+                <select 
+                  formControlName="quarryId" 
+                  class="form-select"
+                  [class.error]="hasFieldError('quarryId')"
+                  required>
+                  <option value="">Ocak seçin</option>
+                  <option *ngFor="let quarry of quarries" [value]="quarry.id">
+                    {{ quarry.name }}
+                  </option>
+                </select>
+                <div class="error-message" *ngIf="hasFieldError('quarryId')">
+                  {{ getFieldErrorMessage('quarryId') }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Ek Bilgiler -->
+            <div class="form-section-divider">
+              <div class="divider-line"></div>
+              <div class="divider-text">
+                <i class="fas fa-plus"></i>
+                Ek Bilgiler (Opsiyonel)
+              </div>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">
+                  <i class="fas fa-calendar-alt"></i>
+                  Satın Alma Tarihi
+                </label>
+                <input 
+                  type="date" 
+                  formControlName="purchaseDate" 
+                  class="form-input">
+              </div>
+
+              <div class="form-group form-full">
+                <label class="form-label">
+                  <i class="fas fa-comment"></i>
+                  Açıklama / Notlar
+                </label>
+                <textarea 
+                  formControlName="description" 
+                  class="form-textarea"
+                  rows="3"
+                  placeholder="Makina hakkında ek bilgiler yazabilirsiniz..."></textarea>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button 
+                type="button" 
+                class="action-btn secondary" 
+                (click)="goBack()"
+                [disabled]="isSubmitting">
+                <i class="fas fa-arrow-left"></i>
+                Geri Dön
+              </button>
+
+              <button 
+                type="button" 
+                class="action-btn outline" 
+                (click)="resetForm()"
+                [disabled]="isSubmitting">
+                <i class="fas fa-undo"></i>
+                Temizle
+              </button>
+
+              <button 
+                type="submit" 
+                class="action-btn primary" 
+                [disabled]="machineForm.invalid || isSubmitting">
+                <i class="fas fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+                <i class="fas fa-save" *ngIf="!isSubmitting"></i>
+                {{ isSubmitting ? 'Kaydediliyor...' : 'Makina Kaydet' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Form Preview (Optional) -->
+      <div class="preview-section" *ngIf="machineForm.value.name">
+        <div class="preview-card">
+          <div class="preview-header">
+            <h4>
+              <i class="fas fa-eye"></i>
+              Önizleme
+            </h4>
+          </div>
+          <div class="preview-content">
+            <div class="preview-item">
+              <span class="preview-label">Makina:</span>
+              <span class="preview-value">{{ machineForm.value.name }}</span>
+            </div>
+            <div class="preview-item" *ngIf="machineForm.value.serialNumber">
+              <span class="preview-label">Seri No:</span>
+              <span class="preview-value">{{ machineForm.value.serialNumber }}</span>
+            </div>
+            <div class="preview-item" *ngIf="selectedBrandId">
+              <span class="preview-label">Marka:</span>
+              <span class="preview-value">{{ getSelectedBrandName() }}</span>
+            </div>
+            <!-- Add more preview items as needed -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,4 +1,7 @@
-export class CreateMachine {
+export class UpdateMachine {
+    // Required ID
+    id: string;
+    
     // Basic Information
     name: string;
     serialNumber: string;
