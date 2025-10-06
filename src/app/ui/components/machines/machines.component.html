@@ -28,6 +28,18 @@
         
         <button type="button" 
                 class="action-btn primary" 
+                (click)="gotoDailyEntry()">
+          <div class="btn-icon">
+            <i class="fas fa-clipboard-list"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Makina Puantajı</span>
+            <span class="btn-subtitle">Günlük saat ve yakıt girişi</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn secondary" 
                 (click)="viewMachineReports()">
           <div class="btn-icon">
             <i class="fas fa-chart-bar"></i>
@@ -252,7 +264,6 @@
                         </div>
                         <div class="machine-details">
                           <span class="machine-name">{{machine.name}}</span>
-                          <span class="machine-meta">ID: {{machine.id.substring(0, 8)}}</span>
                         </div>
                       </div>
                     </td>

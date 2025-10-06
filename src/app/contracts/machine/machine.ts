@@ -19,7 +19,16 @@ export class Machine {
     
     // Additional Info
     purchaseDate?: string;
+    startWorkDate?: string;
+    initialWorkingHoursOrKm?: number;
     description?: string;
+    
+    // Working Hours
+    currentWorkingHours?: number;
+    
+    // Current Operator
+    currentOperatorId?: string;
+    currentOperatorName?: string;
     
     // Metadata
     createdDate?: string;

@@ -4,6 +4,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { CreateMachine } from 'src/app/contracts/machine/create-machine';
 import { UpdateMachine } from 'src/app/contracts/machine/update-machine';
 import { Machine } from 'src/app/contracts/machine/machine';
+import { MachineStats } from 'src/app/contracts/machine/machine-stats';
 import { DynamicQuery } from 'src/app/contracts/dynamic-query';
 import { ListImageFile } from 'src/app/contracts/list-image-file';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
@@ -152,10 +153,10 @@ export class MachineService {
   /**
    * Get machine statistics
    */
-  async getMachineStatistics(machineId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<any> {
-    const observable: Observable<any> = this.httpClientService.get<any>({
+  async getMachineStats(machineId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<MachineStats> {
+    const observable: Observable<MachineStats> = this.httpClientService.get<MachineStats>({
       controller: 'machines',
-      action: `${machineId}/statistics`
+      action: `${machineId}/stats`
     });
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)

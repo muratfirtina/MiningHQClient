@@ -209,6 +209,10 @@ export class MachinesComponent extends BaseComponent implements OnInit {
     // this.router.navigate(['/makinalar/raporlar']);
   }
 
+  gotoDailyEntry(): void {
+    this.router.navigate(['/makinalar/makina-puantaji']);
+  }
+
   viewMaintenanceSchedule(): void {
     console.log('Navigate to maintenance schedule');
     // this.router.navigate(['/makinalar/bakim-takvimi']);

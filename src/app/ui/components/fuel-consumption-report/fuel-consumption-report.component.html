@@ -1,0 +1,415 @@
+<div class="fuel-report-page">
+  
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-gas-pump"></i>
+          Yakıt Tüketim Raporu
+        </h1>
+        <p class="page-subtitle" *ngIf="report">
+          {{ report.machineName }} - {{ report.brandName }} {{ report.modelName }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Geri Dön
+        </button>
+        <button class="header-btn primary" (click)="exportData()">
+          <i class="fas fa-download"></i>
+          Rapor İndir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <div class="filter-header">
+          <h3>
+            <i class="fas fa-filter"></i>
+            Filtreler
+          </h3>
+        </div>
+
+        <div class="filter-row">
+          <!-- Period Quick Select -->
+          <div class="filter-item">
+            <label class="filter-label">Dönem Seçimi</label>
+            <select [(ngModel)]="filterPeriod" (ngModelChange)="onPeriodChange()" class="filter-select">
+              <option value="week">Son 1 Hafta</option>
+              <option value="month">Son 1 Ay</option>
+              <option value="year">Son 1 Yıl</option>
+              <option value="all">Tüm Zamanlar</option>
+              <option value="custom">Özel Tarih Aralığı</option>
+            </select>
+          </div>
+
+          <!-- Custom Date Range -->
+          <div class="filter-item" *ngIf="filterPeriod === 'custom'">
+            <label class="filter-label">Başlangıç Tarihi</label>
+            <input type="date" [(ngModel)]="startDate" class="filter-input" [max]="maxDate">
+          </div>
+
+          <div class="filter-item" *ngIf="filterPeriod === 'custom'">
+            <label class="filter-label">Bitiş Tarihi</label>
+            <input type="date" [(ngModel)]="endDate" class="filter-input" [max]="maxDate">
+          </div>
+
+          <div class="filter-item" *ngIf="filterPeriod === 'custom'">
+            <label class="filter-label">&nbsp;</label>
+            <button class="filter-btn" (click)="applyCustomFilter()">
+              <i class="fas fa-search"></i>
+              Filtrele
+            </button>
+          </div>
+        </div>
+
+        <div class="date-range-info" *ngIf="report">
+          <i class="fas fa-calendar"></i>
+          {{ formatDate(report.startDate) }} - {{ formatDate(report.endDate) }}
+          ({{ report.workingDays }} çalışma günü / {{ report.totalDays }} gün)
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Rapor yükleniyor...</p>
+      </div>
+
+      <!-- Report Content -->
+      <div *ngIf="!isLoading && report" class="report-content">
+
+        <!-- Statistics Cards -->
+        <div class="stats-section">
+          <h3 class="section-title">
+            <i class="fas fa-chart-bar"></i>
+            Ortalama Tüketim
+          </h3>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon daily">
+                <i class="fas fa-calendar-day"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.dailyAverage.toFixed(2) }}</span>
+                <span class="stat-label">Günlük Ort. Yakıt (L)</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon weekly">
+                <i class="fas fa-calendar-week"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.weeklyAverage.toFixed(2) }}</span>
+                <span class="stat-label">Haftalık Ort. Yakıt (L)</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon monthly">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.monthlyAverage.toFixed(2) }}</span>
+                <span class="stat-label">Aylık Ort. Yakıt (L)</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon yearly">
+                <i class="fas fa-calendar"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.yearlyAverage.toFixed(2) }}</span>
+                <span class="stat-label">Yıllık Ort. Yakıt (L)</span>
+              </div>
+            </div>
+
+            <div class="stat-card highlight">
+              <div class="stat-icon total">
+                <i class="fas fa-gas-pump"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.totalFuelConsumption.toFixed(2) }}</span>
+                <span class="stat-label">Toplam Yakıt (L)</span>
+              </div>
+            </div>
+
+            <div class="stat-card highlight">
+              <div class="stat-icon work-hours">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.totalWorkHours.toFixed(2) }}</span>
+                <span class="stat-label">Toplam Çalışma (saat)</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon efficiency">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.fuelPerHour.toFixed(2) }}</span>
+                <span class="stat-label">Saat Başına Yakıt (L/h)</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon work-average">
+                <i class="fas fa-business-time"></i>
+              </div>
+              <div class="stat-content">
+                <span class="stat-value">{{ report.averageWorkHoursPerDay.toFixed(2) }}</span>
+                <span class="stat-label">Günlük Ort. Çalışma (saat)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+          <div class="chart-header">
+            <h3 class="section-title">
+              <i class="fas fa-chart-line"></i>
+              Tüketim Grafiği
+            </h3>
+            <div class="view-mode-selector">
+              <button 
+                class="view-btn" 
+                [class.active]="viewMode === 'daily'"
+                (click)="viewMode = 'daily'; onViewModeChange()">
+                Günlük
+              </button>
+              <button 
+                class="view-btn" 
+                [class.active]="viewMode === 'weekly'"
+                (click)="viewMode = 'weekly'; onViewModeChange()">
+                Haftalık
+              </button>
+              <button 
+                class="view-btn" 
+                [class.active]="viewMode === 'monthly'"
+                (click)="viewMode = 'monthly'; onViewModeChange()">
+                Aylık
+              </button>
+            </div>
+          </div>
+
+          <!-- Simple Bar Chart -->
+          <div class="chart-container">
+            <div class="chart-bars">
+              <ng-container [ngSwitch]="viewMode">
+                <!-- Daily View -->
+                <div *ngSwitchCase="'daily'" class="bar-group">
+                  <div *ngFor="let item of filteredReport?.dailyBreakdown" class="bar-item">
+                    <div class="bar-wrapper">
+                      <div 
+                        class="bar" 
+                        [style.height.%]="(item.fuelConsumption / getMaxValue()) * 100"
+                        [title]="item.fuelConsumption + ' L'">
+                        <span class="bar-value">{{ item.fuelConsumption.toFixed(1) }}</span>
+                      </div>
+                    </div>
+                    <span class="bar-label">{{ formatDate(item.date) }}</span>
+                  </div>
+                </div>
+
+                <!-- Weekly View -->
+                <div *ngSwitchCase="'weekly'" class="bar-group">
+                  <div *ngFor="let item of filteredReport?.weeklySummary" class="bar-item">
+                    <div class="bar-wrapper">
+                      <div 
+                        class="bar" 
+                        [style.height.%]="(item.totalFuel / getMaxValue()) * 100"
+                        [title]="item.totalFuel + ' L'">
+                        <span class="bar-value">{{ item.totalFuel.toFixed(1) }}</span>
+                      </div>
+                    </div>
+                    <span class="bar-label">{{ item.year }} / H{{ item.weekNumber }}</span>
+                  </div>
+                </div>
+
+                <!-- Monthly View -->
+                <div *ngSwitchCase="'monthly'" class="bar-group">
+                  <div *ngFor="let item of filteredReport?.monthlySummary" class="bar-item">
+                    <div class="bar-wrapper">
+                      <div 
+                        class="bar" 
+                        [style.height.%]="(item.totalFuel / getMaxValue()) * 100"
+                        [title]="item.totalFuel + ' L'">
+                        <span class="bar-value">{{ item.totalFuel.toFixed(1) }}</span>
+                      </div>
+                    </div>
+                    <span class="bar-label">{{ getMonthName(item.month) }}</span>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Table -->
+        <div class="table-section">
+          <div class="table-header-with-filter">
+            <h3 class="section-title">
+              <i class="fas fa-table"></i>
+              Detaylı Veri
+            </h3>
+            
+            <!-- Date Range Filter -->
+            <div class="date-filter-compact">
+              <div class="filter-group">
+                <label>Başlangıç:</label>
+                <input 
+                  type="date" 
+                  [(ngModel)]="detailStartDate" 
+                  (change)="applyDetailFilter()"
+                  class="date-input-compact"
+                  [max]="detailEndDate">
+              </div>
+              <div class="filter-group">
+                <label>Bitiş:</label>
+                <input 
+                  type="date" 
+                  [(ngModel)]="detailEndDate" 
+                  (change)="applyDetailFilter()"
+                  class="date-input-compact"
+                  [min]="detailStartDate"
+                  [max]="maxDate">
+              </div>
+              <button class="reset-filter-btn" (click)="resetDetailFilter()" title="Filtreyi Temizle">
+                <i class="fas fa-redo"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table" [ngSwitch]="viewMode">
+              <!-- Daily Table -->
+              <ng-container *ngSwitchCase="'daily'">
+                <thead>
+                  <tr>
+                    <th>Tarih</th>
+                    <th>Çalışma Saati</th>
+                    <th>Yakıt Tüketimi (L)</th>
+                    <th>Saat Başına (L/h)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of getPaginatedData()">
+                    <td>{{ formatDate(item.date) }}</td>
+                    <td>{{ item.workingHours.toFixed(2) }} saat</td>
+                    <td class="fuel-value">{{ item.fuelConsumption.toFixed(2) }} L</td>
+                    <td>{{ item.fuelPerHour.toFixed(2) }} L/h</td>
+                  </tr>
+                </tbody>
+              </ng-container>
+
+              <!-- Weekly Table -->
+              <ng-container *ngSwitchCase="'weekly'">
+                <thead>
+                  <tr>
+                    <th>Yıl / Hafta</th>
+                    <th>Toplam Çalışma (saat)</th>
+                    <th>Toplam Yakıt (L)</th>
+                    <th>Ortalama (L)</th>
+                    <th>Çalışma Günü</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of getPaginatedData()">
+                    <td>{{ item.year }} / Hafta {{ item.weekNumber }}</td>
+                    <td>{{ item.totalWorkHours.toFixed(2) }} saat</td>
+                    <td class="fuel-value">{{ item.totalFuel.toFixed(2) }} L</td>
+                    <td>{{ item.averageFuel.toFixed(2) }} L</td>
+                    <td>{{ item.daysWorked }} gün</td>
+                  </tr>
+                </tbody>
+              </ng-container>
+
+              <!-- Monthly Table -->
+              <ng-container *ngSwitchCase="'monthly'">
+                <thead>
+                  <tr>
+                    <th>Ay / Yıl</th>
+                    <th>Toplam Çalışma (saat)</th>
+                    <th>Toplam Yakıt (L)</th>
+                    <th>Ortalama (L)</th>
+                    <th>Çalışma Günü</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of getPaginatedData()">
+                    <td>{{ getMonthName(item.month) }} {{ item.year }}</td>
+                    <td>{{ item.totalWorkHours.toFixed(2) }} saat</td>
+                    <td class="fuel-value">{{ item.totalFuel.toFixed(2) }} L</td>
+                    <td>{{ item.averageFuel.toFixed(2) }} L</td>
+                    <td>{{ item.daysWorked }} gün</td>
+                  </tr>
+                </tbody>
+              </ng-container>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination-section" *ngIf="pageList && pageList.length">
+            <div class="pagination-info">
+              Sayfa {{currentPage}} / {{pages}} ({{getTotalRecords()}} kayıt)
+            </div>
+            
+            <nav class="pagination-nav">
+              <ul class="pagination">
+                <li class="page-item" [class.disabled]="currentPage <= 1">
+                  <a class="page-link" (click)="changePage(1)">
+                    <i class="fas fa-angle-double-left"></i>
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage <= 1">
+                  <a class="page-link" (click)="changePage(currentPage - 1)">
+                    <i class="fas fa-angle-left"></i>
+                  </a>
+                </li>
+                <li class="page-item" 
+                    *ngFor="let pageNo of pageList" 
+                    [class.active]="pageNo === currentPage">
+                  <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage >= pages">
+                  <a class="page-link" (click)="changePage(currentPage + 1)">
+                    <i class="fas fa-angle-right"></i>
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage >= pages">
+                  <a class="page-link" (click)="changePage(pages)">
+                    <i class="fas fa-angle-double-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- No Data State -->
+      <div *ngIf="!isLoading && !report" class="no-data-state">
+        <i class="fas fa-chart-line"></i>
+        <h3>Veri Bulunamadı</h3>
+        <p>Seçilen tarih aralığında yakıt tüketim verisi bulunamadı.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>

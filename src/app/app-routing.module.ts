@@ -58,13 +58,14 @@ const routes: Routes = [
   {path:'makinalar',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makinalar'}},
   {path:'makinalar/makina-listesi',loadComponent:()=>import('./ui/components/machines/machine-list/machine-list.component').then(m=>m.MachineListComponent),data:{breadcrumb:'Makina Listesi'}},
   {path:'makinalar/makina-ekle',loadComponent:()=>import('./ui/components/machines/machine-add/machine-add.component').then(m=>m.MachineAddComponent),data:{breadcrumb:'Makina Ekle'}},
+  {path:'makinalar/makina-puantaji',loadComponent:()=>import('./ui/components/daily-entry/daily-entry.component').then(m=>m.DailyEntryComponent),data:{breadcrumb:'Makina Puantajı'}},
   {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makina Arama'}},
   
   // Specific machine routes (must come BEFORE general :machineId route)
   {path:'makinalar/makina/:machineId/dosyalar',loadComponent:()=>import('./ui/components/machines/machine-files/machine-files.component').then(m=>m.MachineFilesComponent),data:{breadcrumb:'Makina Dosyaları'}},
   {path:'makinalar/makina/:machineId/bakim',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Makina Bakım'}},
   {path:'makinalar/makina/:machineId/is-verileri',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'İş Verileri'}},
-  {path:'makinalar/makina/:machineId/yakit',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Yakıt Tüketimi'}},
+  {path:'makinalar/makina/:machineId/yakit',loadComponent:()=>import('./ui/components/fuel-consumption-report/fuel-consumption-report.component').then(m=>m.FuelConsumptionReportComponent),data:{breadcrumb:'Yakıt Tüketimi'}},
   {path:'makinalar/makina-listesi/makina/:machineId',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Makina Bilgileri'}},
   
   // General machine route (MUST come AFTER specific routes)

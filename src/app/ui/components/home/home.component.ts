@@ -61,6 +61,10 @@ export class HomeComponent extends BaseComponent implements OnInit{
     this.router.navigate(['/makinalar/ekle']);
   }
 
+  gotoDailyEntry() {
+    this.router.navigate(['/makinalar/makina-puantaji']);
+  }
+
   gotoMaintenance() {
     this.router.navigate(['/bakim']);
   }

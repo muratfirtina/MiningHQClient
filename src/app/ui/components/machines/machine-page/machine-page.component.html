@@ -91,6 +91,46 @@
                   <div class="info-value">{{ formatDate(machine.purchaseDate) || 'Belirtilmemiş' }}</div>
                 </div>
 
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-play-circle"></i>
+                    İşe Başlama Tarihi
+                  </div>
+                  <div class="info-value">{{ formatDate(machine.startWorkDate) || 'Belirtilmemiş' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Başlangıç Saat/Km
+                  </div>
+                  <div class="info-value">{{ machine.initialWorkingHoursOrKm || 0 }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">
+                    <i class="fas fa-clock"></i>
+                    Mevcut Çalışma Saati
+                  </div>
+                  <div class="info-value">{{ machine.currentWorkingHours || 0 }} saat</div>
+                </div>
+
+                <div class="info-item" *ngIf="machine.currentOperatorName">
+                  <div class="info-label">
+                    <i class="fas fa-user"></i>
+                    Mevcut Operatör
+                  </div>
+                  <div class="info-value">{{ machine.currentOperatorName }}</div>
+                </div>
+
+                <div class="info-item" *ngIf="!machine.currentOperatorName">
+                  <div class="info-label">
+                    <i class="fas fa-user-slash"></i>
+                    Mevcut Operatör
+                  </div>
+                  <div class="info-value">Atanmamış</div>
+                </div>
+
                 <div class="info-item full-width" *ngIf="machine.description">
                   <div class="info-label">
                     <i class="fas fa-comment"></i>
@@ -140,13 +180,61 @@
                 <div class="form-row">
                   <div class="form-group">
                     <label class="form-label">
-                      <i class="fas fa-calendar-alt"></i>
-                      Satın Alma Tarihi
+                      <i class="fas fa-industry"></i>
+                      Marka *
                     </label>
-                    <input 
-                      type="date" 
-                      formControlName="purchaseDate" 
-                      class="form-input">
+                    <select 
+                      formControlName="brandId" 
+                      class="form-select"
+                      [class.error]="hasFieldError('brandId')">
+                      <option value="">Marka seçin</option>
+                      <option *ngFor="let brand of brands" [value]="brand.id">
+                        {{ brand.name }}
+                      </option>
+                    </select>
+                    <div class="error-message" *ngIf="hasFieldError('brandId')">
+                      {{ getFieldErrorMessage('brandId') }}
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-cog"></i>
+                      Model *
+                    </label>
+                    <select 
+                      formControlName="modelId" 
+                      class="form-select"
+                      [class.error]="hasFieldError('modelId')">
+                      <option value="">Model seçin</option>
+                      <option *ngFor="let model of filteredModels" [value]="model.id">
+                        {{ model.name }}
+                      </option>
+                    </select>
+                    <div class="error-message" *ngIf="hasFieldError('modelId')">
+                      {{ getFieldErrorMessage('modelId') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-truck"></i>
+                      Makina Tipi *
+                    </label>
+                    <select 
+                      formControlName="machineTypeId" 
+                      class="form-select"
+                      [class.error]="hasFieldError('machineTypeId')">
+                      <option value="">Makina tipi seçin</option>
+                      <option *ngFor="let type of machineTypes" [value]="type.id">
+                        {{ type.name }}
+                      </option>
+                    </select>
+                    <div class="error-message" *ngIf="hasFieldError('machineTypeId')">
+                      {{ getFieldErrorMessage('machineTypeId') }}
+                    </div>
                   </div>
 
                   <div class="form-group">
@@ -166,6 +254,62 @@
                     <div class="error-message" *ngIf="hasFieldError('quarryId')">
                       {{ getFieldErrorMessage('quarryId') }}
                     </div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-calendar-alt"></i>
+                      Satın Alma Tarihi
+                    </label>
+                    <input 
+                      type="date" 
+                      formControlName="purchaseDate" 
+                      class="form-input">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-play-circle"></i>
+                      İşe Başlama Tarihi
+                    </label>
+                    <input 
+                      type="date" 
+                      formControlName="startWorkDate" 
+                      class="form-input">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-tachometer-alt"></i>
+                      Başlangıç Makina Saati/Km
+                    </label>
+                    <input 
+                      type="number" 
+                      formControlName="initialWorkingHoursOrKm" 
+                      class="form-input"
+                      placeholder="Örn: 100"
+                      min="0"
+                      step="0.01">
+                    <small class="form-help">Makina geldiğinde saati veya kilometresi</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      <i class="fas fa-user"></i>
+                      Mevcut Operatör
+                    </label>
+                    <select 
+                      formControlName="currentOperatorId" 
+                      class="form-select">
+                      <option value="">Operatör seçin</option>
+                      <option *ngFor="let employee of employees" [value]="employee.id">
+                        {{ employee.firstName }} {{ employee.lastName }}
+                      </option>
+                    </select>
                   </div>
                 </div>
 
@@ -295,8 +439,18 @@
                   <i class="fas fa-gas-pump"></i>
                 </div>
                 <div class="stat-info">
-                  <span class="stat-number">{{ machineStats.totalFuelUsed || 0 }}</span>
+                  <span class="stat-number">{{ machineStats.totalFuelUsed.toFixed(2) || 0 }}</span>
                   <span class="stat-label">Toplam Yakıt (L)</span>
+                </div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-icon">
+                  <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ machineStats.averageFuelConsumptionPerHour.toFixed(2) || 0 }}</span>
+                  <span class="stat-label">Ort. Yakıt (L/saat)</span>
                 </div>
               </div>
 
@@ -307,6 +461,36 @@
                 <div class="stat-info">
                   <span class="stat-number">{{ machineStats.maintenanceCount || 0 }}</span>
                   <span class="stat-label">Bakım Sayısı</span>
+                </div>
+              </div>
+
+              <!-- <div class="stat-item">
+                <div class="stat-icon">
+                  <i class="fas fa-cubes"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ machineStats.totalProductionAmount.toFixed(2) || 0 }}</span>
+                  <span class="stat-label">Toplam Üretim (m³)</span>
+                </div>
+              </div> -->
+
+              <div class="stat-item" *ngIf="machineStats.lastMaintenanceDate">
+                <div class="stat-icon">
+                  <i class="fas fa-wrench"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ formatDate(machineStats.lastMaintenanceDate) }}</span>
+                  <span class="stat-label">Son Bakım</span>
+                </div>
+              </div>
+
+              <div class="stat-item" *ngIf="machineStats.nextScheduledMaintenance">
+                <div class="stat-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-number">{{ formatDate(machineStats.nextScheduledMaintenance) }}</span>
+                  <span class="stat-label">Sonraki Bakım</span>
                 </div>
               </div>
             </div>

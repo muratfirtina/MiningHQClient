@@ -18,20 +18,15 @@ import { BrandService } from 'src/app/services/common/models/brand.service';
 import { ModelService } from 'src/app/services/common/models/model.service';
 import { MachineTypeService } from 'src/app/services/common/models/machine-type.service';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
+import { EmployeeService } from 'src/app/services/common/models/employee.service';
 
 // Contracts
 import { Brand } from 'src/app/contracts/brand/brand';
 import { Model } from 'src/app/contracts/model/model';
 import { MachineType } from 'src/app/contracts/machine-type/machine-type';
 import { Quarry } from 'src/app/contracts/quarry/quarry';
-
-// Machine Stats Interface
-interface MachineStats {
-  totalWorkDays: number;
-  totalWorkHours: number;
-  totalFuelUsed: number;
-  maintenanceCount: number;
-}
+import { MachineStats } from 'src/app/contracts/machine/machine-stats';
+import { Employee } from 'src/app/contracts/employee/employee';
 
 declare var $: any;
 
@@ -62,6 +57,7 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
   models: Model[] = [];
   machineTypes: MachineType[] = [];
   quarries: Quarry[] = [];
+  employees: Employee[] = [];
   filteredModels: Model[] = [];
   
   // State
@@ -77,6 +73,7 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
     private modelService: ModelService,
     private machineTypeService: MachineTypeService,
     private quarryService: QuarryService,
+    private employeeService: EmployeeService,
     private route: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
@@ -127,7 +124,10 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
       machineTypeId: ['', Validators.required],
       quarryId: ['', Validators.required],
       purchaseDate: [''],
-      description: ['']
+      startWorkDate: [''],
+      initialWorkingHoursOrKm: [null],
+      description: [''],
+      currentOperatorId: ['']
     });
 
     // Watch brand changes
@@ -154,15 +154,25 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
    */
   async loadDropdownData(): Promise<void> {
     try {
-      const [brandsResponse, machineTypesResponse, quarriesResponse] = await Promise.all([
+      const [brandsResponse, machineTypesResponse, quarriesResponse, employeesResponse] = await Promise.all([
         this.brandService.list(0, 100),
         this.machineTypeService.list(0, 100),
-        this.quarryService.list(0, 100)
+        this.quarryService.list(0, 100),
+        this.employeeService.list(0, 1000)
       ]);
 
       this.brands = brandsResponse.items || [];
       this.machineTypes = machineTypesResponse.items || [];
       this.quarries = quarriesResponse.items || [];
+      
+      // Filter only operators (employees with operator license)
+      const allEmployees = employeesResponse.items || [];
+      this.employees = allEmployees.filter(emp => 
+        emp.operatorLicense !== null && emp.operatorLicense !== undefined
+      );
+      
+      console.log('All employees:', allEmployees.length);
+      console.log('Operators only:', this.employees.length);
 
       // Load all models
       const modelsResponse = await this.modelService.list(0, 100);
@@ -170,7 +180,8 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
       
       // Filter models for current brand if machine is loaded
       if (this.machine?.brandId) {
-        this.filteredModels = this.models.filter(model => model.brandId === this.machine.brandId);
+        const response = await this.modelService.listByBrandId(this.machine.brandId);
+        this.filteredModels = response.items || [];
       }
     } catch (error) {
       console.error('Error loading dropdown data:', error);
@@ -189,9 +200,26 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
         modelId: this.machine.modelId,
         machineTypeId: this.machine.machineTypeId,
         quarryId: this.machine.quarryId,
-        purchaseDate: this.machine.purchaseDate || '',
-        description: this.machine.description || ''
+        purchaseDate: this.machine.purchaseDate ? this.formatDateForInput(this.machine.purchaseDate) : '',
+        startWorkDate: this.machine.startWorkDate ? this.formatDateForInput(this.machine.startWorkDate) : '',
+        initialWorkingHoursOrKm: this.machine.initialWorkingHoursOrKm || null,
+        description: this.machine.description || '',
+        currentOperatorId: this.machine.currentOperatorId || ''
       });
+    }
+  }
+
+  /**
+   * Format date for input[type="date"] (YYYY-MM-DD)
+   */
+  private formatDateForInput(dateInput: string | Date | undefined): string {
+    if (!dateInput) return '';
+    
+    try {
+      const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+      return date.toISOString().split('T')[0];
+    } catch {
+      return '';
     }
   }
 
@@ -202,7 +230,23 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
     this.machineForm.get('modelId')?.setValue('');
     
     if (brandId) {
-      this.filteredModels = this.models.filter(model => model.brandId === brandId);
+      this.showSpinner(SpinnerType.BallSpinClockwise);
+      try {
+        // Load models for selected brand using API endpoint
+        const response = await this.modelService.listByBrandId(brandId);
+        this.filteredModels = response.items || [];
+        console.log('Filtered models:', this.filteredModels);
+        
+        if (this.filteredModels.length === 0) {
+          this.showToastr('Seçilen marka için model bulunamadı', 'Bilgi', ToastrMessageType.Info);
+        }
+      } catch (error) {
+        console.error('Error loading models for brand:', error);
+        this.filteredModels = [];
+        this.showToastr('Modeller yüklenirken hata oluştu', 'Hata', ToastrMessageType.Error);
+      } finally {
+        this.hideSpinner(SpinnerType.BallSpinClockwise);
+      }
     } else {
       this.filteredModels = [];
     }
@@ -212,11 +256,19 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
    * Toggle edit mode
    */
   toggleEditMode(): void {
+    console.log('🔄 Toggle Edit Mode Called');
+    console.log('Current isEditMode:', this.isEditMode);
+    console.log('Machine Data:', this.machine);
+    console.log('Form Value:', this.machineForm.value);
+    
     this.isEditMode = !this.isEditMode;
+    
+    console.log('New isEditMode:', this.isEditMode);
     
     if (!this.isEditMode) {
       // Reset form when canceling edit
       this.populateForm();
+      console.log('Form reset to:', this.machineForm.value);
     }
     
     this.showToastr(
@@ -230,7 +282,20 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
    * Update machine
    */
   async updateMachine(): Promise<void> {
+    console.log('📥 Update Machine Called');
+    console.log('Form Valid:', this.machineForm.valid);
+    console.log('Form Value:', this.machineForm.value);
+    console.log('Form Errors:', this.machineForm.errors);
+    
     if (this.machineForm.invalid) {
+      console.log('❌ Form is invalid');
+      Object.keys(this.machineForm.controls).forEach(key => {
+        const control = this.machineForm.get(key);
+        if (control?.invalid) {
+          console.log(`Invalid field: ${key}`, control.errors);
+        }
+      });
+      
       this.markFormGroupTouched(this.machineForm);
       this.showToastr('Lütfen gerekli alanları doldurun', 'Uyarı', ToastrMessageType.Warning);
       return;
@@ -241,38 +306,34 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
     try {
       const formValue = this.machineForm.value;
       
-      // Get names from IDs
-      const selectedBrand = this.brands.find(b => b.id === formValue.brandId);
-      const selectedModel = this.filteredModels.find(m => m.id === formValue.modelId);
-      const selectedMachineType = this.machineTypes.find(mt => mt.id === formValue.machineTypeId);
-      const selectedQuarry = this.quarries.find(q => q.id === formValue.quarryId);
-
-      const updatedMachine = {
+      const updateData = {
         id: this.machine.id,
         name: formValue.name.trim(),
         serialNumber: formValue.serialNumber.trim(),
-        brandId: formValue.brandId,
-        brandName: selectedBrand?.name || '',
         modelId: formValue.modelId,
-        modelName: selectedModel?.name || '',
         machineTypeId: formValue.machineTypeId,
-        machineTypeName: selectedMachineType?.name || '',
         quarryId: formValue.quarryId,
-        quarryName: selectedQuarry?.name || '',
         purchaseDate: formValue.purchaseDate || null,
-        description: formValue.description || ''
+        startWorkDate: formValue.startWorkDate || null,
+        initialWorkingHoursOrKm: formValue.initialWorkingHoursOrKm || null,
+        description: formValue.description || '',
+        currentOperatorId: formValue.currentOperatorId || null
       };
 
-      // TODO: Implement update API call
-      // await this.machineService.update(updatedMachine);
+      console.log('🚀 Sending update data:', updateData);
       
-      // Update local machine object
-      this.machine = { ...this.machine, ...updatedMachine };
+      const response = await this.machineService.update(updateData);
+      console.log('✅ Update response:', response);
+      
+      // Reload machine data after update
+      await this.loadMachine();
+      console.log('✅ Machine reloaded:', this.machine);
+      
       this.isEditMode = false;
       
-      this.showToastr('Makina bilgileri güncellendi', 'Başarılı', ToastrMessageType.Success);
+      this.showToastr('Makina bilgileri başarıyla güncellendi', 'Başarılı', ToastrMessageType.Success);
     } catch (error) {
-      console.error('Error updating machine:', error);
+      console.error('❌ Error updating machine:', error);
       this.showToastr('Güncelleme sırasında hata oluştu', 'Hata', ToastrMessageType.Error);
     } finally {
       this.isUpdating = false;
@@ -431,11 +492,11 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
     return 'fas fa-cogs';
   }
 
-  formatDate(dateString: string): string {
-    if (!dateString) return 'Belirtilmemiş';
+  formatDate(dateInput: string | Date | undefined): string {
+    if (!dateInput) return 'Belirtilmemiş';
     
     try {
-      const date = new Date(dateString);
+      const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
       return date.toLocaleDateString('tr-TR', {
         year: 'numeric',
         month: 'long',
@@ -480,25 +541,23 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
   }
 
   /**
-   * Load machine statistics (placeholder - should be replaced with actual API call)
+   * Load machine statistics from backend
    */
   private async loadMachineStats(): Promise<void> {
     try {
-      // TODO: Replace with actual API call to get machine statistics
-      this.machineStats = {
-        totalWorkDays: Math.floor(Math.random() * 365) + 100,
-        totalWorkHours: Math.floor(Math.random() * 2000) + 500,
-        totalFuelUsed: Math.floor(Math.random() * 50000) + 10000,
-        maintenanceCount: Math.floor(Math.random() * 50) + 5
-      };
+      this.machineStats = await this.machineService.getMachineStats(this.machineId);
     } catch (error) {
       console.error('Error loading machine statistics:', error);
       // Default values in case of error
       this.machineStats = {
+        machineId: this.machineId,
+        machineName: this.machine?.name || '',
         totalWorkDays: 0,
         totalWorkHours: 0,
         totalFuelUsed: 0,
-        maintenanceCount: 0
+        averageFuelConsumptionPerHour: 0,
+        maintenanceCount: 0,
+        totalProductionAmount: 0
       };
     }
   }

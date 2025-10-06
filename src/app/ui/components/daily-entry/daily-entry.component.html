@@ -1,0 +1,283 @@
+<div class="daily-entry-page">
+  
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-clipboard-list"></i>
+          Makina Puantajı
+        </h1>
+        <p class="page-subtitle">
+          Günlük çalışma saatleri ve yakıt tüketimi girişi
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn secondary" (click)="resetForm()" [disabled]="isSaving">
+          <i class="fas fa-redo"></i>
+          Yenile
+        </button>
+        <button class="header-btn primary" (click)="saveDailyEntries()" [disabled]="isSaving || getEditedCount() === 0">
+          <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
+          <i class="fas fa-save" *ngIf="!isSaving"></i>
+          {{ isSaving ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+
+      <!-- Info Cards -->
+      <div class="info-cards" *ngIf="getEditedCount() > 0">
+        <div class="info-card">
+          <div class="info-card-icon">
+            <i class="fas fa-edit"></i>
+          </div>
+          <div class="info-card-content">
+            <span class="info-card-value">{{ getEditedCount() }}</span>
+            <span class="info-card-label">Düzenlenen Makina</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="info-card-content">
+            <span class="info-card-value">{{ getTotalWorkHours() }}</span>
+            <span class="info-card-label">Toplam Çalışma (saat)</span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-icon">
+            <i class="fas fa-gas-pump"></i>
+          </div>
+          <div class="info-card-content">
+            <span class="info-card-value">{{ getTotalFuel().toFixed(2) }}</span>
+            <span class="info-card-label">Toplam Yakıt (litre)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <!-- Date Selection - More Prominent -->
+        <div class="date-selection-card">
+          <div class="date-selection-header">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>Giriş Tarihi Seçin</h3>
+          </div>
+          <div class="date-selection-content">
+            <div class="date-input-wrapper">
+              <input 
+                type="date" 
+                [(ngModel)]="entryDate" 
+                class="date-input-large"
+                [max]="maxDate">
+              <div class="date-info">
+                <i class="fas fa-info-circle"></i>
+                <span>Geçmiş tarihli kayıt yapabilirsiniz</span>
+              </div>
+            </div>
+            <div class="date-quick-actions">
+              <button class="quick-date-btn" (click)="setDateToYesterday()">
+                <i class="fas fa-backward"></i>
+                Dün
+              </button>
+              <button class="quick-date-btn" (click)="setDateToToday()">
+                <i class="fas fa-calendar-day"></i>
+                Bugün
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-item">
+            <label class="filter-label">
+              <i class="fas fa-search"></i>
+              Ara
+            </label>
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="applyFilters()"
+              placeholder="Makina adı, marka, model..."
+              class="filter-input">
+          </div>
+
+          <div class="filter-item">
+            <label class="filter-label">
+              <i class="fas fa-map-marker-alt"></i>
+              Ocak
+            </label>
+            <select 
+              [(ngModel)]="selectedQuarry"
+              (ngModelChange)="applyFilters()"
+              class="filter-select">
+              <option value="">Tüm Ocaklar</option>
+              <option *ngFor="let quarry of quarries" [value]="quarry">{{ quarry }}</option>
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <label class="filter-label">
+              <i class="fas fa-truck"></i>
+              Makina Tipi
+            </label>
+            <select 
+              [(ngModel)]="selectedMachineType"
+              (ngModelChange)="applyFilters()"
+              class="filter-select">
+              <option value="">Tüm Tipler</option>
+              <option *ngFor="let type of machineTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-stats">
+          <span class="filter-stat">
+            <i class="fas fa-list"></i>
+            Gösterilen: {{ filteredMachines.length }} / {{ machines.length }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Entry Table -->
+      <div class="entry-table-container">
+        <table class="entry-table">
+          <thead>
+            <tr>
+              <th class="col-machine">
+                <i class="fas fa-tractor"></i>
+                Makina
+              </th>
+              <th class="col-info">
+                <i class="fas fa-info-circle"></i>
+                Bilgi
+              </th>
+              <th class="col-new">
+                <i class="fas fa-edit"></i>
+                Yeni Saat
+              </th>
+              <th class="col-work">
+                <i class="fas fa-clock"></i>
+                Çalışma (saat)
+              </th>
+              <th class="col-fuel">
+                <i class="fas fa-gas-pump"></i>
+                Yakıt (litre)
+              </th>
+              <th class="col-last">
+                <i class="fas fa-calendar-check"></i>
+                Son Giriş
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let machine of filteredMachines" 
+                [class.edited]="machine.isEdited"
+                [class.error]="machine.calculatedWorkHours && machine.calculatedWorkHours < 0">
+              
+              <td class="col-machine">
+                <div class="machine-cell">
+                  <div class="machine-name">{{ machine.machineName }}</div>
+                  <div class="machine-serial">{{ machine.serialNumber }}</div>
+                </div>
+              </td>
+
+              <td class="col-info">
+                <div class="info-cell">
+                  <div class="info-item">
+                    <i class="fas fa-industry"></i>
+                    {{ machine.brandName }} {{ machine.modelName }}
+                  </div>
+                  <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ machine.quarryName }}
+                  </div>
+                  <div class="info-item" *ngIf="machine.currentOperatorName">
+                    <i class="fas fa-user"></i>
+                    {{ machine.currentOperatorName }}
+                  </div>
+                  <div class="info-item info-current">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Mevcut: {{ machine.currentTotalHours }} saat
+                  </div>
+                </div>
+              </td>
+
+              <td class="col-new">
+                <input 
+                  type="number" 
+                  [value]="machine.newTotalHours > 0 ? machine.newTotalHours : ''"
+                  (input)="machine.newTotalHours = $any($event.target).value ? +$any($event.target).value : 0; onMachineDataChange(machine)"
+                  class="input-hours"
+                  [min]="machine.currentTotalHours"
+                  step="1"
+                  placeholder="Yeni saat">
+              </td>
+
+              <td class="col-work">
+                <div class="work-hours" 
+                     [class.positive]="machine.calculatedWorkHours && machine.calculatedWorkHours > 0"
+                     [class.negative]="machine.calculatedWorkHours && machine.calculatedWorkHours < 0">
+                  {{ machine.calculatedWorkHours || 0 }}
+                </div>
+              </td>
+
+              <td class="col-fuel">
+                <input 
+                  type="number" 
+                  [value]="machine.fuelConsumption > 0 ? machine.fuelConsumption : ''"
+                  (input)="machine.fuelConsumption = $any($event.target).value ? +$any($event.target).value : 0; onMachineDataChange(machine)"
+                  class="input-fuel"
+                  min="0"
+                  step="0.1"
+                  placeholder="Yakıt (L)">
+              </td>
+
+              <td class="col-last">
+                <div class="last-entry">
+                  {{ formatDate(machine.lastEntryDate) }}
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredMachines.length === 0">
+              <td colspan="6" class="no-data">
+                <i class="fas fa-inbox"></i>
+                <p>Kayıt bulunamadı</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Help Text -->
+      <div class="help-section">
+        <div class="help-card">
+          <div class="help-icon">
+            <i class="fas fa-info-circle"></i>
+          </div>
+          <div class="help-content">
+            <h4>Nasıl Kullanılır?</h4>
+            <ul>
+              <li>Giriş tarihini seçin (bir önceki günün verilerini giriyorsunuz)</li>
+              <li>Her makina için yeni toplam saati girin (mevcut saat + bugünkü çalışma)</li>
+              <li>Kullanılan yakıt miktarını litre olarak girin</li>
+              <li>Çalışma saati otomatik hesaplanacaktır</li>
+              <li>Kaydet butonuna basarak tüm verileri kaydedin</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

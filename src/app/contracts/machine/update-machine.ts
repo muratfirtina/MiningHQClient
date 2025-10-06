@@ -8,19 +8,17 @@ export class UpdateMachine {
     
     // Type Information
     machineTypeId: string;
-    machineTypeName: string;
     
-    // Brand and Model
-    brandId: string;
-    brandName: string;
+    // Model
     modelId: string;
-    modelName: string;
     
     // Location
     quarryId: string;
-    quarryName: string;
     
     // Additional Info (Optional)
     purchaseDate?: string;
     description?: string;
+    
+    // Current Operator (Optional)
+    currentOperatorId?: string;
 }
