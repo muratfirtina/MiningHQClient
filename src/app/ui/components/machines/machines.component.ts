@@ -230,12 +230,10 @@ export class MachinesComponent extends BaseComponent implements OnInit {
   }
 
   editMachine(machine: Machine): void {
-    console.log('Makina düzenleme:', machine);
     this.router.navigate(['/makinalar/makina-duzenle', machine.id]);
   }
 
   viewMachineMaintenance(machine: Machine): void {
-    console.log('Makina bakım geçmişi:', machine);
     this.router.navigate(['/makinalar/makina', machine.id, 'bakim']);
   }
 
@@ -290,5 +288,97 @@ export class MachinesComponent extends BaseComponent implements OnInit {
 
   getMachineStatusColor(machine: Machine): string {
     return this.isFeaturedMachine(machine) ? 'featured' : 'default';
+  }
+
+  /**
+   * Get current time formatted
+   */
+  getCurrentTime(): string {
+    const now = new Date();
+    return now.toLocaleTimeString('tr-TR', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
+
+  /**
+   * Check if machine needs maintenance warning (50 hours or less)
+   */
+  needsMaintenanceWarning(machine: Machine): boolean {
+    if (!machine.currentWorkingHours || !machine.nextMaintenanceHour) {
+      return false;
+    }
+    
+    const remainingHours = machine.nextMaintenanceHour - machine.currentWorkingHours;
+    return remainingHours <= 50 && remainingHours > 0;
+  }
+
+  /**
+   * Check if maintenance is overdue (past the scheduled maintenance hour)
+   */
+  isMaintenanceOverdue(machine: Machine): boolean {
+    if (!machine.currentWorkingHours || !machine.nextMaintenanceHour) {
+      return false;
+    }
+    
+    const remainingHours = machine.nextMaintenanceHour - machine.currentWorkingHours;
+    return remainingHours < 0;
+  }
+
+  /**
+   * Get remaining hours until next maintenance
+   */
+  getMaintenanceRemainingHours(machine: Machine): number {
+    if (!machine.currentWorkingHours || !machine.nextMaintenanceHour) {
+      return 0;
+    }
+    
+    return machine.nextMaintenanceHour - machine.currentWorkingHours;
+  }
+
+  /**
+   * Get overdue hours (absolute value)
+   */
+  getMaintenanceOverdueHours(machine: Machine): number {
+    if (!machine.currentWorkingHours || !machine.nextMaintenanceHour) {
+      return 0;
+    }
+    
+    const remainingHours = machine.nextMaintenanceHour - machine.currentWorkingHours;
+    return remainingHours < 0 ? Math.abs(remainingHours) : 0;
+  }
+
+  /**
+   * Get maintenance status class
+   */
+  getMaintenanceStatusClass(machine: Machine): string {
+    if (!machine.currentWorkingHours || !machine.nextMaintenanceHour) {
+      return '';
+    }
+    
+    const remainingHours = machine.nextMaintenanceHour - machine.currentWorkingHours;
+    
+    if (remainingHours < 0) {
+      return 'maintenance-overdue';
+    } else if (remainingHours <= 50) {
+      return 'maintenance-warning';
+    }
+    
+    return '';
+  }
+
+  /**
+   * Get maintenance warning/overdue message
+   */
+  getMaintenanceMessage(machine: Machine): string {
+    if (this.isMaintenanceOverdue(machine)) {
+      const overdueHours = this.getMaintenanceOverdueHours(machine);
+      return `${overdueHours} saat gecikti`;
+    } else if (this.needsMaintenanceWarning(machine)) {
+      const remainingHours = this.getMaintenanceRemainingHours(machine);
+      return `${remainingHours} saat sonra bakım`;
+    }
+    return '';
   }
 }

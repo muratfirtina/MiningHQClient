@@ -1,0 +1,283 @@
+<div class="modern-maintenance-detail-page" *ngIf="maintenance">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Geri
+        </button>
+        <h1 class="page-title">
+          <i [class]="getMaintenanceTypeIcon(maintenance.maintenanceTypeName)"></i>
+          Bakım-Onarım Detayı
+        </h1>
+        <p class="page-subtitle">{{ maintenance.machineName }}</p>
+      </div>
+      <div class="header-badge">
+        <span [class]="'type-badge ' + getMaintenanceTypeBadgeClass(maintenance.maintenanceTypeName)">
+          {{ maintenance.maintenanceTypeName }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-custom">
+    
+    <div class="main-content">
+      
+      <!-- Alert Banner -->
+      <div class="alert-banner" *ngIf="isUpcomingMaintenance()">
+        <div class="alert-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="alert-content">
+          <div class="alert-title">Sonraki Bakım Yaklaşıyor</div>
+          <div class="alert-text">{{ getHoursUntilNextMaintenance() }} saat sonra bakım zamanı</div>
+        </div>
+      </div>
+
+      <!-- Main Info Card -->
+      <div class="info-card main-info">
+        <div class="card-header">
+          <h2>
+            <i class="fas fa-info-circle"></i>
+            Genel Bilgiler
+          </h2>
+        </div>
+        <div class="card-body">
+          
+          <div class="info-grid">
+            
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">Bakım Tarihi</div>
+                <div class="info-value">{{ formatDateTime(maintenance.maintenanceDate) }}</div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">Makina Saati/Kilometre</div>
+                <div class="info-value">{{ maintenance.machineWorkingTimeOrKilometer }} saat</div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-building"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">Bakım Firması</div>
+                <div class="info-value">{{ maintenance.maintenanceFirm }}</div>
+              </div>
+            </div>
+
+            <div class="info-item" *ngIf="maintenance.nextMaintenanceHour">
+              <div class="info-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="info-content">
+                <div class="info-label">Sonraki Bakım Saati</div>
+                <div class="info-value" [class.upcoming]="isUpcomingMaintenance()">
+                  {{ maintenance.nextMaintenanceHour }} saat
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Description Card -->
+      <div class="info-card" *ngIf="maintenance.description">
+        <div class="card-header">
+          <h2>
+            <i class="fas fa-file-alt"></i>
+            Açıklama
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="description-text">
+            {{ maintenance.description }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Parts & Oils Cards -->
+      <div class="two-column-grid" *ngIf="maintenance.partsChanged || maintenance.oilsChanged">
+        
+        <div class="info-card" *ngIf="maintenance.partsChanged">
+          <div class="card-header">
+            <h2>
+              <i class="fas fa-cog"></i>
+              Değiştirilen/Eklenen Parçalar
+            </h2>
+          </div>
+          <div class="card-body">
+            <div class="parts-list">
+              {{ maintenance.partsChanged }}
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card" *ngIf="maintenance.oilsChanged">
+          <div class="card-header">
+            <h2>
+              <i class="fas fa-oil-can"></i>
+              Değiştirilen Yağlar
+            </h2>
+          </div>
+          <div class="card-body">
+            <div class="oils-list">
+              {{ maintenance.oilsChanged }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Files Section -->
+      <div class="info-card files-card" *ngIf="maintenanceFiles && maintenanceFiles.length > 0">
+        <div class="card-header">
+          <h2>
+            <i class="fas fa-paperclip"></i>
+            Dosyalar ve Belgeler
+            <span class="file-count">{{ maintenanceFiles.length }} dosya</span>
+          </h2>
+        </div>
+        <div class="card-body">
+          
+          <div class="files-grid">
+            
+            <div class="file-card" *ngFor="let file of maintenanceFiles; let i = index">
+              <div class="file-preview" (click)="viewFile(file)">
+                <img [id]="'printableImage' + file.name" 
+                     [src]="file.url" 
+                     [alt]="file.name" 
+                     class="file-image"
+                     *ngIf="file.url && isImage(file.name)">
+                <div class="file-icon-placeholder" *ngIf="!file.url || !isImage(file.name)">
+                  <i class="fas fa-file-alt" *ngIf="!isPdf(file.name)"></i>
+                  <i class="fas fa-file-pdf" *ngIf="isPdf(file.name)"></i>
+                </div>
+                <div class="file-overlay">
+                  <div class="overlay-text">
+                    <i class="fas fa-search-plus"></i>
+                    Görüntülemek için tıklayın
+                  </div>
+                </div>
+              </div>
+              
+              <div class="file-info">
+                <div class="file-name">{{ file.name }}</div>
+              </div>
+
+              <div class="file-actions">
+                <button class="action-btn view" 
+                        (click)="viewFile(file)"
+                        title="Görüntüle">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn print" 
+                        (click)="printImage(file.name)"
+                        title="Yazdır"
+                        *ngIf="file.url && isImage(file.name)">
+                  <i class="fas fa-print"></i>
+                </button>
+                <button class="action-btn download" 
+                        (click)="downloadFile(file)"
+                        title="İndir">
+                  <i class="fas fa-download"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Empty Files State -->
+      <div class="info-card empty-files" *ngIf="!maintenanceFiles || maintenanceFiles.length === 0">
+        <div class="card-body">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-folder-open"></i>
+            </div>
+            <h3>Henüz dosya eklenmemiş</h3>
+            <p>Bu bakım kaydı için henüz dosya yüklenmemiş.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="!maintenance && isLoading">
+  <div class="loading-spinner">
+    <i class="fas fa-spinner fa-spin"></i>
+  </div>
+  <p>Bakım detayları yükleniyor...</p>
+</div>
+
+<!-- Lightbox Modal -->
+<div class="lightbox-modal" *ngIf="showLightbox" (click)="closeLightbox()">
+  <div class="lightbox-content" (click)="$event.stopPropagation()">
+    <button class="lightbox-close" (click)="closeLightbox()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <div class="lightbox-header">
+      <h3>{{ selectedFile?.name }}</h3>
+    </div>
+    
+    <div class="lightbox-body">
+      <!-- Resim görüntüleme -->
+      <img [src]="selectedFile?.url" 
+           [alt]="selectedFile?.name" 
+           class="lightbox-image"
+           *ngIf="isImage(selectedFile?.name)">
+      
+      <!-- PDF görüntüleme -->
+      <iframe [src]="selectedFile?.safeUrl" 
+              class="lightbox-pdf"
+              *ngIf="isPdf(selectedFile?.name)"></iframe>
+      
+      <!-- Diğer dosyalar için mesaj -->
+      <div class="lightbox-no-preview" *ngIf="!isImage(selectedFile?.name) && !isPdf(selectedFile?.name)">
+        <i class="fas fa-file-alt"></i>
+        <p>Bu dosya türü için önizleme mevcut değil.</p>
+        <button class="download-btn" (click)="downloadFile(selectedFile)">
+          <i class="fas fa-download"></i>
+          Dosyayı İndir
+        </button>
+      </div>
+    </div>
+    
+    <div class="lightbox-footer">
+      <button class="action-btn print" 
+              (click)="printImage(selectedFile?.name)"
+              *ngIf="isImage(selectedFile?.name)">
+        <i class="fas fa-print"></i>
+        Yazdır
+      </button>
+      <button class="action-btn download" 
+              (click)="downloadFile(selectedFile)">
+        <i class="fas fa-download"></i>
+        İndir
+      </button>
+    </div>
+  </div>
+</div>

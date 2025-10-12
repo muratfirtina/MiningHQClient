@@ -153,15 +153,23 @@
 .filters-section {
   margin-bottom: 2rem;
 }
-
+.date-filter {
+  background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(74, 124, 140, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
 /* Date Selection Card */
 .date-selection-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #4a7c8c 0%, #2d5a6b 100%);
   border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 1.5rem;
+  padding: 1.5rem;
   color: white;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
 }
 
 .date-selection-header {
@@ -195,7 +203,7 @@
 
 .date-input-large {
   width: 100%;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   font-size: 1.125rem;
@@ -232,7 +240,7 @@
 }
 
 .quick-date-btn {
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 1rem;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
@@ -333,11 +341,11 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #546e7a;
+  color: rgba(255, 255, 255, 0.95);
   font-size: 0.9rem;
   
   i {
-    color: #4a7c8c;
+    color: rgba(255, 255, 255, 0.95);
   }
 }
 

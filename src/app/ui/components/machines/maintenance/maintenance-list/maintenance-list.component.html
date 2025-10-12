@@ -1,0 +1,391 @@
+<div class="modern-maintenance-list-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Geri
+        </button>
+        <h1 class="page-title">
+          <i class="fas fa-tools"></i>
+          Bakım-Onarım Yönetimi
+        </h1>
+        <p class="page-subtitle" *ngIf="machine">{{ machine.name }} - Bakım Geçmişi</p>
+      </div>
+      <div class="header-actions">
+        <div class="action-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ maintenances.length }}</span>
+            <span class="stat-label">Bakım Kaydı</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <div class="container-custom">
+      <div class="action-buttons">
+        
+        <button type="button" 
+                class="action-btn primary" 
+                (click)="addMaintenance()">
+          <div class="btn-icon">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Yeni Bakım</span>
+            <span class="btn-subtitle">Bakım kaydı ekle</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn secondary"
+                [class.overdue-btn]="getHoursRemainingForNextMaintenance() !== null && getHoursRemainingForNextMaintenance()! < 0"
+                *ngIf="getMaxNextMaintenanceHour()">
+          <div class="btn-icon">
+            <i [class]="getHoursRemainingForNextMaintenance() !== null && getHoursRemainingForNextMaintenance()! < 0 ? 'fas fa-exclamation-triangle' : 'fas fa-clock'"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Sonraki Bakım</span>
+            <span class="btn-subtitle" *ngIf="getHoursRemainingForNextMaintenance() !== null && getHoursRemainingForNextMaintenance()! >= 0">
+              {{ getMaxNextMaintenanceHour() }} saat ({{ getHoursRemainingForNextMaintenance() }} saat kaldı)
+            </span>
+            <span class="btn-subtitle" *ngIf="getHoursRemainingForNextMaintenance() !== null && getHoursRemainingForNextMaintenance()! < 0">
+              {{ getMaxNextMaintenanceHour() }} saat ({{ getAbsoluteHoursRemaining() }} saat gecikti!)
+            </span>
+            <span class="btn-subtitle" *ngIf="getHoursRemainingForNextMaintenance() === null">
+              {{ getMaxNextMaintenanceHour() }} saat
+            </span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn secondary"
+                *ngIf="maintenances.length > 0">
+          <div class="btn-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Son Bakım</span>
+            <span class="btn-subtitle">{{ formatDate(maintenances[0].maintenanceDate) }}</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn accent"
+                (click)="exportMaintenanceReport()">
+          <div class="btn-icon">
+            <i class="fas fa-file-pdf"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Rapor Al</span>
+            <span class="btn-subtitle">PDF olarak indir</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+      <div class="content-layout">
+        
+        <!-- Filters Sidebar -->
+        <div class="filters-sidebar">
+          <div class="filter-card">
+            <div class="filter-header">
+              <h3>
+                <i class="fas fa-filter"></i>
+                Filtreler
+              </h3>
+              <button class="clear-filters" type="button" (click)="clearFilters()">
+                <i class="fas fa-times"></i>
+                Temizle
+              </button>
+            </div>
+            
+            <div class="filter-form">
+              
+              <!-- Maintenance Type Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-wrench"></i>
+                  Bakım Türü
+                </label>
+                <select [(ngModel)]="selectedMaintenanceType" 
+                        (change)="applyFilters()"
+                        class="filter-select">
+                  <option value="">Tümü</option>
+                  <option *ngFor="let type of maintenanceTypes" [value]="type.name">
+                    {{ type.name }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Date Range Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-calendar"></i>
+                  Başlangıç Tarihi
+                </label>
+                <input type="date" 
+                       [(ngModel)]="startDate"
+                       (change)="applyFilters()"
+                       class="filter-input">
+              </div>
+
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-calendar"></i>
+                  Bitiş Tarihi
+                </label>
+                <input type="date" 
+                       [(ngModel)]="endDate"
+                       (change)="applyFilters()"
+                       class="filter-input">
+              </div>
+
+              <!-- Maintenance Firm Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-building"></i>
+                  Bakım Firması
+                </label>
+                <input type="text" 
+                       [(ngModel)]="firmFilter"
+                       (input)="applyFilters()"
+                       class="filter-input"
+                       placeholder="Firma adı...">
+              </div>
+
+              <!-- Upcoming Maintenance Filter -->
+              <div class="filter-group">
+                <label class="filter-checkbox">
+                  <input type="checkbox" 
+                         [(ngModel)]="showOnlyUpcoming"
+                         (change)="applyFilters()">
+                  <span>Sadece yaklaşan bakımları göster</span>
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Statistics Card -->
+          <div class="filter-card stats-card">
+            <div class="filter-header">
+              <h3>
+                <i class="fas fa-chart-pie"></i>
+                İstatistikler
+              </h3>
+            </div>
+            <div class="stats-content">
+              <div class="stat-row">
+                <span class="stat-label">Toplam Bakım:</span>
+                <span class="stat-value">{{ getTotalMaintenances() }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Bu Ay:</span>
+                <span class="stat-value">{{ getMaintenancesThisMonth() }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Bu Yıl:</span>
+                <span class="stat-value">{{ getMaintenancesThisYear() }}</span>
+              </div>
+              <div class="stat-row" *ngIf="getAverageDaysBetweenMaintenance() > 0">
+                <span class="stat-label">Ort. Bakım Aralığı:</span>
+                <span class="stat-value">{{ getAverageDaysBetweenMaintenance() }} gün</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Maintenance Table -->
+        <div class="table-section">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">
+                <h3>Bakım Geçmişi</h3>
+                <span class="result-count">{{ filteredMaintenances.length }} kayıt bulundu</span>
+              </div>
+              <div class="table-actions">
+                <button class="table-action-btn" type="button" (click)="exportMaintenanceReport()">
+                  <i class="fas fa-download"></i>
+                  Dışa Aktar
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-container" *ngIf="!isLoading">
+              <table class="modern-table" *ngIf="filteredMaintenances.length; else emptyState">
+                <thead>
+                  <tr>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-wrench"></i>
+                        Bakım Türü
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-calendar"></i>
+                        Tarih
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Bakım Saati
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-building"></i>
+                        Firma
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-clock"></i>
+                        Sonraki Bakım
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-paperclip"></i>
+                        Dosyalar
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-cog"></i>
+                        İşlemler
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let maintenance of filteredMaintenances; trackBy: trackByMaintenanceId" 
+                      class="maintenance-row"
+                      [class.upcoming]="isUpcomingMaintenance(maintenance)"
+                      [class.overdue]="isMaintenanceOverdue(maintenance)"
+                      (click)="viewMaintenanceDetail(maintenance)">
+                    <td>
+                      <div class="maintenance-type-info">
+                        <span [class]="'type-badge ' + getMaintenanceTypeBadgeClass(maintenance.maintenanceTypeName)">
+                          <i [class]="getMaintenanceTypeIcon(maintenance.maintenanceTypeName)"></i>
+                          {{ maintenance.maintenanceTypeName }}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="date-info">
+                        <i class="fas fa-calendar"></i>
+                        {{ formatDate(maintenance.maintenanceDate) }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="hour-info">
+                        <i class="fas fa-tachometer-alt"></i>
+                        {{ maintenance.machineWorkingTimeOrKilometer }} saat
+                      </div>
+                    </td>
+                    <td>
+                      <div class="firm-info">
+                        <i class="fas fa-building"></i>
+                        {{ maintenance.maintenanceFirm }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="next-maintenance-info" *ngIf="maintenance.nextMaintenanceHour">
+                        <span class="next-hour" 
+                              [class.warning]="isUpcomingMaintenance(maintenance)"
+                              [class.overdue]="isMaintenanceOverdue(maintenance)">
+                          {{ maintenance.nextMaintenanceHour }} saat
+                        </span>
+                        <span class="hours-remaining warning" *ngIf="isUpcomingMaintenance(maintenance)">
+                          <i class="fas fa-exclamation-triangle"></i>
+                          ({{ getHoursUntilNextMaintenance(maintenance) }} saat kaldı)
+                        </span>
+                        <span class="hours-remaining overdue" *ngIf="isMaintenanceOverdue(maintenance)">
+                          <i class="fas fa-exclamation-circle"></i>
+                          ({{ getOverdueHours(maintenance) }} saat gecikti)
+                        </span>
+                      </div>
+                      <span *ngIf="!maintenance.nextMaintenanceHour" class="no-data">-</span>
+                    </td>
+                    <td>
+                      <div class="file-info">
+                        <span class="file-badge" *ngIf="maintenance.fileCount > 0">
+                          <i class="fas fa-paperclip"></i>
+                          {{ maintenance.fileCount }}
+                        </span>
+                        <span *ngIf="!maintenance.fileCount" class="no-files">-</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-icon-btn view" 
+                                (click)="$event.stopPropagation(); viewMaintenanceDetail(maintenance)"
+                                title="Detayları Görüntüle">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-icon-btn edit" 
+                                (click)="$event.stopPropagation(); editMaintenance(maintenance)"
+                                title="Düzenle">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-icon-btn delete" 
+                                (click)="$event.stopPropagation(); deleteMaintenance(maintenance)"
+                                title="Sil">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Empty State -->
+              <ng-template #emptyState>
+                <div class="empty-state">
+                  <div class="empty-icon">
+                    <i class="fas fa-tools"></i>
+                  </div>
+                  <h3>Bakım kaydı bulunamadı</h3>
+                  <p *ngIf="hasActiveFilters()">Filtrelere uygun bakım kaydı bulunamadı. Filtreleri kontrol edin.</p>
+                  <p *ngIf="!hasActiveFilters()">Henüz bakım kaydı eklenmemiş. İlk bakım kaydını ekleyin.</p>
+                  <button class="empty-action-btn" (click)="addMaintenance()" *ngIf="!hasActiveFilters()">
+                    <i class="fas fa-plus"></i>
+                    Bakım Ekle
+                  </button>
+                  <button class="empty-action-btn" (click)="clearFilters()" *ngIf="hasActiveFilters()">
+                    <i class="fas fa-refresh"></i>
+                    Filtreleri Temizle
+                  </button>
+                </div>
+              </ng-template>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="isLoading" class="loading-state">
+              <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+              <p>Bakım kayıtları yükleniyor...</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

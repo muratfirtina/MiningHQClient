@@ -510,11 +510,14 @@
 }
 
 .machine-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  
   .machine-name {
     display: block;
     font-weight: 600;
     color: #003353;
-    margin-bottom: 0.25rem;
     transition: color 0.3s ease;
   }
   
@@ -764,5 +767,114 @@
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 0.05}s;
     }
+  }
+}
+
+/* Maintenance Warning Styles */
+.machine-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-left: 3px solid #ffc107;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #856404;
+  font-weight: 500;
+  
+  i {
+    color: #ffc107;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  &.overdue {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-left-color: #dc3545;
+    color: #721c24;
+    
+    i {
+      color: #dc3545;
+      animation: urgentPulse 1s ease-in-out infinite;
+    }
+  }
+}
+
+.maintenance-warning {
+  background: linear-gradient(135deg, rgba(255, 243, 205, 0.3) 0%, rgba(255, 234, 167, 0.3) 100%);
+  border-left: 3px solid #ffc107;
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(255, 243, 205, 0.5) 0%, rgba(255, 234, 167, 0.5) 100%);
+  }
+}
+
+.maintenance-overdue {
+  background: linear-gradient(135deg, rgba(248, 215, 218, 0.3) 0%, rgba(242, 153, 164, 0.3) 100%);
+  border-left: 3px solid #dc3545;
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(248, 215, 218, 0.5) 0%, rgba(242, 153, 164, 0.5) 100%);
+  }
+  
+  .machine-warning {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-left-color: #dc3545;
+    color: #721c24;
+    
+    i {
+      color: #dc3545;
+    }
+  }
+}
+
+/* Operator and Working Hours Info Styles */
+.operator-info,
+.working-hours-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  i {
+    color: #2c6173;
+    font-size: 0.9rem;
+  }
+  
+  span {
+    font-weight: 500;
+    color: #1a4d5e;
+  }
+}
+
+.operator-info {
+  i {
+    color: #4CAF50;
+  }
+}
+
+.working-hours-info {
+  i {
+    color: #2196F3;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes urgentPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
   }
 }

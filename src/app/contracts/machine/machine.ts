@@ -30,6 +30,9 @@ export class Machine {
     currentOperatorId?: string;
     currentOperatorName?: string;
     
+    // Maintenance Information
+    nextMaintenanceHour?: number;
+    
     // Metadata
     createdDate?: string;
     updatedDate?: string;

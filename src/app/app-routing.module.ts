@@ -63,7 +63,9 @@ const routes: Routes = [
   
   // Specific machine routes (must come BEFORE general :machineId route)
   {path:'makinalar/makina/:machineId/dosyalar',loadComponent:()=>import('./ui/components/machines/machine-files/machine-files.component').then(m=>m.MachineFilesComponent),data:{breadcrumb:'Makina Dosyaları'}},
-  {path:'makinalar/makina/:machineId/bakim',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Makina Bakım'}},
+  {path:'makinalar/makina/:machineId/bakim-ekle',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-add/maintenance-add.component').then(m=>m.MaintenanceAddComponent),data:{breadcrumb:'Bakım Ekle'}},
+  {path:'makinalar/makina/:machineId/bakim/:maintenanceId',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-detail/maintenance-detail.component').then(m=>m.MaintenanceDetailComponent),data:{breadcrumb:'Bakım Detayı'}},
+  {path:'makinalar/makina/:machineId/bakim',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-list/maintenance-list.component').then(m=>m.MaintenanceListComponent),data:{breadcrumb:'Bakım Geçmişi'}},
   {path:'makinalar/makina/:machineId/is-verileri',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'İş Verileri'}},
   {path:'makinalar/makina/:machineId/yakit',loadComponent:()=>import('./ui/components/fuel-consumption-report/fuel-consumption-report.component').then(m=>m.FuelConsumptionReportComponent),data:{breadcrumb:'Yakıt Tüketimi'}},
   {path:'makinalar/makina-listesi/makina/:machineId',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Makina Bilgileri'}},

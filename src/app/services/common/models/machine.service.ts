@@ -54,6 +54,17 @@ export class MachineService {
   /**
    * Get machine by ID
    */
+  async getById(id: string): Promise<Machine> {
+    const observable: Observable<Machine> = this.httpClientService.get<Machine>({
+      controller: 'machines',
+      action: id
+    });
+    return firstValueFrom(observable);
+  }
+
+  /**
+   * Get machine by ID (legacy method name)
+   */
   async getMachineById(id: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<Machine> {
     const observable: Observable<Machine> = this.httpClientService.get<Machine>({
       controller: 'machines',

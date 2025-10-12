@@ -229,14 +229,14 @@
                     </th>
                     <th>
                       <div class="th-content">
-                        <i class="fas fa-wrench"></i>
-                        Tip
+                        <i class="fas fa-user"></i>
+                        Operatör
                       </div>
                     </th>
                     <th>
                       <div class="th-content">
-                        <i class="fas fa-barcode"></i>
-                        Seri No
+                        <i class="fas fa-clock"></i>
+                        Mevcut Saat
                       </div>
                     </th>
                     <th>
@@ -256,6 +256,7 @@
                 <tbody>
                   <tr *ngFor="let machine of machines.items; trackBy: trackByMachineId" 
                       class="machine-row"
+                      [ngClass]="getMaintenanceStatusClass(machine)"
                       (click)="viewMachineDetails(machine)">
                     <td>
                       <div class="machine-info">
@@ -264,6 +265,12 @@
                         </div>
                         <div class="machine-details">
                           <span class="machine-name">{{machine.name}}</span>
+                          <span class="machine-warning" 
+                                *ngIf="needsMaintenanceWarning(machine) || isMaintenanceOverdue(machine)"
+                                [class.overdue]="isMaintenanceOverdue(machine)">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{getMaintenanceMessage(machine)}}
+                          </span>
                         </div>
                       </div>
                     </td>
@@ -274,12 +281,15 @@
                       </div>
                     </td>
                     <td>
-                      <span class="machine-type-badge">{{machine.machineTypeName}}</span>
+                      <div class="operator-info">
+                        <i class="fas fa-user"></i>
+                        <span>{{machine.currentOperatorName || 'Atanmadı'}}</span>
+                      </div>
                     </td>
                     <td>
-                      <div class="serial-info">
-                        <i class="fas fa-barcode"></i>
-                        {{machine.serialNumber}}
+                      <div class="working-hours-info">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>{{machine.currentWorkingHours || 0}} saat</span>
                       </div>
                     </td>
                     <td>
@@ -302,7 +312,7 @@
                         </button>
                         <button class="action-icon-btn maintenance" 
                                 (click)="$event.stopPropagation(); viewMachineMaintenance(machine)"
-                                title="Bakım Geçmişi">
+                                title="Bakım Ekle">
                           <i class="fas fa-tools"></i>
                         </button>
                       </div>

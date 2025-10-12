@@ -65,36 +65,6 @@
 
       <!-- Filters Section -->
       <div class="filters-section">
-        <!-- Date Selection - More Prominent -->
-        <div class="date-selection-card">
-          <div class="date-selection-header">
-            <i class="fas fa-calendar-alt"></i>
-            <h3>Giriş Tarihi Seçin</h3>
-          </div>
-          <div class="date-selection-content">
-            <div class="date-input-wrapper">
-              <input 
-                type="date" 
-                [(ngModel)]="entryDate" 
-                class="date-input-large"
-                [max]="maxDate">
-              <div class="date-info">
-                <i class="fas fa-info-circle"></i>
-                <span>Geçmiş tarihli kayıt yapabilirsiniz</span>
-              </div>
-            </div>
-            <div class="date-quick-actions">
-              <button class="quick-date-btn" (click)="setDateToYesterday()">
-                <i class="fas fa-backward"></i>
-                Dün
-              </button>
-              <button class="quick-date-btn" (click)="setDateToToday()">
-                <i class="fas fa-calendar-day"></i>
-                Bugün
-              </button>
-            </div>
-          </div>
-        </div>
 
         <div class="filter-row">
           <div class="filter-item">
@@ -145,6 +115,38 @@
             Gösterilen: {{ filteredMachines.length }} / {{ machines.length }}
           </span>
         </div>
+        <!-- Date Selection - More Prominent -->
+        <div class="filter-item date-filter">
+        <div class="date-selection-card">
+          <div class="date-selection-header">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>Giriş Tarihi Seçin</h3>
+          </div>
+          <div class="date-selection-content">
+            <div class="date-input-wrapper">
+              <input 
+                type="date" 
+                [(ngModel)]="entryDate" 
+                class="date-input-large"
+                [max]="maxDate">
+              <div class="date-info">
+                <i class="fas fa-info-circle"></i>
+                <span>Geçmiş tarihli kayıt yapabilirsiniz</span>
+              </div>
+            </div>
+            <div class="date-quick-actions">
+              <button class="quick-date-btn" (click)="setDateToYesterday()">
+                <i class="fas fa-backward"></i>
+                Dün
+              </button>
+              <button class="quick-date-btn" (click)="setDateToToday()">
+                <i class="fas fa-calendar-day"></i>
+                Bugün
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
 
       <!-- Entry Table -->
@@ -186,16 +188,11 @@
               <td class="col-machine">
                 <div class="machine-cell">
                   <div class="machine-name">{{ machine.machineName }}</div>
-                  <div class="machine-serial">{{ machine.serialNumber }}</div>
                 </div>
               </td>
 
               <td class="col-info">
                 <div class="info-cell">
-                  <div class="info-item">
-                    <i class="fas fa-industry"></i>
-                    {{ machine.brandName }} {{ machine.modelName }}
-                  </div>
                   <div class="info-item">
                     <i class="fas fa-map-marker-alt"></i>
                     {{ machine.quarryName }}
