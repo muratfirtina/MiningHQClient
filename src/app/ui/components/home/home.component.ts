@@ -70,7 +70,7 @@ export class HomeComponent extends BaseComponent implements OnInit{
   }
 
   gotoMachineReports() {
-    this.router.navigate(['/makina-raporlari']);
+    this.router.navigate(['/makinalar/makina-raporlari']);
   }
 
   gotoInventory() {

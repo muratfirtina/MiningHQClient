@@ -1,0 +1,361 @@
+<div class="machine-reports-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <button class="back-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Geri Dön
+        </button>
+        <h1 class="page-title">
+          <i class="fas fa-chart-line"></i>
+          Makina Performans Raporları
+        </h1>
+        <p class="page-subtitle">Tüm makinaların detaylı performans ve istatistik bilgileri</p>
+      </div>
+      <div class="header-actions">
+        <button class="export-btn" (click)="exportReports('pdf')">
+          <i class="fas fa-file-pdf"></i>
+          PDF İndir
+        </button>
+        <button class="export-btn" (click)="exportReports('csv')">
+          <i class="fas fa-file-excel"></i>
+          Excel İndir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Statistics Section -->
+  <div class="summary-section">
+    <div class="container-custom">
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon machines">
+            <i class="fas fa-cogs"></i>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Toplam Makina</span>
+            <span class="card-value">{{totalMachines}}</span>
+            <span class="card-detail">Aktif makinalar</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon hours">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Toplam Çalışma</span>
+            <span class="card-value">{{totalWorkingHours | number:'1.0-0'}} <small>saat</small></span>
+            <span class="card-detail">{{getPeriodLabel()}} dönem</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon fuel">
+            <i class="fas fa-gas-pump"></i>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Toplam Yakıt</span>
+            <span class="card-value">{{totalFuelConsumption | number:'1.0-0'}} <small>L</small></span>
+            <span class="card-detail">{{getPeriodLabel()}} tüketim</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon efficiency">
+            <i class="fas fa-tachometer-alt"></i>
+          </div>
+          <div class="card-content">
+            <span class="card-label">Ortalama Verimlilik</span>
+            <span class="card-value">{{averageEfficiency | number:'1.1-2'}} <small>L/saat</small></span>
+            <span class="card-detail">Filo ortalaması</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Controls Section -->
+  <div class="controls-section">
+    <div class="container-custom">
+      <div class="controls-layout">
+        
+        <!-- Period Selector -->
+        <div class="period-selector">
+          <h3 class="selector-title">
+            <i class="fas fa-calendar"></i>
+            Dönem Seçimi
+          </h3>
+          <div class="period-buttons">
+            <button class="period-btn"
+                    [class.active]="selectedPeriod === 'weekly'"
+                    (click)="selectPeriod('weekly')">
+              <i class="fas fa-calendar-week"></i>
+              Haftalık
+            </button>
+            <button class="period-btn"
+                    [class.active]="selectedPeriod === 'monthly'"
+                    (click)="selectPeriod('monthly')">
+              <i class="fas fa-calendar-alt"></i>
+              Aylık
+            </button>
+            <button class="period-btn"
+                    [class.active]="selectedPeriod === 'yearly'"
+                    (click)="selectPeriod('yearly')">
+              <i class="fas fa-calendar"></i>
+              Yıllık
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-container">
+          <div class="filter-row">
+            <div class="filter-item">
+              <label>
+                <i class="fas fa-search"></i>
+                Ara
+              </label>
+              <input type="text" 
+                     [(ngModel)]="searchTerm" 
+                     (ngModelChange)="applyFilters()"
+                     placeholder="Makina adı veya seri no..."
+                     class="filter-input">
+            </div>
+
+            <div class="filter-item">
+              <label>
+                <i class="fas fa-tag"></i>
+                Marka
+              </label>
+              <select [(ngModel)]="selectedBrand" 
+                      (ngModelChange)="applyFilters()"
+                      class="filter-select">
+                <option value="">Tüm Markalar</option>
+                <option *ngFor="let brand of brands" [value]="brand">{{brand}}</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>
+                <i class="fas fa-cog"></i>
+                Tip
+              </label>
+              <select [(ngModel)]="selectedMachineType" 
+                      (ngModelChange)="applyFilters()"
+                      class="filter-select">
+                <option value="">Tüm Tipler</option>
+                <option *ngFor="let type of machineTypes" [value]="type">{{type}}</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>
+                <i class="fas fa-map-marker-alt"></i>
+                Ocak
+              </label>
+              <select [(ngModel)]="selectedQuarry" 
+                      (ngModelChange)="applyFilters()"
+                      class="filter-select">
+                <option value="">Tüm Ocaklar</option>
+                <option *ngFor="let quarry of quarries" [value]="quarry">{{quarry}}</option>
+              </select>
+            </div>
+
+            <button class="clear-btn" 
+                    (click)="clearFilters()"
+                    *ngIf="searchTerm || selectedBrand || selectedMachineType || selectedQuarry">
+              <i class="fas fa-times"></i>
+              Temizle
+            </button>
+          </div>
+        </div>
+
+        <!-- Sort Options -->
+        <div class="sort-container">
+          <label>
+            <i class="fas fa-sort"></i>
+            Sırala:
+          </label>
+          <button class="sort-btn" 
+                  [class.active]="sortBy === 'name'"
+                  (click)="changeSorting('name')">
+            İsim
+            <i class="fas fa-sort-alpha-down" *ngIf="sortBy === 'name' && sortDirection === 'asc'"></i>
+            <i class="fas fa-sort-alpha-up" *ngIf="sortBy === 'name' && sortDirection === 'desc'"></i>
+          </button>
+          <button class="sort-btn" 
+                  [class.active]="sortBy === 'workingHours'"
+                  (click)="changeSorting('workingHours')">
+            Çalışma Saati
+            <i class="fas fa-sort-amount-down" *ngIf="sortBy === 'workingHours' && sortDirection === 'asc'"></i>
+            <i class="fas fa-sort-amount-up" *ngIf="sortBy === 'workingHours' && sortDirection === 'desc'"></i>
+          </button>
+          <button class="sort-btn" 
+                  [class.active]="sortBy === 'fuelConsumption'"
+                  (click)="changeSorting('fuelConsumption')">
+            Yakıt Tüketimi
+            <i class="fas fa-sort-amount-down" *ngIf="sortBy === 'fuelConsumption' && sortDirection === 'asc'"></i>
+            <i class="fas fa-sort-amount-up" *ngIf="sortBy === 'fuelConsumption' && sortDirection === 'desc'"></i>
+          </button>
+          <button class="sort-btn" 
+                  [class.active]="sortBy === 'efficiency'"
+                  (click)="changeSorting('efficiency')">
+            Verimlilik
+            <i class="fas fa-sort-amount-down" *ngIf="sortBy === 'efficiency' && sortDirection === 'asc'"></i>
+            <i class="fas fa-sort-amount-up" *ngIf="sortBy === 'efficiency' && sortDirection === 'desc'"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Grid Section -->
+  <div class="reports-section">
+    <div class="container-custom">
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p>Performans raporları yükleniyor...</p>
+      </div>
+
+      <!-- Reports Grid -->
+      <div *ngIf="!isLoading" class="reports-grid">
+        
+        <!-- Empty State -->
+        <div *ngIf="filteredMachines.length === 0" class="empty-state">
+          <div class="empty-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>Makina bulunamadı</h3>
+          <p>Seçili filtrelere uygun makina raporu bulunamadı.</p>
+          <button class="empty-action-btn" (click)="clearFilters()">
+            <i class="fas fa-refresh"></i>
+            Filtreleri Temizle
+          </button>
+        </div>
+
+        <!-- Machine Report Cards -->
+        <div *ngFor="let machine of filteredMachines; trackBy: trackByMachineId" 
+             class="report-card"
+             (click)="viewMachineDetails(machine)">
+          
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="machine-info">
+              <div class="machine-avatar">
+                <i [class]="getMachineIcon(machine.machineTypeName)"></i>
+              </div>
+              <div class="machine-details">
+                <h3 class="machine-name">{{machine.name}}</h3>
+                <div class="machine-meta">
+                  <span class="brand-badge">{{machine.brandName}}</span>
+                  <span class="model-text">{{machine.modelName}}</span>
+                </div>
+                <div class="machine-location">
+                  <i class="fas fa-map-marker-alt"></i>
+                  {{machine.quarryName}}
+                </div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="view-details-btn" (click)="$event.stopPropagation(); viewMachineDetails(machine)">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Performance Stats -->
+          <div class="performance-stats" *ngIf="machine.performanceReport && !machine.isLoadingReport">
+            <ng-container *ngIf="getPeriodData(machine) as periodData">
+              
+              <div class="stat-row">
+                <div class="stat-item">
+                  <div class="stat-icon-small working-hours">
+                    <i class="fas fa-clock"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label-small">Çalışma Saati</span>
+                    <span class="stat-value-small">{{periodData.totalWorkingHours | number:'1.0-1'}} saat</span>
+                  </div>
+                </div>
+
+                <div class="stat-item">
+                  <div class="stat-icon-small working-days">
+                    <i class="fas fa-calendar-check"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label-small">Çalışma Günü</span>
+                    <span class="stat-value-small">{{periodData.totalWorkingDays}} gün</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-row">
+                <div class="stat-item">
+                  <div class="stat-icon-small fuel">
+                    <i class="fas fa-gas-pump"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label-small">Yakıt Tüketimi</span>
+                    <span class="stat-value-small">{{periodData.totalFuelConsumption | number:'1.0-1'}} L</span>
+                  </div>
+                </div>
+
+                <div class="stat-item">
+                  <div class="stat-icon-small efficiency">
+                    <i class="fas fa-tachometer-alt"></i>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label-small">Verimlilik</span>
+                    <span class="stat-value-small">{{calculateEfficiency(machine) | number:'1.1-2'}} L/saat</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat-row averages">
+                <div class="stat-item">
+                  <div class="stat-info">
+                    <span class="stat-label-small">Günlük Ort. Saat</span>
+                    <span class="stat-value-small">{{periodData.averageDailyHours | number:'1.1-1'}} saat</span>
+                  </div>
+                </div>
+
+                <div class="stat-item">
+                  <div class="stat-info">
+                    <span class="stat-label-small">Günlük Ort. Yakıt</span>
+                    <span class="stat-value-small">{{periodData.averageDailyFuelConsumption | number:'1.1-1'}} L</span>
+                  </div>
+                </div>
+              </div>
+
+            </ng-container>
+          </div>
+
+          <!-- Loading Report State -->
+          <div *ngIf="machine.isLoadingReport" class="report-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Rapor yükleniyor...</span>
+          </div>
+
+          <!-- No Report Available -->
+          <div *ngIf="!machine.performanceReport && !machine.isLoadingReport" class="no-report">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Bu makina için performans verisi bulunmuyor</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

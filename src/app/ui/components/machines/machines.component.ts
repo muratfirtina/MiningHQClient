@@ -226,8 +226,7 @@ export class MachinesComponent extends BaseComponent implements OnInit {
    */
   viewMachineReports(): void {
     // Navigate to a dedicated reports page if needed in the future
-    console.log('Navigate to machine reports page');
-    // this.router.navigate(['/makinalar/raporlar']);
+    this.router.navigate(['/makinalar/makina-raporlari']);
   }
 
   gotoDailyEntry(): void {
