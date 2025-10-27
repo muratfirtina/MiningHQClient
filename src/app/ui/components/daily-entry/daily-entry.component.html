@@ -17,11 +17,6 @@
           <i class="fas fa-redo"></i>
           Yenile
         </button>
-        <button class="header-btn primary" (click)="saveDailyEntries()" [disabled]="isSaving || getEditedCount() === 0">
-          <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
-          <i class="fas fa-save" *ngIf="!isSaving"></i>
-          {{ isSaving ? 'Kaydediliyor...' : 'Kaydet' }}
-        </button>
       </div>
     </div>
   </div>
@@ -255,6 +250,12 @@
         </table>
       </div>
 
+      <button class="header-btn primary" (click)="saveDailyEntries()" [disabled]="isSaving || getEditedCount() === 0">
+          <i class="fas fa-spinner fa-spin" *ngIf="isSaving"></i>
+          <i class="fas fa-save" *ngIf="!isSaving"></i>
+          {{ isSaving ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+
       <!-- Help Text -->
       <div class="help-section">
         <div class="help-card">
@@ -274,6 +275,67 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showConfirmModal" (click)="cancelSave()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-icon warning">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h2 class="modal-title">Kaydet Onayla</h2>
+        <button class="modal-close" (click)="cancelSave()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-message">{{ confirmationMessage }}</p>
+        
+        <div class="modal-info-boxes">
+          <div class="modal-info-box">
+            <i class="fas fa-tractor"></i>
+            <div class="modal-info-content">
+              <span class="modal-info-value">{{ getEditedCount() }}</span>
+              <span class="modal-info-label">Makina</span>
+            </div>
+          </div>
+          
+          <div class="modal-info-box">
+            <i class="fas fa-clock"></i>
+            <div class="modal-info-content">
+              <span class="modal-info-value">{{ getTotalWorkHours() }}</span>
+              <span class="modal-info-label">Çalışma Saati</span>
+            </div>
+          </div>
+          
+          <div class="modal-info-box">
+            <i class="fas fa-gas-pump"></i>
+            <div class="modal-info-content">
+              <span class="modal-info-value">{{ getTotalFuel().toFixed(2) }}</span>
+              <span class="modal-info-label">Yakıt (L)</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-warning">
+          <i class="fas fa-info-circle"></i>
+          <span>Bu işlem geri alınamaz. Devam etmek istediğinizden emin misiniz?</span>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="modal-btn cancel" (click)="cancelSave()">
+          <i class="fas fa-times"></i>
+          İptal
+        </button>
+        <button class="modal-btn confirm" (click)="confirmSave()">
+          <i class="fas fa-check"></i>
+          Onayla ve Kaydet
+        </button>
+      </div>
     </div>
   </div>
 

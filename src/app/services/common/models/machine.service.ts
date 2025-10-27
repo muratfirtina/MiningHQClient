@@ -5,6 +5,7 @@ import { CreateMachine } from 'src/app/contracts/machine/create-machine';
 import { UpdateMachine } from 'src/app/contracts/machine/update-machine';
 import { Machine } from 'src/app/contracts/machine/machine';
 import { MachineStats } from 'src/app/contracts/machine/machine-stats';
+import { MachinePerformanceReport } from 'src/app/contracts/machine/machine-performance-report';
 import { DynamicQuery } from 'src/app/contracts/dynamic-query';
 import { ListImageFile } from 'src/app/contracts/list-image-file';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
@@ -195,6 +196,20 @@ export class MachineService {
   async getMachinesSummary(successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<any> {
     const observable: Observable<any> = this.httpClientService.get<any>({
       controller: 'machines/summary'
+    });
+    const promiseData = firstValueFrom(observable);
+    promiseData.then(successCallback)
+      .catch(errorCallback);
+    return await promiseData;
+  }
+
+  /**
+   * Get machine performance report
+   */
+  async getMachinePerformanceReport(machineId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<MachinePerformanceReport> {
+    const observable: Observable<MachinePerformanceReport> = this.httpClientService.get<MachinePerformanceReport>({
+      controller: 'machines',
+      action: `${machineId}/performance-report`
     });
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)

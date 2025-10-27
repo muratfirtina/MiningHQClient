@@ -66,7 +66,7 @@ export class HomeComponent extends BaseComponent implements OnInit{
   }
 
   gotoMaintenance() {
-    this.router.navigate(['/bakim']);
+    this.router.navigate(['/makinalar/bakim-takvimi']);
   }
 
   gotoMachineReports() {

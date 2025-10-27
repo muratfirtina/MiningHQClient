@@ -19,6 +19,7 @@ import { ModelService } from 'src/app/services/common/models/model.service';
 import { MachineTypeService } from 'src/app/services/common/models/machine-type.service';
 import { QuarryService } from 'src/app/services/common/models/quarry.service';
 import { EmployeeService } from 'src/app/services/common/models/employee.service';
+import { MaintenanceService } from 'src/app/services/common/models/maintenance.service';
 
 // Contracts
 import { Brand } from 'src/app/contracts/brand/brand';
@@ -27,6 +28,8 @@ import { MachineType } from 'src/app/contracts/machine-type/machine-type';
 import { Quarry } from 'src/app/contracts/quarry/quarry';
 import { MachineStats } from 'src/app/contracts/machine/machine-stats';
 import { Employee } from 'src/app/contracts/employee/employee';
+import { Maintenance } from 'src/app/contracts/maintenance/maintenance';
+import { PageRequest } from 'src/app/contracts/pageRequest';
 
 declare var $: any;
 
@@ -51,6 +54,9 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
   machine: Machine;
   machineForm: FormGroup;
   machineStats: MachineStats;
+  maintenances: Maintenance[] = [];
+  lastMaintenance: Maintenance | null = null;
+  nextMaintenanceHour: number | null = null;
   
   // Dropdown data
   brands: Brand[] = [];
@@ -74,6 +80,7 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
     private machineTypeService: MachineTypeService,
     private quarryService: QuarryService,
     private employeeService: EmployeeService,
+    private maintenanceService: MaintenanceService,
     private route: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
@@ -99,7 +106,8 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
       await Promise.all([
         this.loadMachine(),
         this.loadDropdownData(),
-        this.loadMachineStats()
+        this.loadMachineStats(),
+        this.loadMaintenances()
       ]);
 
       this.showToastr('Makina bilgileri yüklendi', 'Başarılı', ToastrMessageType.Success);
@@ -559,6 +567,37 @@ export class MachinePageComponent extends BaseComponent implements OnInit {
         maintenanceCount: 0,
         totalProductionAmount: 0
       };
+    }
+  }
+
+  /**
+   * Load maintenance records for the machine
+   */
+  private async loadMaintenances(): Promise<void> {
+    try {
+      const response = await this.maintenanceService.getByMachineId(this.machineId, { pageIndex: 0, pageSize: 100 }).toPromise();
+      this.maintenances = response?.items || [];
+      
+      if (this.maintenances.length > 0) {
+        // Sort by maintenance date descending (newest first)
+        this.maintenances.sort((a, b) => 
+          new Date(b.maintenanceDate).getTime() - new Date(a.maintenanceDate).getTime()
+        );
+        
+        // Get last maintenance
+        this.lastMaintenance = this.maintenances[0];
+        
+        // Get max nextMaintenanceHour from all maintenances
+        const maintenancesWithNextHour = this.maintenances.filter(m => m.nextMaintenanceHour);
+        if (maintenancesWithNextHour.length > 0) {
+          this.nextMaintenanceHour = Math.max(...maintenancesWithNextHour.map(m => m.nextMaintenanceHour!));
+        }
+      }
+    } catch (error) {
+      console.error('Error loading maintenances:', error);
+      this.maintenances = [];
+      this.lastMaintenance = null;
+      this.nextMaintenanceHour = null;
     }
   }
 }

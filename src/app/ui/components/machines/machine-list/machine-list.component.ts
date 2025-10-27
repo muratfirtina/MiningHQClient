@@ -148,8 +148,13 @@ export class MachineListComponent extends BaseComponent implements OnInit {
    * View maintenance schedule
    */
   viewMaintenanceSchedule(): void {
-    console.log('Navigate to maintenance schedule');
-    // this.router.navigate(['/makinalar/bakim-takvimi']);
+    console.log('Bakım Takvimi butonu tıklandı');
+    console.log('Navigasyon yapılıyor: /makinalar/bakim-takvimi');
+    
+    this.router.navigate(['/makinalar/bakim-takvimi']).then(
+      (success) => console.log('Navigasyon başarılı:', success),
+      (error) => console.error('Navigasyon hatası:', error)
+    );
   }
 
   /**

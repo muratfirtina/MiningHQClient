@@ -254,11 +254,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let machine of machines.items; trackBy: trackByMachineId" 
-                      class="machine-row"
-                      [ngClass]="getMaintenanceStatusClass(machine)"
-                      (click)="viewMachineDetails(machine)">
-                    <td>
+                  <ng-container *ngFor="let machine of machines.items; trackBy: trackByMachineId">
+                    <!-- Machine Row -->
+                    <tr class="machine-row"
+                        [ngClass]="getMaintenanceStatusClass(machine)"
+                        (click)="viewMachineDetails(machine)">
+                      <td>
                       <div class="machine-info">
                         <div class="machine-avatar" [class.featured]="isFeaturedMachine(machine)">
                           <i [class]="getMachineIcon(machine.machineTypeName)"></i>
@@ -298,26 +299,127 @@
                         {{machine.quarryName}}
                       </div>
                     </td>
-                    <td>
-                      <div class="action-buttons">
-                        <button class="action-icon-btn view" 
-                                (click)="$event.stopPropagation(); viewMachineDetails(machine)"
-                                title="Detayları Görüntüle">
-                          <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="action-icon-btn edit" 
-                                (click)="$event.stopPropagation(); editMachine(machine)"
-                                title="Düzenle">
-                          <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-icon-btn maintenance" 
-                                (click)="$event.stopPropagation(); viewMachineMaintenance(machine)"
-                                title="Bakım Ekle">
-                          <i class="fas fa-tools"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                      <td>
+                        <div class="action-buttons">
+                          <button class="action-icon-btn view" 
+                                  (click)="$event.stopPropagation(); viewMachineDetails(machine)"
+                                  title="Detayları Görüntüle">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                          <button class="action-icon-btn maintenance" 
+                                  (click)="$event.stopPropagation(); viewMachineMaintenance(machine)"
+                                  title="Bakım Ekle">
+                            <i class="fas fa-tools"></i>
+                          </button>
+                          <button class="action-icon-btn report"
+                                  [class.active]="isMachineExpanded(machine.id)"
+                                  (click)="toggleMachineReport(machine, $event)"
+                                  title="Performans Raporu">
+                            <i class="fas fa-chart-line"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <!-- Performance Report Expandable Row -->
+                    <tr *ngIf="isMachineExpanded(machine.id)" 
+                        class="performance-report-row">
+                      <td colspan="6">
+                        <div class="performance-report-container" 
+                             [@slideDown]>
+                          
+                          <!-- Loading State -->
+                          <div *ngIf="loadingPerformance" class="report-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Performans verileri yükleniyor...</span>
+                          </div>
+                          
+                          <!-- Report Content -->
+                          <div *ngIf="!loadingPerformance && getMachinePerformance(machine.id)" 
+                               class="report-content">
+                            
+                            <!-- Period Selector -->
+                            <div class="period-selector">
+                              <button class="period-btn"
+                                      [class.active]="selectedPeriod === 'weekly'"
+                                      (click)="selectPeriod('weekly')">
+                                <i class="fas fa-calendar-week"></i>
+                                Haftalık
+                              </button>
+                              <button class="period-btn"
+                                      [class.active]="selectedPeriod === 'monthly'"
+                                      (click)="selectPeriod('monthly')">
+                                <i class="fas fa-calendar-alt"></i>
+                                Aylık
+                              </button>
+                              <button class="period-btn"
+                                      [class.active]="selectedPeriod === 'yearly'"
+                                      (click)="selectPeriod('yearly')">
+                                <i class="fas fa-calendar"></i>
+                                Yıllık
+                              </button>
+                            </div>
+                            
+                            <!-- Performance Stats -->
+                            <div class="performance-stats">
+                              <ng-container *ngIf="getMachinePerformance(machine.id) as report">
+                                <ng-container *ngIf="getSelectedPeriodData(report) as periodData">
+                                  
+                                  <div class="stat-card">
+                                    <div class="stat-icon working-hours">
+                                      <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                      <span class="stat-label">Toplam Çalışma Saati</span>
+                                      <span class="stat-value">{{periodData.totalWorkingHours | number:'1.1-1'}} saat</span>
+                                      <span class="stat-detail">Ortalama: {{periodData.averageDailyHours | number:'1.1-1'}} saat/gün</span>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="stat-card">
+                                    <div class="stat-icon working-days">
+                                      <i class="fas fa-calendar-check"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                      <span class="stat-label">Toplam Çalışma Günü</span>
+                                      <span class="stat-value">{{periodData.totalWorkingDays}} gün</span>
+                                      <span class="stat-detail">{{getPeriodLabel()}} dönemde</span>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="stat-card">
+                                    <div class="stat-icon fuel">
+                                      <i class="fas fa-gas-pump"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                      <span class="stat-label">Toplam Yakıt Tüketimi</span>
+                                      <span class="stat-value">{{periodData.totalFuelConsumption | number:'1.1-1'}} L</span>
+                                      <span class="stat-detail">Ortalama: {{periodData.averageDailyFuelConsumption | number:'1.1-1'}} L/gün</span>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="stat-card">
+                                    <div class="stat-icon efficiency">
+                                      <i class="fas fa-tachometer-alt"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                      <span class="stat-label">Yakıt Verimliliği</span>
+                                      <span class="stat-value">
+                                        {{(periodData.averageDailyHours > 0 ? (periodData.averageDailyFuelConsumption / periodData.averageDailyHours) : 0) | number:'1.0-2'}} L/saat
+                                      </span>
+                                      <span class="stat-detail">Saatlik ortalama tüketim</span>
+                                    </div>
+                                  </div>
+                                  
+                                </ng-container>
+                              </ng-container>
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
                 </tbody>
               </table>
               

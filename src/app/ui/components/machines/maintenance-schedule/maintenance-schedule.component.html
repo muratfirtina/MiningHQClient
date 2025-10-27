@@ -1,0 +1,188 @@
+<div class="maintenance-schedule-container">
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="page-header">
+          <h2 class="page-title">
+            <i class="fas fa-calendar-alt me-2"></i>
+            Bakım Takvimi
+          </h2>
+          <p class="text-muted">Tüm makinaların bakım durumu ve planlama bilgileri</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped maintenance-table mb-0">
+                <thead class="table-dark">
+                  <tr>
+                    <th>No</th>
+                    <th>Makina</th>
+                    <th>Tip</th>
+                    <th>Marka/Model</th>
+                    <th>Ocak</th>
+                    <th>Son Bakım</th>
+                    <th>Son Bakım Saati/Km</th>
+                    <th>Şu Anki Saat/Km</th>
+                    <th>Sonraki Bakım Saati</th>
+                    <th>Kalan Saat/Km</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let schedule of schedules; let i = index" 
+                      [ngClass]="getStatusClass(schedule.maintenanceStatus)">
+                    <td>{{ (currentPageNo - 1) * pageSize + i + 1 }}</td>
+                    <td class="fw-bold">{{ schedule.machineName }}</td>
+                    <td>{{ schedule.machineTypeName }}</td>
+                    <td>{{ schedule.brandName }} / {{ schedule.modelName }}</td>
+                    <td>{{ schedule.quarryName }}</td>
+                    <td>
+                      <span *ngIf="schedule.lastMaintenanceDate" class="text-muted">
+                        {{ formatDate(schedule.lastMaintenanceDate) }}
+                      </span>
+                      <span *ngIf="!schedule.lastMaintenanceDate" class="text-danger">
+                        Bakım Yok
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="schedule.lastMaintenanceHourOrKm">
+                        {{ schedule.lastMaintenanceHourOrKm | number }}
+                      </span>
+                      <span *ngIf="!schedule.lastMaintenanceHourOrKm">-</span>
+                    </td>
+                    <td>
+                      <span *ngIf="schedule.currentWorkingHourOrKm" class="fw-bold text-primary">
+                        {{ schedule.currentWorkingHourOrKm | number }}
+                      </span>
+                      <span *ngIf="!schedule.currentWorkingHourOrKm">-</span>
+                    </td>
+                    <td>
+                      <span *ngIf="schedule.nextMaintenanceHour" class="fw-bold">
+                        {{ schedule.nextMaintenanceHour | number }}
+                      </span>
+                      <span *ngIf="!schedule.nextMaintenanceHour" class="text-muted">
+                        Planlanmadı
+                      </span>
+                    </td>
+                    <td>
+                      <span *ngIf="schedule.remainingHourOrKm !== null && schedule.remainingHourOrKm !== undefined" 
+                            [class.text-danger]="schedule.remainingHourOrKm <= 0"
+                            [class.text-warning]="schedule.remainingHourOrKm > 0 && schedule.remainingHourOrKm <= 50"
+                            [class.text-success]="schedule.remainingHourOrKm > 50"
+                            class="fw-bold">
+                        {{ schedule.remainingHourOrKm | number }}
+                      </span>
+                      <span *ngIf="schedule.remainingHourOrKm === null || schedule.remainingHourOrKm === undefined">
+                        -
+                      </span>
+                    </td>
+                    <td>
+                      <span [ngClass]="getStatusBadgeClass(schedule.maintenanceStatus)">
+                        {{ schedule.maintenanceStatus }}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group">
+                        <a [routerLink]="['/makinalar/makina', schedule.machineId]" 
+                           class="btn btn-outline-primary" 
+                           title="Makina Detayı">
+                          <i class="fas fa-eye"></i>
+                        </a>
+                        <a [routerLink]="['/makinalar/makina', schedule.machineId, 'bakim']" 
+                           class="btn btn-outline-info" 
+                           title="Bakım Geçmişi">
+                          <i class="fas fa-history"></i>
+                        </a>
+                        <a [routerLink]="['/makinalar/makina', schedule.machineId, 'bakim-ekle']" 
+                           class="btn btn-outline-success" 
+                           title="Yeni Bakım">
+                          <i class="fas fa-plus"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="schedules.length === 0">
+                    <td colspan="12" class="text-center text-muted py-5">
+                      <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                      Henüz bakım kaydı bulunmamaktadır.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="row mt-4" *ngIf="pages > 1">
+      <div class="col-12">
+        <nav aria-label="Sayfa navigasyonu">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPageNo <= 1">
+              <a class="page-link" (click)="goToPage(1)" [class.disabled]="currentPageNo <= 1">
+                <i class="fas fa-angle-double-left"></i>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPageNo <= 1">
+              <a class="page-link" (click)="goToPage(currentPageNo - 1)" [class.disabled]="currentPageNo <= 1">
+                <i class="fas fa-angle-left"></i> Önceki
+              </a>
+            </li>
+            <li class="page-item" *ngFor="let pageNo of pageList" [class.active]="pageNo === currentPageNo">
+              <a class="page-link" (click)="goToPage(pageNo)">{{ pageNo }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPageNo >= pages">
+              <a class="page-link" (click)="goToPage(currentPageNo + 1)" [class.disabled]="currentPageNo >= pages">
+                Sonraki <i class="fas fa-angle-right"></i>
+              </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPageNo >= pages">
+              <a class="page-link" (click)="goToPage(pages)" [class.disabled]="currentPageNo >= pages">
+                <i class="fas fa-angle-double-right"></i>
+              </a>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link">{{ currentPageNo }} / {{ pages }}</span>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h6 class="card-title">
+              <i class="fas fa-info-circle me-2"></i>
+              Durum Açıklamaları
+            </h6>
+            <div class="row">
+              <div class="col-md-4">
+                <span class="badge bg-danger me-2">Gecikmiş</span>
+                <span class="text-muted">Bakım süresi geçmiş (0 veya negatif kalan saat/km)</span>
+              </div>
+              <div class="col-md-4">
+                <span class="badge bg-warning text-dark me-2">Yaklaşıyor</span>
+                <span class="text-muted">Bakım yaklaşıyor (50 saat/km veya daha az kaldı)</span>
+              </div>
+              <div class="col-md-4">
+                <span class="badge bg-success me-2">Normal</span>
+                <span class="text-muted">Bakıma zaman var (50 saat/km'den fazla)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

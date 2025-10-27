@@ -26,6 +26,9 @@ export class DailyEntryComponent extends BaseComponent implements OnInit {
   
   isLoading: boolean = false;
   isSaving: boolean = false;
+  showConfirmModal: boolean = false;
+  pendingEntries: MachineEntryItem[] = [];
+  confirmationMessage: string = '';
   
   // Filters
   selectedQuarry: string = '';
@@ -147,20 +150,48 @@ export class DailyEntryComponent extends BaseComponent implements OnInit {
       return;
     }
 
+    // Prepare entries for confirmation
+    this.pendingEntries = editedMachines.map(machine => ({
+      machineId: machine.machineId,
+      currentTotalHours: machine.currentTotalHours,
+      newTotalHours: machine.newTotalHours,
+      fuelConsumption: machine.fuelConsumption
+    }));
+
+    // Prepare confirmation message
+    const totalWorkHours = this.getTotalWorkHours();
+    const totalFuel = this.getTotalFuel();
+    const entryDateFormatted = new Date(this.entryDate).toLocaleDateString('tr-TR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    this.confirmationMessage = `${entryDateFormatted} tarihi için ${editedMachines.length} makina, ${totalWorkHours} saat çalışma ve ${totalFuel.toFixed(2)} litre yakıt kaydı yapılacak.`;
+
+    // Show confirmation modal
+    this.showConfirmModal = true;
+  }
+
+  confirmSave(): void {
+    this.showConfirmModal = false;
+    this.performSave();
+  }
+
+  cancelSave(): void {
+    this.showConfirmModal = false;
+    this.pendingEntries = [];
+    this.confirmationMessage = '';
+  }
+
+  async performSave(): Promise<void> {
     this.isSaving = true;
     this.showSpinner(SpinnerType.BallSpinClockwise);
 
     try {
-      const machineEntries: MachineEntryItem[] = editedMachines.map(machine => ({
-        machineId: machine.machineId,
-        currentTotalHours: machine.currentTotalHours,
-        newTotalHours: machine.newTotalHours,
-        fuelConsumption: machine.fuelConsumption
-      }));
-
       const bulkData: BulkCreateDailyEntry = {
         entryDate: this.entryDate,
-        machineEntries: machineEntries
+        machineEntries: this.pendingEntries
       };
 
       const response = await this.dailyEntryService.bulkCreateDailyEntry(bulkData);

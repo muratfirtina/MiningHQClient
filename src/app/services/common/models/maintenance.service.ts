@@ -4,6 +4,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { Maintenance } from 'src/app/contracts/maintenance/maintenance';
 import { CreateMaintenance } from 'src/app/contracts/maintenance/create-maintenance';
 import { MaintenanceFile } from 'src/app/contracts/maintenance/maintenance-file';
+import { MaintenanceSchedule } from 'src/app/contracts/maintenance/maintenance-schedule';
 import { PageRequest } from 'src/app/contracts/pageRequest';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
 
@@ -97,5 +98,14 @@ export class MaintenanceService {
     });
 
     return observable;
+  }
+
+  // Get maintenance schedule for all machines
+  getMaintenanceSchedule(pageRequest: PageRequest): Observable<GetListResponse<MaintenanceSchedule>> {
+    return this.httpClientService.get<GetListResponse<MaintenanceSchedule>>({
+      controller: "maintenances",
+      action: "schedule",
+      queryString: `pageIndex=${pageRequest.pageIndex}&pageSize=${pageRequest.pageSize}`
+    });
   }
 }

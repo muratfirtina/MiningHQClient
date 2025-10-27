@@ -343,68 +343,7 @@
             </div>
           </div>
 
-        </div>
-
-        <!-- Right Column - Quick Actions -->
-        <div class="right-column">
-          
-          <!-- Quick Actions Card -->
-          <div class="actions-card">
-            <div class="card-header">
-              <h3>
-                <i class="fas fa-bolt"></i>
-                Hızlı İşlemler
-              </h3>
-            </div>
-            
-            <div class="actions-list">
-              <button class="action-item" (click)="viewMachineFiles()">
-                <div class="action-icon">
-                  <i class="fas fa-folder-open"></i>
-                </div>
-                <div class="action-info">
-                  <span class="action-title">Dosyalar</span>
-                  <span class="action-subtitle">Makina belgelerini görüntüle</span>
-                </div>
-                <i class="fas fa-chevron-right action-arrow"></i>
-              </button>
-
-              <button class="action-item" (click)="viewMaintenanceHistory()">
-                <div class="action-icon">
-                  <i class="fas fa-tools"></i>
-                </div>
-                <div class="action-info">
-                  <span class="action-title">Bakım Geçmişi</span>
-                  <span class="action-subtitle">Bakım kayıtlarını incele</span>
-                </div>
-                <i class="fas fa-chevron-right action-arrow"></i>
-              </button>
-
-              <button class="action-item" (click)="viewWorkData()">
-                <div class="action-icon">
-                  <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="action-info">
-                  <span class="action-title">İş Verileri</span>
-                  <span class="action-subtitle">Performans verilerini gör</span>
-                </div>
-                <i class="fas fa-chevron-right action-arrow"></i>
-              </button>
-
-              <button class="action-item" (click)="viewFuelConsumption()">
-                <div class="action-icon">
-                  <i class="fas fa-gas-pump"></i>
-                </div>
-                <div class="action-info">
-                  <span class="action-title">Yakıt Tüketimi</span>
-                  <span class="action-subtitle">Yakıt analiz raporları</span>
-                </div>
-                <i class="fas fa-chevron-right action-arrow"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Machine Stats Card -->
+          <!-- Machine Stats Card - Moved below Machine Card -->
           <div class="stats-card" *ngIf="machineStats">
             <div class="card-header">
               <h3>
@@ -464,35 +403,87 @@
                 </div>
               </div>
 
-              <!-- <div class="stat-item">
-                <div class="stat-icon">
-                  <i class="fas fa-cubes"></i>
-                </div>
-                <div class="stat-info">
-                  <span class="stat-number">{{ machineStats.totalProductionAmount.toFixed(2) || 0 }}</span>
-                  <span class="stat-label">Toplam Üretim (m³)</span>
-                </div>
-              </div> -->
-
-              <div class="stat-item" *ngIf="machineStats.lastMaintenanceDate">
+              <div class="stat-item" *ngIf="lastMaintenance">
                 <div class="stat-icon">
                   <i class="fas fa-wrench"></i>
                 </div>
                 <div class="stat-info">
-                  <span class="stat-number">{{ formatDate(machineStats.lastMaintenanceDate) }}</span>
-                  <span class="stat-label">Son Bakım</span>
+                  <span class="stat-number">{{ formatDate(lastMaintenance.maintenanceDate) }}</span>
+                  <span class="stat-number">{{ lastMaintenance.machineWorkingTimeOrKilometer }} saat</span>
+                  <span class="stat-label">Son Bakım Tarihi ve Saati</span>
                 </div>
               </div>
 
-              <div class="stat-item" *ngIf="machineStats.nextScheduledMaintenance">
+              <div class="stat-item" *ngIf="nextMaintenanceHour">
                 <div class="stat-icon">
                   <i class="fas fa-calendar-check"></i>
                 </div>
                 <div class="stat-info">
-                  <span class="stat-number">{{ formatDate(machineStats.nextScheduledMaintenance) }}</span>
+                  <span class="stat-number">{{ nextMaintenanceHour }} saat</span>
                   <span class="stat-label">Sonraki Bakım</span>
                 </div>
               </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column - Quick Actions -->
+        <div class="right-column">
+          
+          <!-- Quick Actions Card -->
+          <div class="actions-card">
+            <div class="card-header">
+              <h3>
+                <i class="fas fa-bolt"></i>
+                Hızlı İşlemler
+              </h3>
+            </div>
+            
+            <div class="actions-list">
+              <button class="action-item" (click)="viewMachineFiles()">
+                <div class="action-icon">
+                  <i class="fas fa-folder-open"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">Dosyalar</span>
+                  <span class="action-subtitle">Makina belgelerini görüntüle</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
+
+              <button class="action-item" (click)="viewMaintenanceHistory()">
+                <div class="action-icon">
+                  <i class="fas fa-tools"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">Bakım Geçmişi</span>
+                  <span class="action-subtitle">Bakım kayıtlarını incele</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
+
+              <!-- <button class="action-item" (click)="viewWorkData()">
+                <div class="action-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">İş Verileri</span>
+                  <span class="action-subtitle">Performans verilerini gör</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button> -->
+
+              <button class="action-item" (click)="viewFuelConsumption()">
+                <div class="action-icon">
+                  <i class="fas fa-gas-pump"></i>
+                </div>
+                <div class="action-info">
+                  <span class="action-title">Yakıt Tüketimi</span>
+                  <span class="action-subtitle">Yakıt analiz raporları</span>
+                </div>
+                <i class="fas fa-chevron-right action-arrow"></i>
+              </button>
             </div>
           </div>
 

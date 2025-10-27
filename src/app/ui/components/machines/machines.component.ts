@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { DynamicQuery, Filter, Sort } from 'src/app/contracts/dynamic-query';
 import { MachineService } from 'src/app/services/common/models/machine.service';
 import { Machine } from 'src/app/contracts/machine/machine';
+import { MachinePerformanceReport, PerformancePeriod } from 'src/app/contracts/machine/machine-performance-report';
 import { GetListResponse } from 'src/app/contracts/getListResponse';
 import { from } from 'rxjs';
 
@@ -28,6 +30,18 @@ import { RouterModule } from '@angular/router';
   templateUrl: './machines.component.html',
   styleUrls: ['./machines.component.scss'],
   standalone: true,
+  animations: [
+    trigger('slideDown', [
+      transition(':enter', [
+        style({ height: '0', opacity: '0', overflow: 'hidden' }),
+        animate('300ms ease-out', style({ height: '*', opacity: '1' }))
+      ]),
+      transition(':leave', [
+        style({ height: '*', opacity: '1', overflow: 'hidden' }),
+        animate('200ms ease-in', style({ height: '0', opacity: '0' }))
+      ])
+    ])
+  ],
   imports: [
     CommonModule,
     NgFor,
@@ -59,6 +73,12 @@ export class MachinesComponent extends BaseComponent implements OnInit {
   // State
   isLoading: boolean = false;
   isSearching: boolean = false;
+  
+  // Performance Report State
+  expandedMachineId: string | null = null;
+  machinePerformanceData: Map<string, MachinePerformanceReport> = new Map();
+  selectedPeriod: 'weekly' | 'monthly' | 'yearly' = 'weekly';
+  loadingPerformance: boolean = false;
 
   constructor(
     spinner: NgxSpinnerService, 
@@ -205,7 +225,8 @@ export class MachinesComponent extends BaseComponent implements OnInit {
    * Navigation Methods
    */
   viewMachineReports(): void {
-    console.log('Navigate to machine reports');
+    // Navigate to a dedicated reports page if needed in the future
+    console.log('Navigate to machine reports page');
     // this.router.navigate(['/makinalar/raporlar']);
   }
 
@@ -214,8 +235,7 @@ export class MachinesComponent extends BaseComponent implements OnInit {
   }
 
   viewMaintenanceSchedule(): void {
-    console.log('Navigate to maintenance schedule');
-    // this.router.navigate(['/makinalar/bakim-takvimi']);
+    this.router.navigate(['/makinalar/bakim-takvimi']);
   }
 
   addNewMachine(): void {
@@ -380,5 +400,75 @@ export class MachinesComponent extends BaseComponent implements OnInit {
       return `${remainingHours} saat sonra bakım`;
     }
     return '';
+  }
+
+  /**
+   * Performance Report Methods
+   */
+  async toggleMachineReport(machine: Machine, event: Event): Promise<void> {
+    event.stopPropagation();
+    
+    if (this.expandedMachineId === machine.id) {
+      this.expandedMachineId = null;
+      return;
+    }
+    
+    this.expandedMachineId = machine.id;
+    
+    // Check if we already have the data
+    if (!this.machinePerformanceData.has(machine.id)) {
+      await this.loadMachinePerformance(machine.id);
+    }
+  }
+
+  async loadMachinePerformance(machineId: string): Promise<void> {
+    this.loadingPerformance = true;
+    
+    try {
+      const report = await this.machineService.getMachinePerformanceReport(machineId);
+      this.machinePerformanceData.set(machineId, report);
+    } catch (error) {
+      console.error('Error loading machine performance:', error);
+    } finally {
+      this.loadingPerformance = false;
+    }
+  }
+
+  isMachineExpanded(machineId: string): boolean {
+    return this.expandedMachineId === machineId;
+  }
+
+  getMachinePerformance(machineId: string): MachinePerformanceReport | undefined {
+    return this.machinePerformanceData.get(machineId);
+  }
+
+  getSelectedPeriodData(report: MachinePerformanceReport): PerformancePeriod {
+    switch (this.selectedPeriod) {
+      case 'weekly':
+        return report.weeklyPerformance;
+      case 'monthly':
+        return report.monthlyPerformance;
+      case 'yearly':
+        return report.yearlyPerformance;
+      default:
+        return report.weeklyPerformance;
+    }
+  }
+
+  selectPeriod(period: 'weekly' | 'monthly' | 'yearly'): void {
+    this.selectedPeriod = period;
+  }
+
+  getPeriodLabel(): string {
+    switch (this.selectedPeriod) {
+      case 'weekly':
+        return 'Haftalık';
+      case 'monthly':
+        return 'Aylık';
+      case 'yearly':
+        return 'Yıllık';
+      default:
+        return 'Haftalık';
+    }
   }
 }

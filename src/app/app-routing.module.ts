@@ -58,6 +58,7 @@ const routes: Routes = [
   {path:'makinalar',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makinalar'}},
   {path:'makinalar/makina-listesi',loadComponent:()=>import('./ui/components/machines/machine-list/machine-list.component').then(m=>m.MachineListComponent),data:{breadcrumb:'Makina Listesi'}},
   {path:'makinalar/makina-ekle',loadComponent:()=>import('./ui/components/machines/machine-add/machine-add.component').then(m=>m.MachineAddComponent),data:{breadcrumb:'Makina Ekle'}},
+  {path:'makinalar/bakim-takvimi',loadComponent:()=>import('./ui/components/machines/maintenance-schedule/maintenance-schedule.component').then(m=>m.MaintenanceScheduleComponent),data:{breadcrumb:'Bakım Takvimi'}},
   {path:'makinalar/makina-puantaji',loadComponent:()=>import('./ui/components/daily-entry/daily-entry.component').then(m=>m.DailyEntryComponent),data:{breadcrumb:'Makina Puantajı'}},
   {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makina Arama'}},
   

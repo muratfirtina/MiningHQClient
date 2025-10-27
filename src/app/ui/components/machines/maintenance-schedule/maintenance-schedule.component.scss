@@ -1,0 +1,379 @@
+/* Maintenance Schedule Page - Matching Machine List Design */
+.maintenance-schedule-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2c6173 0%, #003353 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding: 2rem 0;
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 15% 25%, rgba(255, 193, 7, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 85% 75%, rgba(255, 193, 7, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .container-fluid {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Page Header */
+  .page-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid #ffc107;
+    
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      
+      i {
+        color: #ffc107;
+      }
+    }
+    
+    .text-muted {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-size: 1rem;
+      margin: 0;
+    }
+  }
+  
+  /* Card Container */
+  .card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 51, 83, 0.1);
+    
+    .card-body {
+      padding: 0;
+    }
+  }
+  
+  /* Table */
+  .maintenance-table {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+    
+    thead {
+      background: linear-gradient(135deg, #2c6173, #003353);
+      
+      th {
+        font-weight: 600;
+        white-space: nowrap;
+        vertical-align: middle;
+        color: white;
+        border: none;
+        padding: 1rem 0.75rem;
+        
+        &:first-child {
+          border-top-left-radius: 20px;
+        }
+        
+        &:last-child {
+          border-top-right-radius: 20px;
+        }
+      }
+    }
+    
+    tbody {
+      background: white;
+      
+      td {
+        vertical-align: middle;
+        padding: 0.875rem 0.75rem;
+        color: #003353;
+        border-color: rgba(44, 97, 115, 0.1);
+      }
+      
+      tr {
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: rgba(255, 193, 7, 0.05);
+          transform: scale(1.005);
+          box-shadow: 0 2px 8px rgba(0, 51, 83, 0.08);
+        }
+        
+        &.status-overdue {
+          background-color: rgba(239, 68, 68, 0.1);
+          
+          &:hover {
+            background-color: rgba(239, 68, 68, 0.15);
+          }
+        }
+        
+        &.status-upcoming {
+          background-color: rgba(255, 193, 7, 0.1);
+          
+          &:hover {
+            background-color: rgba(255, 193, 7, 0.15);
+          }
+        }
+        
+        &.status-normal {
+          background-color: rgba(16, 185, 129, 0.05);
+          
+          &:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+          }
+        }
+      }
+      
+      .fw-bold {
+        font-weight: 700;
+        color: #003353;
+      }
+      
+      .text-primary {
+        color: #2c6173 !important;
+        font-weight: 600;
+      }
+      
+      .text-muted {
+        color: rgba(44, 97, 115, 0.7) !important;
+      }
+      
+      .text-danger {
+        color: #ef4444 !important;
+        font-weight: 600;
+      }
+      
+      .text-warning {
+        color: #f59e0b !important;
+        font-weight: 600;
+      }
+      
+      .text-success {
+        color: #10b981 !important;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  /* Status Badges */
+  .badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    
+    &.bg-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+      color: white;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+    
+    &.bg-warning {
+      background: linear-gradient(135deg, #ffc107, #ffed4e) !important;
+      color: #003353 !important;
+      box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+    }
+    
+    &.bg-success {
+      background: linear-gradient(135deg, #10b981, #34d399) !important;
+      color: white;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    &.bg-secondary {
+      background: linear-gradient(135deg, #6b7280, #9ca3af) !important;
+      color: white;
+    }
+  }
+  
+  /* Action Buttons */
+  .btn-group-sm .btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    
+    &.btn-outline-primary {
+      border-color: #2c6173;
+      color: #2c6173;
+      
+      &:hover {
+        background: #2c6173;
+        border-color: #2c6173;
+        color: white;
+        transform: translateY(-2px);
+      }
+    }
+    
+    &.btn-outline-info {
+      border-color: #ffc107;
+      color: #ffc107;
+      
+      &:hover {
+        background: #ffc107;
+        border-color: #ffc107;
+        color: #003353;
+        transform: translateY(-2px);
+      }
+    }
+    
+    &.btn-outline-success {
+      border-color: #10b981;
+      color: #10b981;
+      
+      &:hover {
+        background: #10b981;
+        border-color: #10b981;
+        color: white;
+        transform: translateY(-2px);
+      }
+    }
+  }
+  
+  /* Pagination */
+  .pagination {
+    justify-content: center;
+    
+    .page-item {
+      margin: 0 0.25rem;
+      
+      .page-link {
+        cursor: pointer;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        color: #2c6173;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        background: rgba(255, 255, 255, 0.95);
+        transition: all 0.3s ease;
+        
+        &:hover:not(.disabled) {
+          background: rgba(255, 193, 7, 0.1);
+          border-color: #ffc107;
+          color: #003353;
+          transform: translateY(-2px);
+        }
+        
+        &.disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
+      }
+      
+      &.active .page-link {
+        background: linear-gradient(135deg, #ffc107, #ffed4e);
+        border-color: #ffc107;
+        color: #003353;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+      }
+      
+      &.disabled .page-link {
+        background: rgba(255, 255, 255, 0.5);
+        border-color: rgba(44, 97, 115, 0.2);
+        color: rgba(44, 97, 115, 0.4);
+      }
+    }
+  }
+  
+  /* Legend Card */
+  .card {
+    &:last-child {
+      .card-body {
+        padding: 1.5rem;
+      }
+    }
+  }
+  
+  .card-title {
+    color: #003353;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    
+    i {
+      color: #ffc107;
+    }
+  }
+  
+  /* Empty State */
+  .text-center.text-muted.py-5 {
+    padding: 4rem 2rem !important;
+    
+    i {
+      color: rgba(44, 97, 115, 0.3);
+      display: block;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .maintenance-schedule-container {
+    .maintenance-table {
+      font-size: 0.8rem;
+      
+      thead th,
+      tbody td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .maintenance-schedule-container {
+    padding: 1rem 0;
+    
+    .page-header {
+      padding: 1.5rem;
+      
+      .page-title {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .table-responsive {
+      border-radius: 20px;
+    }
+    
+    .pagination {
+      flex-wrap: wrap;
+      
+      .page-item {
+        margin: 0.25rem;
+      }
+    }
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card,
+.page-header {
+  animation: fadeInUp 0.6s ease-out;
+}
