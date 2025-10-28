@@ -154,6 +154,69 @@
             </div>
           </div>
 
+          <!-- Ocak Modülü -->
+          <div class="main-module-card quarries-module">
+            <div class="module-header" (click)="gotoQuarries()">
+              <div class="module-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                </svg>
+              </div>
+              <div class="module-content">
+                <h2 class="module-title">Ocak Yönetimi</h2>
+                <p class="module-description">Ocak bilgileri, üretim ve stok takibi</p>
+                <div class="module-action">
+                  <span>Modüle Git</span>
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Ocak Kısayolları -->
+            <div class="shortcuts-section">
+              <h3 class="shortcuts-title">
+                <i class="fas fa-bolt"></i>
+                Hızlı Erişim
+              </h3>
+              <div class="shortcuts-grid">
+                <button class="shortcut-btn" (click)="gotoQuarryList()">
+                  <div class="shortcut-icon">
+                    <i class="fas fa-mountain"></i>
+                  </div>
+                  <span>Ocak Listesi</span>
+                </button>
+                
+                <button class="shortcut-btn" (click)="gotoQuarryAdd()">
+                  <div class="shortcut-icon">
+                    <i class="fas fa-plus-circle"></i>
+                  </div>
+                  <span>Ocak Kayıt</span>
+                </button>
+                
+                <button class="shortcut-btn" (click)="gotoProduction()">
+                  <div class="shortcut-icon">
+                    <i class="fas fa-chart-line"></i>
+                  </div>
+                  <span>Üretim Takibi</span>
+                </button>
+                
+                <button class="shortcut-btn" (click)="gotoQuarryMap()">
+                  <div class="shortcut-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                  </div>
+                  <span>Harita Görünümü</span>
+                </button>
+                
+                <button class="shortcut-btn" (click)="gotoQuarryReports()">
+                  <div class="shortcut-icon">
+                    <i class="fas fa-file-alt"></i>
+                  </div>
+                  <span>Raporlar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 

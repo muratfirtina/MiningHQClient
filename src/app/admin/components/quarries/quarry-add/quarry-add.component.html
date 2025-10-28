@@ -1,10 +1,65 @@
 <div class="modal-body" style="padding-bottom: 1px;">
-    <div class="form-group">
-        <label for="ad">Ocak:</label>
-        <input type="text" id="quarryName" name="quarryName" class="form-control" #quarryName required>
-    </div>
-    <div class="modal-footer" style="border-top: none;">
-        <button type="button" class="btn btn-warning" style="margin-top: 10px;"
-            (click)="addQuarry(quarryName)">Kaydet</button>
-    </div>
+    <form #quarryForm="ngForm">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="name">Ocak Adı *</label>
+                    <input type="text" id="name" name="name" class="form-control" 
+                           [(ngModel)]="quarry.name" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="location">Lokasyon</label>
+                    <input type="text" id="location" name="location" class="form-control" 
+                           [(ngModel)]="quarry.location">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Açıklama</label>
+            <textarea id="description" name="description" class="form-control" rows="3"
+                      [(ngModel)]="quarry.description"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="latitude">Enlem (Latitude)</label>
+                    <input type="number" id="latitude" name="latitude" class="form-control" 
+                           [(ngModel)]="quarry.latitude" step="0.000001">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="longitude">Boylam (Longitude)</label>
+                    <input type="number" id="longitude" name="longitude" class="form-control" 
+                           [(ngModel)]="quarry.longitude" step="0.000001">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="coordinateDescription">Koordinat Açıklaması</label>
+            <input type="text" id="coordinateDescription" name="coordinateDescription" class="form-control" 
+                   [(ngModel)]="quarry.coordinateDescription">
+        </div>
+
+        <div class="form-group">
+            <label for="miningEngineerId">Maden Mühendisi</label>
+            <select id="miningEngineerId" name="miningEngineerId" class="form-control" 
+                    [(ngModel)]="quarry.miningEngineerId">
+                <option [value]="undefined">-- Seçiniz --</option>
+                <option *ngFor="let engineer of engineers" [value]="engineer.id">
+                    {{engineer.firstName}} {{engineer.lastName}}
+                </option>
+            </select>
+        </div>
+
+        <div class="modal-footer" style="border-top: none;">
+            <button type="button" class="btn btn-warning" style="margin-top: 10px;"
+                    (click)="addQuarry()" [disabled]="!quarryForm.valid">Kaydet</button>
+        </div>
+    </form>
 </div>

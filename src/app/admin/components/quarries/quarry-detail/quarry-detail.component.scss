@@ -1,0 +1,29 @@
+.nav-tabs {
+  .nav-link {
+    cursor: pointer;
+    color: #6c757d;
+    
+    &:hover {
+      color: #495057;
+    }
+    
+    &.active {
+      color: #495057;
+      font-weight: 600;
+    }
+  }
+}
+
+.card {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.btn {
+  border-radius: 0.25rem;
+}

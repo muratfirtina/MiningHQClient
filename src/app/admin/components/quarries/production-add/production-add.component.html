@@ -1,0 +1,92 @@
+<div class="modal-body">
+  <form #productionForm="ngForm">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group mb-3">
+          <label>Hafta Başlangıç *</label>
+          <input type="date" class="form-control" [(ngModel)]="production.weekStartDate" 
+                 name="weekStartDate" required>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group mb-3">
+          <label>Hafta Bitiş *</label>
+          <input type="date" class="form-control" [(ngModel)]="production.weekEndDate" 
+                 name="weekEndDate" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group mb-3">
+          <label>Üretim Miktarı *</label>
+          <input type="number" class="form-control" [(ngModel)]="production.productionAmount" 
+                 name="productionAmount" required min="0" step="0.01">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group mb-3">
+          <label>Birim</label>
+          <select class="form-control" [(ngModel)]="production.productionUnit" name="productionUnit">
+            <option value="ton">Ton</option>
+            <option value="m³">m³</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group mb-3">
+          <label>Stok Miktarı *</label>
+          <input type="number" class="form-control" [(ngModel)]="production.stockAmount" 
+                 name="stockAmount" required min="0" step="0.01">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group mb-3">
+          <label>Birim</label>
+          <select class="form-control" [(ngModel)]="production.stockUnit" name="stockUnit">
+            <option value="ton">Ton</option>
+            <option value="m³">m³</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-8">
+        <div class="form-group mb-3">
+          <label>Satış Miktarı *</label>
+          <input type="number" class="form-control" [(ngModel)]="production.salesAmount" 
+                 name="salesAmount" required min="0" step="0.01">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group mb-3">
+          <label>Birim</label>
+          <select class="form-control" [(ngModel)]="production.salesUnit" name="salesUnit">
+            <option value="ton">Ton</option>
+            <option value="m³">m³</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group mb-3">
+      <label>Notlar</label>
+      <textarea class="form-control" [(ngModel)]="production.notes" name="notes" rows="3"></textarea>
+    </div>
+
+    <div class="modal-footer" style="border-top: none;">
+      <button type="button" class="btn btn-primary" (click)="addProduction()" 
+              [disabled]="!productionForm.valid">
+        <i class="fas fa-save"></i> Kaydet
+      </button>
+    </div>
+  </form>
+</div>

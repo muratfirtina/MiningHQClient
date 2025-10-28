@@ -1,4 +1,5 @@
-export class CreateQuarry{
+export class UpdateQuarry{
+    id: string;
     name: string;
     description?: string;
     location?: string;

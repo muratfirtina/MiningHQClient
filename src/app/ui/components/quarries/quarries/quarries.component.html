@@ -1,0 +1,312 @@
+<div class="modern-quarry-list-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="fas fa-mountain"></i>
+          Ocak Yönetimi
+        </h1>
+        <p class="page-subtitle">Ocak bilgileri, üretim ve stok takibi</p>
+      </div>
+      <div class="header-actions">
+        <div class="action-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{quarries.length}}</span>
+            <span class="stat-label">Ocak</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <div class="container-custom">
+      <div class="action-buttons">
+        
+        <button type="button" 
+                class="action-btn primary" 
+                (click)="goToQuarryList()">
+          <div class="btn-icon">
+            <i class="fas fa-list"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Ocak Listesi</span>
+            <span class="btn-subtitle">Detaylı liste görünümü</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn secondary">
+          <div class="btn-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Üretim Verileri</span>
+            <span class="btn-subtitle">Haftalık üretim raporları</span>
+          </div>
+        </button>
+
+        <button type="button" 
+                class="action-btn accent" 
+                (click)="goToQuarryAdd()">
+          <div class="btn-icon">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div class="btn-content">
+            <span class="btn-title">Yeni Ocak</span>
+            <span class="btn-subtitle">Yeni ocak ekle</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-custom">
+      <div class="content-layout">
+        
+        <!-- Filters Sidebar -->
+        <div class="filters-sidebar">
+          <div class="filter-card">
+            <div class="filter-header">
+              <h3>
+                <i class="fas fa-filter"></i>
+                Filtreler
+              </h3>
+              <button class="clear-filters" type="button" (click)="searchForm.reset(); searchQuarries()">
+                <i class="fas fa-times"></i>
+                Temizle
+              </button>
+            </div>
+            
+            <form [formGroup]="searchForm" (ngSubmit)="searchQuarries()" class="filter-form">
+              
+              <!-- Name Search -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-search"></i>
+                  Ocak Adı Ara
+                </label>
+                <input type="text" 
+                       formControlName="nameSearch" 
+                       class="filter-input"
+                       placeholder="Ocak adı yazın...">
+              </div>
+
+              <!-- Location Filter -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Lokasyon
+                </label>
+                <input type="text" 
+                       formControlName="location" 
+                       class="filter-input"
+                       placeholder="Lokasyon ara...">
+              </div>
+
+              <!-- Sort Direction -->
+              <div class="filter-group">
+                <label class="filter-label">
+                  <i class="fas fa-sort"></i>
+                  Sıralama
+                </label>
+                <select formControlName="sortDirection" class="filter-select">
+                  <option value="asc">A'dan Z'ye</option>
+                  <option value="desc">Z'den A'ya</option>
+                </select>
+              </div>
+
+              <button type="submit" class="filter-submit-btn">
+                <i class="fas fa-search"></i>
+                Filtrele
+              </button>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Quarry Table -->
+        <div class="table-section">
+          <div class="table-card">
+            <div class="table-header">
+              <div class="table-title">
+                <h3>Ocak Listesi</h3>
+                <span class="result-count">{{filteredQuarries.length}} ocak bulundu</span>
+              </div>
+              <div class="table-actions">
+                <button class="table-action-btn" type="button">
+                  <i class="fas fa-download"></i>
+                  Dışa Aktar
+                </button>
+              </div>
+            </div>
+            
+            <div class="table-container">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-mountain"></i>
+                        Ocak Adı
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Lokasyon
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-user-tie"></i>
+                        Maden Mühendisi
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-users"></i>
+                        Personel
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-truck"></i>
+                        Makina
+                      </div>
+                    </th>
+                    <th>
+                      <div class="th-content">
+                        <i class="fas fa-cog"></i>
+                        İşlemler
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let quarry of paginatedQuarries; trackBy: trackByQuarryId" 
+                      class="quarry-row"
+                      (click)="goToQuarryPage(quarry.id)">
+                    <td>
+                      <div class="quarry-info">
+                        <div class="quarry-avatar">
+                          <i class="fas fa-mountain"></i>
+                        </div>
+                        <div class="quarry-details">
+                          <span class="quarry-name">{{quarry.name}}</span>
+                          <span class="quarry-meta" *ngIf="quarry.description">{{quarry.description | slice:0:30}}...</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="location-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{quarry.location || '-'}}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="engineer-info" *ngIf="quarry.miningEngineer">
+                        <span class="engineer-name">
+                          {{quarry.miningEngineer.firstName}} {{quarry.miningEngineer.lastName}}
+                        </span>
+                        <span class="engineer-phone" *ngIf="quarry.miningEngineer.phone">
+                          <i class="fas fa-phone"></i> {{quarry.miningEngineer.phone}}
+                        </span>
+                      </div>
+                      <span *ngIf="!quarry.miningEngineer" class="text-muted">-</span>
+                    </td>
+                    <td>
+                      <span class="count-badge employee-badge">
+                        <i class="fas fa-users"></i>
+                        {{quarry.employeeCount || 0}}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="count-badge machine-badge">
+                        <i class="fas fa-truck"></i>
+                        {{quarry.machineCount || 0}}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-icon-btn view" 
+                                (click)="$event.stopPropagation(); goToQuarryPage(quarry.id)"
+                                title="Detay">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-icon-btn production" 
+                                (click)="goToQuarryProduction(quarry.id, $event)"
+                                title="Üretim">
+                          <i class="fas fa-chart-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- Empty State -->
+              <div *ngIf="filteredQuarries.length === 0" class="empty-state">
+                <div class="empty-icon">
+                  <i class="fas fa-mountain"></i>
+                </div>
+                <h3>Ocak bulunamadı</h3>
+                <p>Arama kriterlerinize uygun ocak bulunamadı. Filtreleri kontrol edin.</p>
+                <button class="empty-action-btn" (click)="searchForm.reset(); searchQuarries()">
+                  <i class="fas fa-refresh"></i>
+                  Filtreleri Temizle
+                </button>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section" *ngIf="filteredQuarries.length > 0 && pages > 1">
+              <div class="pagination-info">
+                Sayfa {{currentPageNo}} / {{pages}} ({{filteredQuarries.length}} sonuç)
+              </div>
+              
+              <nav class="pagination-nav">
+                <ul class="pagination">
+                  <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                    <a class="page-link" (click)="changePage(1)">
+                      <i class="fas fa-angle-double-left"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo <= 1">
+                    <a class="page-link" (click)="changePage(currentPageNo - 1)">
+                      <i class="fas fa-angle-left"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" 
+                      *ngFor="let pageNo of pageList" 
+                      [class.active]="pageNo === currentPageNo">
+                    <a class="page-link" (click)="changePage(pageNo)">{{pageNo}}</a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                    <a class="page-link" (click)="changePage(currentPageNo + 1)">
+                      <i class="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                  <li class="page-item" [class.disabled]="currentPageNo >= pages">
+                    <a class="page-link" (click)="changePage(pages)">
+                      <i class="fas fa-angle-double-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

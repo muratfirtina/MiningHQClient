@@ -1,0 +1,406 @@
+<div *ngIf="quarry" class="modern-quarry-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="back()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Geri</span>
+      </button>
+      <div class="page-title">
+        <h1>
+          <i class="fas fa-mountain"></i>
+          {{quarry.name}}
+        </h1>
+        <p *ngIf="quarry.location">
+          <i class="fas fa-map-marker-alt"></i>
+          {{quarry.location}}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="quarry-layout">
+      
+      <!-- Sidebar Stats -->
+      <div class="stats-sidebar">
+        <div class="stat-card primary">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{quarry.employees?.length || 0}}</span>
+            <span class="stat-label">Personel</span>
+          </div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-icon">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{quarry.machines?.length || 0}}</span>
+            <span class="stat-label">Makina</span>
+          </div>
+        </div>
+
+        <div class="stat-card warning">
+          <div class="stat-icon">
+            <i class="fas fa-folder"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{quarry.quarryFiles?.length || 0}}</span>
+            <span class="stat-label">Dosya</span>
+          </div>
+        </div>
+
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{quarry.quarryProductions?.length || 0}}</span>
+            <span class="stat-label">Üretim</span>
+          </div>
+        </div>
+
+        <!-- Engineer Info -->
+        <div class="engineer-card" *ngIf="quarry.miningEngineer">
+          <div class="engineer-header">
+            <i class="fas fa-user-tie"></i>
+            <span>Maden Mühendisi</span>
+          </div>
+          <div class="engineer-info">
+            <h4>{{quarry.miningEngineer.firstName}} {{quarry.miningEngineer.lastName}}</h4>
+            <p *ngIf="quarry.miningEngineer.phone">
+              <i class="fas fa-phone"></i>
+              {{quarry.miningEngineer.phone}}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        
+        <!-- Tabs Navigation -->
+        <div class="tabs-navigation">
+          <button class="tab-btn" 
+                  [class.active]="activeTab === 'info'"
+                  (click)="setActiveTab('info')">
+            <i class="fas fa-info-circle"></i>
+            <span>Genel Bilgiler</span>
+          </button>
+          
+          <button class="tab-btn" 
+                  [class.active]="activeTab === 'employees'"
+                  (click)="setActiveTab('employees')">
+            <i class="fas fa-users"></i>
+            <span>Personeller</span>
+            <span class="tab-badge">{{quarry.employees?.length || 0}}</span>
+          </button>
+          
+          <button class="tab-btn" 
+                  [class.active]="activeTab === 'machines'"
+                  (click)="setActiveTab('machines')">
+            <i class="fas fa-truck"></i>
+            <span>Makinalar</span>
+            <span class="tab-badge">{{quarry.machines?.length || 0}}</span>
+          </button>
+          
+          <button class="tab-btn" 
+                  [class.active]="activeTab === 'files'"
+                  (click)="setActiveTab('files')">
+            <i class="fas fa-folder"></i>
+            <span>Dosyalar</span>
+            <span class="tab-badge">{{quarry.quarryFiles?.length || 0}}</span>
+          </button>
+          
+          <button class="tab-btn" 
+                  [class.active]="activeTab === 'production'"
+                  (click)="setActiveTab('production')">
+            <i class="fas fa-chart-line"></i>
+            <span>Üretim</span>
+            <span class="tab-badge">{{quarry.quarryProductions?.length || 0}}</span>
+          </button>
+          
+          <button class="tab-btn" 
+                  [class.active]="activeTab === 'map'"
+                  (click)="setActiveTab('map')">
+            <i class="fas fa-map"></i>
+            <span>Harita</span>
+          </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          
+          <!-- Genel Bilgiler Tab -->
+          <div *ngIf="activeTab === 'info'" class="content-card">
+            <div class="content-header">
+              <h3><i class="fas fa-info-circle"></i> Genel Bilgiler</h3>
+            </div>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>Ocak Adı</label>
+                <span>{{quarry.name}}</span>
+              </div>
+              <div class="info-item">
+                <label>Lokasyon</label>
+                <span>{{quarry.location || '-'}}</span>
+              </div>
+              <div class="info-item">
+                <label>Açıklama</label>
+                <span>{{quarry.description || '-'}}</span>
+              </div>
+              <div class="info-item">
+                <label>Koordinatlar</label>
+                <span *ngIf="quarry.latitude && quarry.longitude">
+                  {{quarry.latitude}}, {{quarry.longitude}}
+                </span>
+                <span *ngIf="!quarry.latitude || !quarry.longitude">-</span>
+              </div>
+              <div class="info-item full-width">
+                <label>Koordinat Açıklaması</label>
+                <span>{{quarry.coordinateDescription || '-'}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personeller Tab -->
+          <div *ngIf="activeTab === 'employees'" class="content-card">
+            <div class="content-header">
+              <h3><i class="fas fa-users"></i> Çalışan Personeller</h3>
+            </div>
+            <div class="table-container" *ngIf="quarry.employees && quarry.employees.length > 0">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Ad Soyad</th>
+                    <th>Pozisyon</th>
+                    <th>Departman</th>
+                    <th>Telefon</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let employee of quarry.employees">
+                    <td>
+                      <div class="user-info">
+                        <div class="user-avatar">
+                          <i class="fas fa-user"></i>
+                        </div>
+                        <span>{{employee.firstName}} {{employee.lastName}}</span>
+                      </div>
+                    </td>
+                    <td>{{employee.jobName || '-'}}</td>
+                    <td>{{employee.departmentName || '-'}}</td>
+                    <td>{{employee.phone || '-'}}</td>
+                    <td>
+                      <button class="btn-icon primary" 
+                              [routerLink]="['/personeller/personel', employee.id]"
+                              title="Detay">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="!quarry.employees || quarry.employees.length === 0" class="empty-state">
+              <i class="fas fa-users fa-4x"></i>
+              <p>Bu ocakta henüz çalışan personel bulunmamaktadır</p>
+            </div>
+          </div>
+
+          <!-- Makinalar Tab -->
+          <div *ngIf="activeTab === 'machines'" class="content-card">
+            <div class="content-header">
+              <h3><i class="fas fa-truck"></i> Çalışan Makinalar</h3>
+            </div>
+            <div class="table-container" *ngIf="quarry.machines && quarry.machines.length > 0">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Ad</th>
+                    <th>Seri No</th>
+                    <th>Tip</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let machine of quarry.machines">
+                    <td>
+                      <div class="user-info">
+                        <div class="user-avatar machine">
+                          <i class="fas fa-truck"></i>
+                        </div>
+                        <span>{{machine.name || machine.serialNumber}}</span>
+                      </div>
+                    </td>
+                    <td>{{machine.serialNumber}}</td>
+                    <td>{{machine.machineTypeName || '-'}}</td>
+                    <td>{{machine.brandName || '-'}}</td>
+                    <td>{{machine.modelName || '-'}}</td>
+                    <td>
+                      <button class="btn-icon success" 
+                              [routerLink]="['/makinalar/makina', machine.id]"
+                              title="Detay">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="!quarry.machines || quarry.machines.length === 0" class="empty-state">
+              <i class="fas fa-truck fa-4x"></i>
+              <p>Bu ocakta henüz çalışan makina bulunmamaktadır</p>
+            </div>
+          </div>
+
+          <!-- Dosyalar Tab -->
+          <div *ngIf="activeTab === 'files'" class="content-card">
+            <div class="content-header">
+              <h3><i class="fas fa-folder"></i> Ocak Dosyaları</h3>
+              <div class="header-actions">
+                <input type="file" class="d-none" #fileInput multiple (change)="onFileSelected($event)">
+                <button class="btn btn-primary" (click)="fileInput.click()">
+                  <i class="fas fa-upload"></i>
+                  Dosya Yükle
+                </button>
+                <button class="btn btn-success" *ngIf="selectedFiles" (click)="uploadFiles()">
+                  <i class="fas fa-check"></i>
+                  Yükle ({{selectedFiles.length}})
+                </button>
+              </div>
+            </div>
+            <div class="files-grid" *ngIf="quarry.quarryFiles && quarry.quarryFiles.length > 0">
+              <div class="file-card" *ngFor="let file of quarry.quarryFiles">
+                <div class="file-icon">
+                  <i class="fas fa-file"></i>
+                </div>
+                <div class="file-info">
+                  <h4>{{file.fileName}}</h4>
+                  <p>{{file.storage}}</p>
+                </div>
+                <div class="file-actions">
+                  <button class="btn-icon primary" (click)="downloadFile(file)" title="İndir">
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button class="btn-icon danger" (click)="deleteFile(file.id, file.path)" title="Sil">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!quarry.quarryFiles || quarry.quarryFiles.length === 0" class="empty-state">
+              <i class="fas fa-folder-open fa-4x"></i>
+              <p>Bu ocak için henüz yüklenmiş dosya bulunmamaktadır</p>
+            </div>
+          </div>
+
+          <!-- Üretim Tab -->
+          <div *ngIf="activeTab === 'production'" class="content-card">
+            <div class="content-header">
+              <h3><i class="fas fa-chart-line"></i> Haftalık Üretim Verileri</h3>
+              <a [routerLink]="['/ocaklar/uretim', quarryId]" class="btn btn-primary">
+                <i class="fas fa-chart-bar"></i>
+                Detaylı Görünüm
+              </a>
+            </div>
+            <div class="table-container" *ngIf="quarry.quarryProductions && quarry.quarryProductions.length > 0">
+              <table class="modern-table">
+                <thead>
+                  <tr>
+                    <th>Hafta</th>
+                    <th>Üretim</th>
+                    <th>Stok</th>
+                    <th>Satış</th>
+                    <th>Notlar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let production of quarry.quarryProductions | slice:0:5">
+                    <td>
+                      {{production.weekStartDate | date:'dd.MM.yy'}} - 
+                      {{production.weekEndDate | date:'dd.MM.yy'}}
+                    </td>
+                    <td>
+                      <span class="badge info">
+                        {{production.productionAmount}} {{production.productionUnit}}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge warning">
+                        {{production.stockAmount}} {{production.stockUnit}}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge success">
+                        {{production.salesAmount}} {{production.salesUnit}}
+                      </span>
+                    </td>
+                    <td>{{production.notes || '-'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="text-center mt-3" *ngIf="quarry.quarryProductions.length > 5">
+                <small class="text-muted">
+                  Son 5 kayıt gösteriliyor. 
+                  <a [routerLink]="['/ocaklar/uretim', quarryId]">Tümünü görüntüle</a>
+                </small>
+              </p>
+            </div>
+            <div *ngIf="!quarry.quarryProductions || quarry.quarryProductions.length === 0" class="empty-state">
+              <i class="fas fa-chart-line fa-4x"></i>
+              <p>Bu ocak için henüz üretim verisi bulunmamaktadır</p>
+            </div>
+          </div>
+
+          <!-- Harita Tab -->
+          <div *ngIf="activeTab === 'map'" class="content-card">
+            <div class="content-header">
+              <h3><i class="fas fa-map"></i> Ocak Konumu</h3>
+              <a *ngIf="quarry.latitude && quarry.longitude"
+                 [href]="'https://www.google.com/maps?q=' + quarry.latitude + ',' + quarry.longitude" 
+                 target="_blank" 
+                 class="btn btn-primary">
+                <i class="fas fa-external-link-alt"></i>
+                Google Maps'te Aç
+              </a>
+            </div>
+            <div *ngIf="quarry.latitude && quarry.longitude" class="map-container">
+              <iframe 
+                [src]="getGoogleMapsUrl() | safe: 'resourceUrl'" 
+                width="100%" 
+                height="600" 
+                style="border:0;border-radius:12px;" 
+                allowfullscreen="" 
+                loading="lazy">
+              </iframe>
+              <div class="map-info">
+                <i class="fas fa-map-marker-alt"></i> 
+                Koordinatlar: {{quarry.latitude}}, {{quarry.longitude}}
+              </div>
+            </div>
+            <div *ngIf="!quarry.latitude || !quarry.longitude" class="empty-state">
+              <i class="fas fa-map fa-4x"></i>
+              <p>Bu ocak için koordinat bilgisi bulunmamaktadır</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!quarry" class="loading-state">
+  <div class="spinner"></div>
+  <p>Yükleniyor...</p>
+</div>

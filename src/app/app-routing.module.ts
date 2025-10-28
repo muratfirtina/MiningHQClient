@@ -21,6 +21,7 @@ const routes: Routes = [
       {path:'quarries/quarry-add',loadComponent:()=>import('./admin/components/quarries/quarry-add/quarry-add.component').then(m=>m.QuarryAddComponent)},
       {path:'quarries/quarry-list',loadComponent:()=>import('./admin/components/quarries/quarry-list/quarry-list.component').then(m=>m.QuarryListComponent)},
       {path:'quarries/quarry-list/:pageNo',loadComponent:()=>import('./admin/components/quarries/quarry-list/quarry-list.component').then(m=>m.QuarryListComponent)},
+      {path:'quarries/:id',loadComponent:()=>import('./admin/components/quarries/quarry-detail/quarry-detail.component').then(m=>m.QuarryDetailComponent)},
       {path:'brands',loadComponent:()=>import('./admin/components/brands/brands.component').then(m=>m.BrandsComponent)},
       {path:'brands/brand-add',loadComponent:()=>import('./admin/components/brands/brand-add/brand-add.component').then(m=>m.BrandAddComponent)},
       {path:'brands/brand-list',loadComponent:()=>import('./admin/components/brands/brand-list/brand-list.component').then(m=>m.BrandListComponent)},
@@ -86,6 +87,13 @@ const routes: Routes = [
   
   // Leave Usage Routes
   {path:'personeller/izinler/izinkullanimi',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent),data:{breadcrumb:'İzin Kullanımı'}},
+  
+  // Quarry Routes - UI
+  {path:'ocaklar',loadComponent:()=>import('./ui/components/quarries/quarries/quarries.component').then(m=>m.QuarriesComponent),data:{breadcrumb:'Ocaklar'}},
+  {path:'ocaklar/ocak-listesi',loadComponent:()=>import('./ui/components/quarries/quarry-list/quarry-list.component').then(m=>m.QuarryListComponent),data:{breadcrumb:'Ocak Listesi'}},
+  {path:'ocaklar/ocak-ekle',loadComponent:()=>import('./ui/components/quarries/quarry-add/quarry-add.component').then(m=>m.QuarryAddComponent),data:{breadcrumb:'Ocak Ekle'}},
+  {path:'ocaklar/ocak/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-page/quarry-page.component').then(m=>m.QuarryPageComponent),data:{breadcrumb:'Ocak Bilgileri'}},
+  {path:'ocaklar/uretim/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-production/quarry-production.component').then(m=>m.QuarryProductionComponent),data:{breadcrumb:'Üretim Verileri'}},
   
 ];
 

@@ -76,4 +76,29 @@ export class HomeComponent extends BaseComponent implements OnInit{
   gotoInventory() {
     this.router.navigate(['/envanter']);
   }
+
+  // Ocak kısayolları
+  gotoQuarries() {
+    this.router.navigate(['/ocaklar']);
+  }
+
+  gotoQuarryList() {
+    this.router.navigate(['/ocaklar/ocak-listesi']);
+  }
+
+  gotoQuarryAdd() {
+    this.router.navigate(['/admin/quarries/quarry-add']);
+  }
+
+  gotoProduction() {
+    this.router.navigate(['/ocaklar']);
+  }
+
+  gotoQuarryMap() {
+    this.router.navigate(['/ocaklar/ocak-listesi']);
+  }
+
+  gotoQuarryReports() {
+    this.router.navigate(['/ocaklar']);
+  }
 }

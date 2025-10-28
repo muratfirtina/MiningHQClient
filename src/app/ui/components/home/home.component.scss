@@ -2,18 +2,26 @@
 .modern-home-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #2c6173 0%, #003353 100%);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+
   &::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-      radial-gradient(circle at 15% 25%, rgba(255, 193, 7, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 85% 75%, rgba(255, 193, 7, 0.06) 0%, transparent 50%);
+    background: radial-gradient(
+        circle at 15% 25%,
+        rgba(255, 193, 7, 0.08) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 85% 75%,
+        rgba(255, 193, 7, 0.06) 0%,
+        transparent 50%
+      );
     pointer-events: none;
     z-index: 0;
   }
@@ -24,7 +32,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
-  
+
   @media (max-width: 768px) {
     padding: 0 1rem;
   }
@@ -44,7 +52,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
-  
+
   @media (max-width: 768px) {
     padding: 0 1rem;
   }
@@ -52,7 +60,7 @@
 
 .header-center {
   text-align: center;
-  
+
   .page-title {
     display: flex;
     align-items: center;
@@ -62,16 +70,16 @@
     font-weight: 700;
     color: white;
     margin-bottom: 1rem;
-    
+
     i {
       color: #ffc107;
     }
-    
+
     @media (max-width: 768px) {
       font-size: 2.5rem;
     }
   }
-  
+
   .page-subtitle {
     color: rgba(255, 255, 255, 0.9);
     font-size: 1.2rem;
@@ -95,12 +103,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 3rem;
-  
+
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -116,48 +124,152 @@
   overflow: hidden;
   transition: all 0.4s ease;
   border: 1px solid rgba(255, 193, 7, 0.2);
-  
+
   &:hover {
     transform: translateY(-10px);
     box-shadow: 0 30px 80px rgba(0, 51, 83, 0.2);
     border-color: #ffc107;
   }
-  
+
   &.personnel-module {
     .module-header {
       background: linear-gradient(135deg, #2c6173 0%, #003353 100%);
-      
+
       .module-icon {
         background: rgba(255, 193, 7, 0.2);
         color: #ffc107;
       }
+      
     }
-    
+
     .shortcuts-title i {
       color: #2c6173;
     }
+    .shortcut-btn {
+      background: rgba(44, 97, 115, 0.05);
+      border: 1px solid rgba(44, 97, 115, 0.15);
+      border-radius: 12px;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #2c6173;
+      font-weight: 500;
+      font-size: 0.85rem;
+      text-align: center;
+
+      &:hover {
+        background: #00335338;
+        border-color: #003353;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(44, 97, 115, 0.1);
+        color: #003353;
+
+        .shortcut-icon {
+          background: linear-gradient(135deg, #2c6173 0%, #003353 100%);
+          color: #ffc107;
+          transform: scale(1.1);
+        }
+      }
+
+      @media (max-width: 640px) {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+      }
+    }
+    .shortcut-btn:focus,
+    .module-header:focus {
+      outline: 3px solid #016caf;
+      outline-offset: 2px;
+    }
   }
-  
+
   &.machines-module {
     .module-header {
       background: linear-gradient(135deg, #ffc107 0%, #ffed4e 100%);
-      
+
       .module-icon {
         background: rgba(0, 51, 83, 0.2);
         color: #003353;
       }
-      
+
       .module-content {
         color: #003353;
       }
-      
+
       .module-action {
         color: #003353;
       }
     }
-    
+
     .shortcuts-title i {
       color: #ffc107;
+    }
+  }
+
+  &.quarries-module {
+    .module-header {
+      background: linear-gradient(135deg, #00d18c 0%, #06805a 100%);
+
+      .module-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+      }
+
+      .module-content {
+        color: #ffffff;
+      }
+
+      .module-action {
+        color: #ffffff;
+      }
+    }
+
+    .shortcuts-title i {
+      color: #28a745;
+    }
+    .shortcut-btn {
+      background: rgba(44, 97, 115, 0.05);
+      border: 1px solid #06805a;
+      border-radius: 12px;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #06805a;
+      font-weight: 500;
+      font-size: 0.85rem;
+      text-align: center;
+
+      &:hover {
+        background: #0680594b;
+        border-color: #06805a;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(44, 97, 115, 0.1);
+        color: #003353;
+
+        .shortcut-icon {
+          background: linear-gradient(135deg, #00d18c 0%, #06805a 100%);
+          color: #fff;
+          transform: scale(1.1);
+        }
+      }
+
+      @media (max-width: 640px) {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+      }
+    }
+    .shortcut-btn:focus,
+    .module-header:focus {
+      outline: 3px solid #05b67f;
+      outline-offset: 2px;
     }
   }
 }
@@ -170,13 +282,13 @@
   align-items: center;
   gap: 2rem;
   color: white;
-  
+
   &:hover {
     .module-action {
       transform: translateX(5px);
     }
   }
-  
+
   @media (max-width: 640px) {
     padding: 2rem;
     flex-direction: column;
@@ -193,16 +305,16 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
+
   svg {
     width: 60px;
     height: 60px;
   }
-  
+
   @media (max-width: 640px) {
     width: 80px;
     height: 80px;
-    
+
     svg {
       width: 50px;
       height: 50px;
@@ -212,17 +324,17 @@
 
 .module-content {
   flex: 1;
-  
+
   .module-title {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
-    
+
     @media (max-width: 640px) {
       font-size: 1.75rem;
     }
   }
-  
+
   .module-description {
     font-size: 1.1rem;
     opacity: 0.9;
@@ -238,7 +350,7 @@
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.3s ease;
-  
+
   i {
     font-size: 1.1rem;
   }
@@ -248,7 +360,7 @@
 .shortcuts-section {
   padding: 2rem 2.5rem;
   border-top: 1px solid rgba(44, 97, 115, 0.1);
-  
+
   @media (max-width: 640px) {
     padding: 1.5rem 2rem;
   }
@@ -262,7 +374,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
-  
+
   i {
     font-size: 1rem;
   }
@@ -272,7 +384,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
-  
+
   @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
@@ -294,21 +406,21 @@
   font-weight: 500;
   font-size: 0.85rem;
   text-align: center;
-  
+
   &:hover {
     background: rgba(255, 193, 7, 0.1);
     border-color: #ffc107;
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(44, 97, 115, 0.1);
     color: #003353;
-    
+
     .shortcut-icon {
       background: linear-gradient(135deg, #ffc107, #ffed4e);
       color: #003353;
       transform: scale(1.1);
     }
   }
-  
+
   @media (max-width: 640px) {
     padding: 0.75rem 0.5rem;
     font-size: 0.8rem;
@@ -324,15 +436,15 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  
+
   i {
     font-size: 1rem;
   }
-  
+
   @media (max-width: 640px) {
     width: 35px;
     height: 35px;
-    
+
     i {
       font-size: 0.9rem;
     }
@@ -365,11 +477,11 @@
 .main-module-card {
   animation: fadeInScale 0.6s ease-out;
   animation-fill-mode: both;
-  
+
   &:nth-child(1) {
     animation-delay: 0.1s;
   }
-  
+
   &:nth-child(2) {
     animation-delay: 0.2s;
   }
@@ -378,7 +490,7 @@
 .shortcut-btn {
   animation: fadeInUp 0.4s ease-out;
   animation-fill-mode: both;
-  
+
   @for $i from 1 through 10 {
     &:nth-child(#{$i}) {
       animation-delay: #{0.3 + ($i * 0.05)}s;
@@ -399,15 +511,15 @@
   .page-header {
     padding: 2rem 0;
   }
-  
+
   .main-content {
     padding: 2rem 0;
   }
-  
+
   .main-module-card {
     border-radius: 20px;
   }
-  
+
   .shortcuts-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -432,12 +544,12 @@
 @media print {
   .modern-home-page {
     background: white !important;
-    
+
     &::before {
       display: none;
     }
   }
-  
+
   .main-module-card {
     background: white !important;
     border: 2px solid #2c6173 !important;

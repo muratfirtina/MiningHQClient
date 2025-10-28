@@ -9,6 +9,8 @@ import { Maintenance } from 'src/app/contracts/maintenance/maintenance';
 import { MaintenanceFile } from 'src/app/contracts/maintenance/maintenance-file';
 import { switchMap } from 'rxjs';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Machine } from 'src/app/contracts/machine/machine';
+import { MachineService } from 'src/app/services/common/models/machine.service';
 
 @Component({
   selector: 'app-maintenance-detail',
@@ -27,6 +29,7 @@ export class MaintenanceDetailComponent extends BaseComponent implements OnInit 
   maintenanceId: string;
   machineId: string;
   isLoading: boolean = false;
+  machine: Machine;
   
   // Lightbox için
   selectedFile: any = null;
@@ -37,6 +40,7 @@ export class MaintenanceDetailComponent extends BaseComponent implements OnInit 
     private route: ActivatedRoute,
     private router: Router,
     private maintenanceService: MaintenanceService,
+    private machineService: MachineService,
     private sanitizer: DomSanitizer,
     private http: HttpClient
   ) {
@@ -64,32 +68,36 @@ export class MaintenanceDetailComponent extends BaseComponent implements OnInit 
   }
 
   async loadMaintenance(): Promise<void> {
-    this.isLoading = true;
-    
-    try {
-      this.maintenance = await this.maintenanceService.getById(this.maintenanceId);
-      
-      // Backend'den gelen maintenanceFiles'ı kullan
-      if (this.maintenance.maintenanceFiles && this.maintenance.maintenanceFiles.length > 0) {
-        this.maintenanceFiles = this.maintenance.maintenanceFiles.map(file => {
-          // URL yapısı: baseUrl/category/path/name
-          const baseUrl = 'http://localhost:5278';
-          const fullUrl = `${baseUrl}/${file.category}/${file.path}/${file.name}`;
-          
-          return {
-            ...file,
-            url: fullUrl,
-            safeUrl: this.sanitizer.bypassSecurityTrustUrl(fullUrl)
-          };
-        });
-      }
-      
-      this.isLoading = false;
-    } catch (error) {
-      console.error('Error loading maintenance:', error);
-      this.isLoading = false;
+  this.isLoading = true;
+  
+  try {
+    // Önce bakımı yükle
+    this.maintenance = await this.maintenanceService.getById(this.maintenanceId);
+
+    // Ardından makine detayını yükle (şu anki çalışma saati için)
+    if (this.machineId) {
+      this.machine = await this.machineService.getById(this.machineId);
     }
+
+    // Dosyaları işle
+    if (this.maintenance.maintenanceFiles && this.maintenance.maintenanceFiles.length > 0) {
+      const baseUrl = 'http://localhost:5278';
+      this.maintenanceFiles = this.maintenance.maintenanceFiles.map(file => {
+        const fullUrl = `${baseUrl}/${file.category}/${file.path}/${file.name}`;
+        return {
+          ...file,
+          url: fullUrl,
+          safeUrl: this.sanitizer.bypassSecurityTrustUrl(fullUrl)
+        };
+      });
+    }
+    
+    this.isLoading = false;
+  } catch (error) {
+    console.error('Error loading maintenance:', error);
+    this.isLoading = false;
   }
+}
 
   // Dosyayı lightbox'ta görüntüle
   viewFile(file: any): void {
@@ -273,15 +281,14 @@ export class MaintenanceDetailComponent extends BaseComponent implements OnInit 
   }
 
   isUpcomingMaintenance(): boolean {
-    if (!this.maintenance?.nextMaintenanceHour) return false;
-    const currentHour = this.maintenance.machineWorkingTimeOrKilometer;
-    const hoursRemaining = this.maintenance.nextMaintenanceHour - currentHour;
-    return hoursRemaining <= 100 && hoursRemaining > 0;
-  }
+  const hoursLeft = this.getHoursUntilNextMaintenance();
+  return hoursLeft > 0 && hoursLeft <= 100;
+}
 
   getHoursUntilNextMaintenance(): number {
-    if (!this.maintenance?.nextMaintenanceHour) return -1;
-    const currentHour = this.maintenance.machineWorkingTimeOrKilometer;
-    return this.maintenance.nextMaintenanceHour - currentHour;
+  if (!this.maintenance?.nextMaintenanceHour || !this.machine?.currentWorkingHours) {
+    return -1;
+  }
+  return this.maintenance.nextMaintenanceHour - this.machine.currentWorkingHours;
   }
 }

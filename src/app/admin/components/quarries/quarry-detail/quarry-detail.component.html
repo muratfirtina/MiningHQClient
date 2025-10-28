@@ -1,0 +1,265 @@
+<div class="container-fluid mt-4" *ngIf="quarry">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <button class="btn btn-secondary me-2" (click)="back()">
+        <i class="fas fa-arrow-left"></i> Geri
+      </button>
+      <h2 class="d-inline">{{ quarry.name }}</h2>
+    </div>
+    <div>
+      <button class="btn btn-primary me-2" *ngIf="!isEditMode" (click)="toggleEditMode()">
+        <i class="fas fa-edit"></i> Düzenle
+      </button>
+      <button class="btn btn-success me-2" *ngIf="isEditMode" (click)="saveChanges()">
+        <i class="fas fa-save"></i> Kaydet
+      </button>
+      <button class="btn btn-secondary me-2" *ngIf="isEditMode" (click)="cancelEdit()">
+        <i class="fas fa-times"></i> İptal
+      </button>
+      <button class="btn btn-danger" (click)="deleteQuarry()">
+        <i class="fas fa-trash"></i> Sil
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+        <i class="fas fa-info-circle"></i> Genel Bilgiler
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'employees'" (click)="setActiveTab('employees')">
+        <i class="fas fa-users"></i> Personeller ({{ quarry.employees?.length || 0 }})
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'machines'" (click)="setActiveTab('machines')">
+        <i class="fas fa-truck"></i> Makinalar ({{ quarry.machines?.length || 0 }})
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'files'" (click)="setActiveTab('files')">
+        <i class="fas fa-folder"></i> Dosyalar ({{ quarry.quarryFiles?.length || 0 }})
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'production'" (click)="setActiveTab('production')">
+        <i class="fas fa-chart-line"></i> Üretim Verileri ({{ quarry.quarryProductions?.length || 0 }})
+      </a>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    
+    <!-- Genel Bilgiler Tab -->
+    <div *ngIf="activeTab === 'info'" class="card">
+      <div class="card-body">
+        <form *ngIf="isEditMode">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label>Ocak Adı *</label>
+                <input type="text" class="form-control" [(ngModel)]="quarry.name" name="name" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label>Lokasyon</label>
+                <input type="text" class="form-control" [(ngModel)]="quarry.location" name="location">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Açıklama</label>
+            <textarea class="form-control" [(ngModel)]="quarry.description" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label>Enlem (Latitude)</label>
+                <input type="number" class="form-control" [(ngModel)]="quarry.latitude" name="latitude" step="0.000001">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label>Boylam (Longitude)</label>
+                <input type="number" class="form-control" [(ngModel)]="quarry.longitude" name="longitude" step="0.000001">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Koordinat Açıklaması</label>
+            <input type="text" class="form-control" [(ngModel)]="quarry.coordinateDescription" name="coordinateDescription">
+          </div>
+
+          <div class="form-group mb-3">
+            <label>Maden Mühendisi</label>
+            <select class="form-control" [(ngModel)]="quarry.miningEngineerId" name="miningEngineerId">
+              <option [value]="undefined">-- Seçiniz --</option>
+              <option *ngFor="let engineer of engineers" [value]="engineer.id">
+                {{engineer.firstName}} {{engineer.lastName}}
+              </option>
+            </select>
+          </div>
+        </form>
+
+        <div *ngIf="!isEditMode">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Ocak Adı:</strong> {{ quarry.name }}</p>
+              <p><strong>Lokasyon:</strong> {{ quarry.location || '-' }}</p>
+              <p><strong>Açıklama:</strong> {{ quarry.description || '-' }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Koordinatlar:</strong> 
+                <span *ngIf="quarry.latitude && quarry.longitude">
+                  {{ quarry.latitude }}, {{ quarry.longitude }}
+                </span>
+                <span *ngIf="!quarry.latitude || !quarry.longitude">-</span>
+              </p>
+              <p><strong>Koordinat Açıklaması:</strong> {{ quarry.coordinateDescription || '-' }}</p>
+              <p><strong>Maden Mühendisi:</strong> 
+                <span *ngIf="quarry.miningEngineer">
+                  {{ quarry.miningEngineer.firstName }} {{ quarry.miningEngineer.lastName }}
+                  <span *ngIf="quarry.miningEngineer.phone"> ({{ quarry.miningEngineer.phone }})</span>
+                </span>
+                <span *ngIf="!quarry.miningEngineer">-</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personeller Tab -->
+    <div *ngIf="activeTab === 'employees'" class="card">
+      <div class="card-body">
+        <h5>Ocakta Çalışan Personeller</h5>
+        <table class="table table-striped" *ngIf="quarry.employees && quarry.employees.length > 0">
+          <thead>
+            <tr>
+              <th>Ad Soyad</th>
+              <th>Pozisyon</th>
+              <th>Departman</th>
+              <th>Telefon</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of quarry.employees">
+              <td>{{ employee.firstName }} {{ employee.lastName }}</td>
+              <td>{{ employee.jobName || '-' }}</td>
+              <td>{{ employee.departmentName || '-' }}</td>
+              <td>{{ employee.phone || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!quarry.employees || quarry.employees.length === 0" class="text-muted">
+          Bu ocakta çalışan personel bulunmamaktadır.
+        </p>
+      </div>
+    </div>
+
+    <!-- Makinalar Tab -->
+    <div *ngIf="activeTab === 'machines'" class="card">
+      <div class="card-body">
+        <h5>Ocakta Çalışan Makinalar</h5>
+        <table class="table table-striped" *ngIf="quarry.machines && quarry.machines.length > 0">
+          <thead>
+            <tr>
+              <th>Ad</th>
+              <th>Seri No</th>
+              <th>Tip</th>
+              <th>Marka</th>
+              <th>Model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let machine of quarry.machines">
+              <td>{{ machine.name || '-' }}</td>
+              <td>{{ machine.serialNumber }}</td>
+              <td>{{ machine.machineTypeName || '-' }}</td>
+              <td>{{ machine.brandName || '-' }}</td>
+              <td>{{ machine.modelName || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!quarry.machines || quarry.machines.length === 0" class="text-muted">
+          Bu ocakta çalışan makina bulunmamaktadır.
+        </p>
+      </div>
+    </div>
+
+    <!-- Dosyalar Tab -->
+    <div *ngIf="activeTab === 'files'" class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Ocak Dosyaları</h5>
+          <button class="btn btn-primary">
+            <i class="fas fa-upload"></i> Dosya Yükle
+          </button>
+        </div>
+        <div class="row">
+          <div class="col-md-3" *ngFor="let file of quarry.quarryFiles">
+            <div class="card mb-3">
+              <div class="card-body text-center">
+                <i class="fas fa-file fa-3x mb-2"></i>
+                <p class="mb-1"><small>{{ file.fileName }}</small></p>
+                <button class="btn btn-sm btn-primary">Görüntüle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p *ngIf="!quarry.quarryFiles || quarry.quarryFiles.length === 0" class="text-muted">
+          Bu ocak için yüklenmiş dosya bulunmamaktadır.
+        </p>
+      </div>
+    </div>
+
+    <!-- Üretim Verileri Tab -->
+    <div *ngIf="activeTab === 'production'" class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5>Haftalık Üretim Verileri</h5>
+          <button class="btn btn-primary">
+            <i class="fas fa-plus"></i> Yeni Kayıt Ekle
+          </button>
+        </div>
+        <table class="table table-striped" *ngIf="quarry.quarryProductions && quarry.quarryProductions.length > 0">
+          <thead>
+            <tr>
+              <th>Hafta</th>
+              <th>Üretim</th>
+              <th>Stok</th>
+              <th>Satış</th>
+              <th>Notlar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let production of quarry.quarryProductions">
+              <td>{{ production.weekStartDate | date:'dd.MM.yyyy' }} - {{ production.weekEndDate | date:'dd.MM.yyyy' }}</td>
+              <td>{{ production.productionAmount }} {{ production.productionUnit }}</td>
+              <td>{{ production.stockAmount }} {{ production.stockUnit }}</td>
+              <td>{{ production.salesAmount }} {{ production.salesUnit }}</td>
+              <td>{{ production.notes || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p *ngIf="!quarry.quarryProductions || quarry.quarryProductions.length === 0" class="text-muted">
+          Bu ocak için üretim verisi bulunmamaktadır.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div *ngIf="!quarry" class="text-center mt-5">
+  <p class="text-muted">Yükleniyor...</p>
+</div>

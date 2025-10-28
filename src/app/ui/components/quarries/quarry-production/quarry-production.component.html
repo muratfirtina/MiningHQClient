@@ -1,0 +1,312 @@
+<div class="modern-production-page">
+  
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <button class="back-btn" (click)="back()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Geri</span>
+      </button>
+      <div class="page-title">
+        <h1>
+          <i class="fas fa-chart-line"></i>
+          Üretim Takibi
+        </h1>
+        <p *ngIf="quarry">
+          <i class="fas fa-mountain"></i>
+          {{quarry.name}}
+        </p>
+      </div>
+      <button class="add-btn" (click)="toggleAddForm()">
+        <i class="fas" [class.fa-plus]="!showAddForm" [class.fa-times]="showAddForm"></i>
+        <span>{{showAddForm ? 'İptal' : 'Yeni Kayıt'}}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card primary">
+        <div class="stat-icon">
+          <i class="fas fa-industry"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Toplam Üretim</span>
+          <span class="stat-value">{{totalProduction | number:'1.0-2'}} ton</span>
+        </div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-icon">
+          <i class="fas fa-boxes"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Toplam Stok</span>
+          <span class="stat-value">{{totalStock | number:'1.0-2'}} ton</span>
+        </div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-icon">
+          <i class="fas fa-hand-holding-usd"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Toplam Satış</span>
+          <span class="stat-value">{{totalSales | number:'1.0-2'}} ton</span>
+        </div>
+      </div>
+
+      <div class="stat-card info">
+        <div class="stat-icon">
+          <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Ortalama Üretim</span>
+          <span class="stat-value">{{averageProduction | number:'1.0-2'}} ton</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Production Form -->
+    <div class="add-form-card" *ngIf="showAddForm">
+      <div class="form-header">
+        <h3>
+          <i class="fas fa-plus-circle"></i>
+          Yeni Üretim Kaydı
+        </h3>
+      </div>
+      
+      <form class="production-form">
+        <div class="form-grid">
+          
+          <!-- Date Range -->
+          <div class="form-group">
+            <label for="weekStartDate">
+              <i class="fas fa-calendar-alt"></i>
+              Hafta Başlangıcı
+            </label>
+            <input type="date" 
+                   id="weekStartDate" 
+                   [(ngModel)]="newProduction.weekStartDate" 
+                   name="weekStartDate"
+                   class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label for="weekEndDate">
+              <i class="fas fa-calendar-alt"></i>
+              Hafta Bitişi
+            </label>
+            <input type="date" 
+                   id="weekEndDate" 
+                   [(ngModel)]="newProduction.weekEndDate" 
+                   name="weekEndDate"
+                   class="form-input">
+          </div>
+
+          <!-- Production -->
+          <div class="form-group">
+            <label for="productionAmount">
+              <i class="fas fa-industry"></i>
+              Üretim Miktarı
+            </label>
+            <div class="input-group">
+              <input type="number" 
+                     id="productionAmount" 
+                     [(ngModel)]="newProduction.productionAmount" 
+                     name="productionAmount"
+                     class="form-input"
+                     placeholder="0">
+              <select [(ngModel)]="newProduction.productionUnit" 
+                      name="productionUnit"
+                      class="form-select">
+                <option value="ton">ton</option>
+                <option value="m³">m³</option>
+                <option value="kg">kg</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Stock -->
+          <div class="form-group">
+            <label for="stockAmount">
+              <i class="fas fa-boxes"></i>
+              Stok Miktarı
+            </label>
+            <div class="input-group">
+              <input type="number" 
+                     id="stockAmount" 
+                     [(ngModel)]="newProduction.stockAmount" 
+                     name="stockAmount"
+                     class="form-input"
+                     placeholder="0">
+              <select [(ngModel)]="newProduction.stockUnit" 
+                      name="stockUnit"
+                      class="form-select">
+                <option value="ton">ton</option>
+                <option value="m³">m³</option>
+                <option value="kg">kg</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Sales -->
+          <div class="form-group">
+            <label for="salesAmount">
+              <i class="fas fa-hand-holding-usd"></i>
+              Satış Miktarı
+            </label>
+            <div class="input-group">
+              <input type="number" 
+                     id="salesAmount" 
+                     [(ngModel)]="newProduction.salesAmount" 
+                     name="salesAmount"
+                     class="form-input"
+                     placeholder="0">
+              <select [(ngModel)]="newProduction.salesUnit" 
+                      name="salesUnit"
+                      class="form-select">
+                <option value="ton">ton</option>
+                <option value="m³">m³</option>
+                <option value="kg">kg</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group full-width">
+            <label for="notes">
+              <i class="fas fa-sticky-note"></i>
+              Notlar
+            </label>
+            <textarea id="notes" 
+                      [(ngModel)]="newProduction.notes" 
+                      name="notes"
+                      class="form-textarea"
+                      rows="3"
+                      placeholder="Ek açıklama veya notlar..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="toggleAddForm()">
+            <i class="fas fa-times"></i>
+            İptal
+          </button>
+          <button type="button" class="btn btn-primary" (click)="saveProduction()">
+            <i class="fas fa-save"></i>
+            Kaydet
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Productions Table -->
+    <div class="table-card">
+      <div class="table-header">
+        <h3>
+          <i class="fas fa-list"></i>
+          Üretim Kayıtları
+        </h3>
+        <span class="record-count">{{productions.length}} kayıt</span>
+      </div>
+
+      <div class="table-container" *ngIf="productions && productions.length > 0">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>
+                <i class="fas fa-calendar"></i>
+                Hafta
+              </th>
+              <th>
+                <i class="fas fa-industry"></i>
+                Üretim
+              </th>
+              <th>
+                <i class="fas fa-boxes"></i>
+                Stok
+              </th>
+              <th>
+                <i class="fas fa-hand-holding-usd"></i>
+                Satış
+              </th>
+              <th>
+                <i class="fas fa-percentage"></i>
+                Verimlilik
+              </th>
+              <th>
+                <i class="fas fa-sticky-note"></i>
+                Notlar
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let production of productions; let i = index">
+              <td>
+                <span class="row-number">{{i + 1}}</span>
+              </td>
+              <td>
+                <div class="date-range">
+                  <span class="date-start">{{production.weekStartDate | date:'dd.MM.yyyy'}}</span>
+                  <i class="fas fa-arrow-right"></i>
+                  <span class="date-end">{{production.weekEndDate | date:'dd.MM.yyyy'}}</span>
+                </div>
+              </td>
+              <td>
+                <span class="amount-badge production">
+                  {{production.productionAmount | number:'1.0-2'}} {{production.productionUnit}}
+                </span>
+              </td>
+              <td>
+                <span class="amount-badge stock">
+                  {{production.stockAmount | number:'1.0-2'}} {{production.stockUnit}}
+                </span>
+              </td>
+              <td>
+                <span class="amount-badge sales">
+                  {{production.salesAmount | number:'1.0-2'}} {{production.salesUnit}}
+                </span>
+              </td>
+              <td>
+                <div class="efficiency-cell">
+                  <div class="efficiency-bar">
+                    <div class="efficiency-fill" 
+                         [style.width.%]="getEfficiencyPercentage(production)"
+                         [ngClass]="getEfficiencyClass(getEfficiencyPercentage(production))">
+                    </div>
+                  </div>
+                  <span class="efficiency-text">
+                    {{getEfficiencyPercentage(production) | number:'1.0-1'}}%
+                  </span>
+                </div>
+              </td>
+              <td>
+                <span class="notes-text" [title]="production.notes">
+                  {{production.notes || '-'}}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="!productions || productions.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>Henüz üretim kaydı yok</h3>
+        <p>Yeni üretim kaydı eklemek için yukarıdaki "Yeni Kayıt" butonuna tıklayın</p>
+        <button class="btn btn-primary" (click)="toggleAddForm()">
+          <i class="fas fa-plus"></i>
+          İlk Kaydı Ekle
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
