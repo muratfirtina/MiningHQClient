@@ -185,8 +185,90 @@
                       [(ngModel)]="newProduction.notes" 
                       name="notes"
                       class="form-textarea"
-                      rows="3"
+                      rows="2"
                       placeholder="Ek açıklama veya notlar..."></textarea>
+          </div>
+          
+          <!-- Location Section Header -->
+          <div class="form-section-header full-width">
+            <h4>
+              <i class="fas fa-map-marker-alt"></i>
+              Üretim Konumu (UTM 35T)
+            </h4>
+            <p>Sahadan aldığınız UTM koordinatlarını giriniz</p>
+          </div>
+          
+          <!-- UTM Easting -->
+          <div class="form-group">
+            <label for="utmEasting">
+              <i class="fas fa-arrows-alt-h"></i>
+              UTM Doğruluk (X)
+            </label>
+            <input type="number" 
+                   id="utmEasting" 
+                   [(ngModel)]="newProduction.utmEasting" 
+                   name="utmEasting"
+                   class="form-input"
+                   placeholder="Örn: 537824"
+                   step="0.01">
+          </div>
+          
+          <!-- UTM Northing -->
+          <div class="form-group">
+            <label for="utmNorthing">
+              <i class="fas fa-arrows-alt-v"></i>
+              UTM Kuzeyleme (Y)
+            </label>
+            <input type="number" 
+                   id="utmNorthing" 
+                   [(ngModel)]="newProduction.utmNorthing" 
+                   name="utmNorthing"
+                   class="form-input"
+                   placeholder="Örn: 4398652"
+                   step="0.01">
+          </div>
+          
+          <!-- Altitude -->
+          <div class="form-group">
+            <label for="altitude">
+              <i class="fas fa-mountain"></i>
+              Yükseklik (m)
+            </label>
+            <input type="number" 
+                   id="altitude" 
+                   [(ngModel)]="newProduction.altitude" 
+                   name="altitude"
+                   class="form-input"
+                   placeholder="Örn: 850"
+                   step="0.1">
+          </div>
+          
+          <!-- Pafta -->
+          <div class="form-group">
+            <label for="pafta">
+              <i class="fas fa-map"></i>
+              Pafta
+            </label>
+            <input type="text" 
+                   id="pafta" 
+                   [(ngModel)]="newProduction.pafta" 
+                   name="pafta"
+                   class="form-input"
+                   placeholder="Örn: L37-c3">
+          </div>
+          
+          <!-- Coordinate Description -->
+          <div class="form-group full-width">
+            <label for="coordinateDescription">
+              <i class="fas fa-info-circle"></i>
+              Konum Açıklaması
+            </label>
+            <input type="text" 
+                   id="coordinateDescription" 
+                   [(ngModel)]="newProduction.coordinateDescription" 
+                   name="coordinateDescription"
+                   class="form-input"
+                   placeholder="Örn: Kuzey Basamak, 3. Kademe">
           </div>
 
         </div>
@@ -240,8 +322,12 @@
                 Verimlilik
               </th>
               <th>
-                <i class="fas fa-sticky-note"></i>
-                Notlar
+                <i class="fas fa-map-marker-alt"></i>
+                Konum
+              </th>
+              <th>
+                <i class="fas fa-cog"></i>
+                İşlemler
               </th>
             </tr>
           </thead>
@@ -286,9 +372,31 @@
                 </div>
               </td>
               <td>
-                <span class="notes-text" [title]="production.notes">
-                  {{production.notes || '-'}}
-                </span>
+                <div class="location-cell">
+                  <span *ngIf="production.latitude && production.longitude" class="location-available">
+                    <i class="fas fa-check-circle"></i>
+                    Var
+                  </span>
+                  <span *ngIf="!production.latitude || !production.longitude" class="location-unavailable">
+                    <i class="fas fa-times-circle"></i>
+                    Yok
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-icon map" 
+                          *ngIf="production.latitude && production.longitude"
+                          (click)="showProductionMap(production)"
+                          title="Haritada Göster">
+                    <i class="fas fa-map"></i>
+                  </button>
+                  <span *ngIf="!production.latitude || !production.longitude" 
+                        class="no-map-text"
+                        title="Konum bilgisi yok">
+                    -
+                  </span>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -308,5 +416,62 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Map Modal -->
+<div class="map-modal" *ngIf="selectedProduction" (click)="closeMap()">
+  <div class="map-modal-content" (click)="$event.stopPropagation()">
+    <div class="map-modal-header">
+      <h3>
+        <i class="fas fa-map-marker-alt"></i>
+        Üretim Konumu
+      </h3>
+      <button class="close-btn" (click)="closeMap()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="map-modal-body">
+      <div class="location-info">
+        <div class="info-item">
+          <strong>Hafta:</strong>
+          {{selectedProduction.weekStartDate | date:'dd.MM.yyyy'}} - 
+          {{selectedProduction.weekEndDate | date:'dd.MM.yyyy'}}
+        </div>
+        <div class="info-item" *ngIf="selectedProduction.utmEasting && selectedProduction.utmNorthing">
+          <strong>UTM:</strong>
+          X: {{selectedProduction.utmEasting | number:'1.2-2'}}, 
+          Y: {{selectedProduction.utmNorthing | number:'1.2-2'}}
+        </div>
+        <div class="info-item" *ngIf="selectedProduction.altitude">
+          <strong>Yükseklik:</strong>
+          {{selectedProduction.altitude}} m
+        </div>
+        <div class="info-item" *ngIf="selectedProduction.pafta">
+          <strong>Pafta:</strong>
+          {{selectedProduction.pafta}}
+        </div>
+        <div class="info-item" *ngIf="selectedProduction.coordinateDescription">
+          <strong>Açıklama:</strong>
+          {{selectedProduction.coordinateDescription}}
+        </div>
+      </div>
+      <iframe 
+        [src]="getProductionMapUrl() | safe: 'resourceUrl'" 
+        width="100%" 
+        height="500" 
+        style="border:0;border-radius:12px;margin-top:1rem;" 
+        allowfullscreen="" 
+        loading="lazy">
+      </iframe>
+      <div class="map-actions">
+        <a [href]="'https://www.google.com/maps?q=' + selectedProduction.latitude + ',' + selectedProduction.longitude" 
+           target="_blank" 
+           class="btn btn-primary">
+          <i class="fas fa-external-link-alt"></i>
+          Google Maps'te Aç
+        </a>
+      </div>
+    </div>
   </div>
 </div>

@@ -9,4 +9,11 @@ export class CreateQuarryProduction {
     salesAmount: number;
     salesUnit?: string;
     notes?: string;
+    
+    // Konum bilgileri (UTM 35T)
+    utmEasting?: number;
+    utmNorthing?: number;
+    altitude?: number;
+    pafta?: string;
+    coordinateDescription?: string;
 }

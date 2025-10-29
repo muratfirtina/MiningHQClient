@@ -49,9 +49,36 @@ export class QuarryAddComponent extends BaseComponent implements OnInit {
     }
   }
 
-  async addQuarry(): Promise<void> {
+  validateQuarry(): boolean {
     if (!this.quarry.name || this.quarry.name.trim() === '') {
       this.toastr.error('Ocak adı zorunludur');
+      return false;
+    }
+
+    // UTM Validation
+    if (this.quarry.utmEasting || this.quarry.utmNorthing) {
+      if (!this.quarry.utmEasting || !this.quarry.utmNorthing) {
+        this.toastr.error('UTM koordinatları eksiksiz girilmelidir (hem X hem Y)');
+        return false;
+      }
+      
+      // Basic UTM validation for Zone 35T (Turkey)
+      if (this.quarry.utmEasting < 166000 || this.quarry.utmEasting > 833000) {
+        this.toastr.error('UTM Doğruluk (X) değeri 166,000 ile 833,000 arasında olmalıdır');
+        return false;
+      }
+      
+      if (this.quarry.utmNorthing < 0 || this.quarry.utmNorthing > 9329000) {
+        this.toastr.error('UTM Kuzeyleme (Y) değeri 0 ile 9,329,000 arasında olmalıdır');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  async addQuarry(): Promise<void> {
+    if (!this.validateQuarry()) {
       return;
     }
 
@@ -60,7 +87,9 @@ export class QuarryAddComponent extends BaseComponent implements OnInit {
     try {
       await this.quarryService.add(this.quarry);
       this.hideSpinner(SpinnerType.BallSpinClockwise);
-      this.toastr.success('Ocak başarıyla eklendi');
+      this.toastr.success('Ocak başarıyla eklendi', 'Başarılı', {
+        timeOut: 2000
+      });
       this.createdQuarry.emit(this.quarry);
       
       setTimeout(() => {
@@ -68,7 +97,7 @@ export class QuarryAddComponent extends BaseComponent implements OnInit {
       }, 1500);
     } catch (error) {
       this.hideSpinner(SpinnerType.BallSpinClockwise);
-      this.toastr.error('Ocak eklenemedi');
+      this.toastr.error('Ocak eklenemedi', 'Hata');
       console.error('Ocak ekleme hatası:', error);
     }
   }

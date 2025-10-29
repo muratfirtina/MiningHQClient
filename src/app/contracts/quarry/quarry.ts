@@ -3,9 +3,18 @@ export class Quarry {
     name: string;
     description?: string;
     location?: string;
+    
+    // Konum bilgileri (UTM 35T)
+    utmEasting?: number;
+    utmNorthing?: number;
+    altitude?: number;
+    pafta?: string;
+    
+    // Google Maps koordinatları (otomatik dönüştürülür)
     latitude?: number;
     longitude?: number;
     coordinateDescription?: string;
+    
     miningEngineerId?: string;
     miningEngineer?: MiningEngineerDto;
     employees?: EmployeeDto[];
@@ -60,4 +69,15 @@ export class QuarryProductionDto {
     salesAmount: number;
     salesUnit?: string;
     notes?: string;
+    
+    // Konum bilgileri (UTM 35T)
+    utmEasting?: number;
+    utmNorthing?: number;
+    altitude?: number;
+    pafta?: string;
+    
+    // Google Maps koordinatları
+    latitude?: number;
+    longitude?: number;
+    coordinateDescription?: string;
 }

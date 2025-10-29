@@ -78,16 +78,52 @@ export class QuarryDetailComponent extends BaseComponent implements OnInit {
     this.isEditMode = !this.isEditMode;
   }
 
+  validateQuarry(): boolean {
+    if (!this.quarry) return false;
+
+    if (!this.quarry.name || this.quarry.name.trim() === '') {
+      this.toastr.error('Ocak adı zorunludur');
+      return false;
+    }
+
+    // UTM Validation
+    if (this.quarry.utmEasting || this.quarry.utmNorthing) {
+      if (!this.quarry.utmEasting || !this.quarry.utmNorthing) {
+        this.toastr.error('UTM koordinatları eksiksiz girilmelidir (hem X hem Y)');
+        return false;
+      }
+      
+      // Basic UTM validation for Zone 35T (Turkey)
+      if (this.quarry.utmEasting < 166000 || this.quarry.utmEasting > 833000) {
+        this.toastr.error('UTM Doğruluk (X) değeri 166,000 ile 833,000 arasında olmalıdır');
+        return false;
+      }
+      
+      if (this.quarry.utmNorthing < 0 || this.quarry.utmNorthing > 9329000) {
+        this.toastr.error('UTM Kuzeyleme (Y) değeri 0 ile 9,329,000 arasında olmalıdır');
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   async saveChanges(): Promise<void> {
     if (!this.quarry) return;
+
+    if (!this.validateQuarry()) {
+      return;
+    }
 
     const updateQuarry: UpdateQuarry = {
       id: this.quarry.id,
       name: this.quarry.name,
       description: this.quarry.description,
       location: this.quarry.location,
-      latitude: this.quarry.latitude,
-      longitude: this.quarry.longitude,
+      utmEasting: this.quarry.utmEasting,
+      utmNorthing: this.quarry.utmNorthing,
+      altitude: this.quarry.altitude,
+      pafta: this.quarry.pafta,
       coordinateDescription: this.quarry.coordinateDescription,
       miningEngineerId: this.quarry.miningEngineerId
     };

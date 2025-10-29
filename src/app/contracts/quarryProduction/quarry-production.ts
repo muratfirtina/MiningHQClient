@@ -11,4 +11,15 @@ export class QuarryProduction {
     salesAmount: number;
     salesUnit?: string;
     notes?: string;
+    
+    // Konum bilgileri (UTM 35T)
+    utmEasting?: number;
+    utmNorthing?: number;
+    altitude?: number;
+    pafta?: string;
+    
+    // Google Maps koordinatları (otomatik dönüştürülür)
+    latitude?: number;
+    longitude?: number;
+    coordinateDescription?: string;
 }

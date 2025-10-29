@@ -10,11 +10,12 @@ import { QuarryProductionService } from 'src/app/services/common/models/quarry-p
 import { Quarry } from 'src/app/contracts/quarry/quarry';
 import { QuarryProduction } from 'src/app/contracts/quarryProduction/quarry-production';
 import { CreateQuarryProduction } from 'src/app/contracts/quarryProduction/create-quarry-production';
+import { SafePipe } from 'src/app/pipes/safe.pipe';
 
 @Component({
   selector: 'app-quarry-production',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SafePipe],
   templateUrl: './quarry-production.component.html',
   styleUrls: ['./quarry-production.component.scss']
 })
@@ -33,6 +34,9 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
   totalStock: number = 0;
   totalSales: number = 0;
   averageProduction: number = 0;
+  
+  // Map Modal
+  selectedProduction: QuarryProduction | null = null;
 
   constructor(
     spinner: NgxSpinnerService,
@@ -143,6 +147,25 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
       this.toastr.error('Miktarlar negatif olamaz');
       return false;
     }
+    
+    // UTM validation
+    if (this.newProduction.utmEasting || this.newProduction.utmNorthing) {
+      if (!this.newProduction.utmEasting || !this.newProduction.utmNorthing) {
+        this.toastr.error('UTM koordinatları eksiksiz girilmelidir (hem X hem Y)');
+        return false;
+      }
+      
+      // Basic UTM validation for Zone 35T (Turkey)
+      if (this.newProduction.utmEasting < 166000 || this.newProduction.utmEasting > 833000) {
+        this.toastr.error('UTM Doğruluk (X) değeri 166,000 ile 833,000 arasında olmalıdır');
+        return false;
+      }
+      
+      if (this.newProduction.utmNorthing < 0 || this.newProduction.utmNorthing > 9329000) {
+        this.toastr.error('UTM Kuzeyleme (Y) değeri 0 ile 9,329,000 arasında olmalıdır');
+        return false;
+      }
+    }
 
     return true;
   }
@@ -156,6 +179,22 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
     if (percentage < 50) return 'bg-danger';
     if (percentage < 80) return 'bg-warning';
     return 'bg-success';
+  }
+  
+  showProductionMap(production: QuarryProduction): void {
+    this.selectedProduction = production;
+  }
+  
+  closeMap(): void {
+    this.selectedProduction = null;
+  }
+  
+  getProductionMapUrl(): string {
+    if (!this.selectedProduction || !this.selectedProduction.latitude || !this.selectedProduction.longitude) {
+      return '';
+    }
+    
+    return `https://www.google.com/maps?q=${this.selectedProduction.latitude},${this.selectedProduction.longitude}&z=18&output=embed`;
   }
 
   back(): void {
