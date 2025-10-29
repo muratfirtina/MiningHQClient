@@ -11,6 +11,7 @@ export class QuarryProduction {
     salesAmount: number;
     salesUnit?: string;
     notes?: string;
+    cumulativeStock?: number;
     
     // Konum bilgileri (UTM 35T)
     utmEasting?: number;

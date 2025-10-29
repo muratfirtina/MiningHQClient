@@ -12,6 +12,19 @@ import { QuarryProduction } from 'src/app/contracts/quarryProduction/quarry-prod
 import { CreateQuarryProduction } from 'src/app/contracts/quarryProduction/create-quarry-production';
 import { SafePipe } from 'src/app/pipes/safe.pipe';
 
+interface ProductionWithCumulativeStock extends QuarryProduction {
+  cumulativeStock: number;
+}
+
+interface PeriodStats {
+  period: string;
+  totalProduction: number;
+  totalStock: number;
+  totalSales: number;
+  averageProduction: number;
+  recordCount: number;
+}
+
 @Component({
   selector: 'app-quarry-production',
   standalone: true,
@@ -23,7 +36,7 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
   
   quarryId: string = '';
   quarry: Quarry | null = null;
-  productions: QuarryProduction[] = [];
+  productions: ProductionWithCumulativeStock[] = [];
   
   // Add Production Form
   showAddForm: boolean = false;
@@ -34,6 +47,11 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
   totalStock: number = 0;
   totalSales: number = 0;
   averageProduction: number = 0;
+  
+  // Period Statistics
+  showStatsModal: boolean = false;
+  statsType: 'weekly' | 'monthly' | 'yearly' = 'weekly';
+  periodStats: PeriodStats[] = [];
   
   // Map Modal
   selectedProduction: QuarryProduction | null = null;
@@ -72,7 +90,29 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     try {
       const result = await this.productionService.list(0, 100, this.quarryId);
-      this.productions = result.items;
+      
+      // Sort by date (oldest first for cumulative calculation)
+      const sortedProductions = result.items.sort((a, b) => 
+        new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()
+      );
+      
+      // Calculate cumulative stock for each record
+      // FIXED: Remove stockAmount from calculation - it's already included in production-sales difference
+      let cumulativeStock = 0;
+      this.productions = sortedProductions.map(prod => {
+        // Her hafta: önceki toplam stok + üretim - satış
+        // stockAmount eklenmemeli çünkü o zaten (üretim - satış) sonucudur
+        cumulativeStock = cumulativeStock + prod.productionAmount - prod.salesAmount;
+        
+        return {
+          ...prod,
+          cumulativeStock: cumulativeStock
+        };
+      });
+      
+      // Reverse for display (newest first)
+      this.productions.reverse();
+      
       this.calculateStatistics();
       this.hideSpinner(SpinnerType.BallSpinClockwise);
     } catch (error) {
@@ -83,7 +123,7 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
 
   calculateStatistics(): void {
     this.totalProduction = this.productions.reduce((sum, p) => sum + p.productionAmount, 0);
-    this.totalStock = this.productions.reduce((sum, p) => sum + p.stockAmount, 0);
+    this.totalStock = this.productions.length > 0 ? this.productions[0].cumulativeStock : 0; // En son hafta
     this.totalSales = this.productions.reduce((sum, p) => sum + p.salesAmount, 0);
     this.averageProduction = this.productions.length > 0 ? this.totalProduction / this.productions.length : 0;
   }
@@ -117,6 +157,20 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
   async saveProduction(): Promise<void> {
     if (!this.validateForm()) {
       return;
+    }
+
+    // Stok hesaplama uyarısı göster
+    if (this.newProduction.salesAmount > this.newProduction.productionAmount) {
+      const deficit = this.newProduction.salesAmount - this.newProduction.productionAmount;
+      const confirmed = confirm(
+        `Satış miktarı (${this.newProduction.salesAmount} ton) üretimden (${this.newProduction.productionAmount} ton) fazla!\n\n` +
+        `Fark: ${deficit} ton\n\n` +
+        `Bu fark önceki stoktan düşülecektir. Devam etmek istiyor musunuz?`
+      );
+      
+      if (!confirmed) {
+        return;
+      }
     }
 
     this.showSpinner(SpinnerType.BallSpinClockwise);
@@ -179,6 +233,110 @@ export class QuarryProductionComponent extends BaseComponent implements OnInit {
     if (percentage < 50) return 'bg-danger';
     if (percentage < 80) return 'bg-warning';
     return 'bg-success';
+  }
+  
+  // Period Statistics Methods
+  showPeriodStats(type: 'weekly' | 'monthly' | 'yearly'): void {
+    this.statsType = type;
+    this.calculatePeriodStats();
+    this.showStatsModal = true;
+  }
+  
+  closePeriodStats(): void {
+    this.showStatsModal = false;
+  }
+  
+  calculatePeriodStats(): void {
+    this.periodStats = [];
+    
+    if (this.productions.length === 0) return;
+    
+    // Sort chronologically for calculation
+    const sortedProds = [...this.productions].sort((a, b) => 
+      new Date(a.weekStartDate).getTime() - new Date(b.weekStartDate).getTime()
+    );
+    
+    if (this.statsType === 'weekly') {
+      // Weekly stats (already have weekly data)
+      this.periodStats = sortedProds.map(prod => ({
+        period: `${this.formatDate(prod.weekStartDate)} - ${this.formatDate(prod.weekEndDate)}`,
+        totalProduction: prod.productionAmount,
+        totalStock: prod.cumulativeStock,
+        totalSales: prod.salesAmount,
+        averageProduction: prod.productionAmount,
+        recordCount: 1
+      })).reverse();
+    } else if (this.statsType === 'monthly') {
+      // Group by month
+      const monthlyData = new Map<string, ProductionWithCumulativeStock[]>();
+      
+      sortedProds.forEach(prod => {
+        const date = new Date(prod.weekStartDate);
+        const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+        
+        if (!monthlyData.has(monthKey)) {
+          monthlyData.set(monthKey, []);
+        }
+        monthlyData.get(monthKey)!.push(prod);
+      });
+      
+      monthlyData.forEach((prods, monthKey) => {
+        const [year, month] = monthKey.split('-');
+        const monthName = new Date(parseInt(year), parseInt(month) - 1).toLocaleString('tr-TR', { month: 'long', year: 'numeric' });
+        
+        this.periodStats.push({
+          period: monthName.charAt(0).toUpperCase() + monthName.slice(1),
+          totalProduction: prods.reduce((sum, p) => sum + p.productionAmount, 0),
+          totalStock: prods[prods.length - 1].cumulativeStock, // Son hafta stoku
+          totalSales: prods.reduce((sum, p) => sum + p.salesAmount, 0),
+          averageProduction: prods.reduce((sum, p) => sum + p.productionAmount, 0) / prods.length,
+          recordCount: prods.length
+        });
+      });
+      
+      this.periodStats.reverse();
+    } else if (this.statsType === 'yearly') {
+      // Group by year
+      const yearlyData = new Map<number, ProductionWithCumulativeStock[]>();
+      
+      sortedProds.forEach(prod => {
+        const year = new Date(prod.weekStartDate).getFullYear();
+        
+        if (!yearlyData.has(year)) {
+          yearlyData.set(year, []);
+        }
+        yearlyData.get(year)!.push(prod);
+      });
+      
+      yearlyData.forEach((prods, year) => {
+        this.periodStats.push({
+          period: `${year}`,
+          totalProduction: prods.reduce((sum, p) => sum + p.productionAmount, 0),
+          totalStock: prods[prods.length - 1].cumulativeStock, // Son hafta stoku
+          totalSales: prods.reduce((sum, p) => sum + p.salesAmount, 0),
+          averageProduction: prods.reduce((sum, p) => sum + p.productionAmount, 0) / prods.length,
+          recordCount: prods.length
+        });
+      });
+      
+      this.periodStats.reverse();
+    }
+  }
+  
+  formatDate(date: Date | string): string {
+    const d = new Date(date);
+    return `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear()}`;
+  }
+  
+  getStatsTitle(): string {
+    switch (this.statsType) {
+      case 'weekly':
+        return 'Haftalık İstatistikler';
+      case 'monthly':
+        return 'Aylık İstatistikler';
+      case 'yearly':
+        return 'Yıllık İstatistikler';
+    }
   }
   
   showProductionMap(production: QuarryProduction): void {

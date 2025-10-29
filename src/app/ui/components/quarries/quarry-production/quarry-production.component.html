@@ -43,7 +43,7 @@
           <i class="fas fa-boxes"></i>
         </div>
         <div class="stat-content">
-          <span class="stat-label">Toplam Stok</span>
+          <span class="stat-label">Mevcut Toplam Stok</span>
           <span class="stat-value">{{totalStock | number:'1.0-2'}} ton</span>
         </div>
       </div>
@@ -67,6 +67,22 @@
           <span class="stat-value">{{averageProduction | number:'1.0-2'}} ton</span>
         </div>
       </div>
+    </div>
+
+    <!-- Period Statistics Buttons -->
+    <div class="period-stats-buttons">
+      <button class="btn btn-outline-primary" (click)="showPeriodStats('weekly')">
+        <i class="fas fa-calendar-week"></i>
+        Haftalık İstatistikler
+      </button>
+      <button class="btn btn-outline-success" (click)="showPeriodStats('monthly')">
+        <i class="fas fa-calendar-alt"></i>
+        Aylık İstatistikler
+      </button>
+      <button class="btn btn-outline-info" (click)="showPeriodStats('yearly')">
+        <i class="fas fa-calendar"></i>
+        Yıllık İstatistikler
+      </button>
     </div>
 
     <!-- Add Production Form -->
@@ -133,7 +149,7 @@
           <div class="form-group">
             <label for="stockAmount">
               <i class="fas fa-boxes"></i>
-              Stok Miktarı
+              Bu Hafta Elde Kalan Stok
             </label>
             <div class="input-group">
               <input type="number" 
@@ -150,6 +166,10 @@
                 <option value="kg">kg</option>
               </select>
             </div>
+            <small class="form-text text-muted">
+              <i class="fas fa-info-circle"></i>
+              Satış > Üretim ise, fark otomatik olarak önceki stoktan düşülecektir
+            </small>
           </div>
 
           <!-- Sales -->
@@ -210,7 +230,7 @@
                    name="utmEasting"
                    class="form-input"
                    placeholder="Örn: 537824"
-                   step="0.01">
+                   step="1">
           </div>
           
           <!-- UTM Northing -->
@@ -225,7 +245,7 @@
                    name="utmNorthing"
                    class="form-input"
                    placeholder="Örn: 4398652"
-                   step="0.01">
+                   step="1">
           </div>
           
           <!-- Altitude -->
@@ -310,8 +330,12 @@
                 Üretim
               </th>
               <th>
+                <i class="fas fa-warehouse"></i>
+                Haftalık Stok
+              </th>
+              <th>
                 <i class="fas fa-boxes"></i>
-                Stok
+                Toplam Stok
               </th>
               <th>
                 <i class="fas fa-hand-holding-usd"></i>
@@ -351,6 +375,15 @@
               <td>
                 <span class="amount-badge stock">
                   {{production.stockAmount | number:'1.0-2'}} {{production.stockUnit}}
+                </span>
+              </td>
+              <td>
+                <span class="amount-badge total-stock" 
+                      [class.low-stock]="production.cumulativeStock < 100"
+                      [class.medium-stock]="production.cumulativeStock >= 100 && production.cumulativeStock < 500"
+                      [class.high-stock]="production.cumulativeStock >= 500">
+                  <i class="fas fa-layer-group"></i>
+                  {{production.cumulativeStock | number:'1.0-2'}} ton
                 </span>
               </td>
               <td>
@@ -419,6 +452,47 @@
   </div>
 </div>
 
+<!-- Period Statistics Modal -->
+<div class="stats-modal" *ngIf="showStatsModal" (click)="closePeriodStats()">
+  <div class="stats-modal-content" (click)="$event.stopPropagation()">
+    <div class="stats-modal-header">
+      <h3>
+        <i class="fas fa-chart-bar"></i>
+        {{ getStatsTitle() }}
+      </h3>
+      <button class="close-btn" (click)="closePeriodStats()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="stats-modal-body">
+      <div class="stats-table-container">
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Dönem</th>
+              <th>Toplam Üretim</th>
+              <th>Toplam Stok</th>
+              <th>Toplam Satış</th>
+              <th>Ortalama Üretim</th>
+              <th>Kayıt Sayısı</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let stat of periodStats">
+              <td><strong>{{ stat.period }}</strong></td>
+              <td>{{ stat.totalProduction | number:'1.0-2' }} ton</td>
+              <td>{{ stat.totalStock | number:'1.0-2' }} ton</td>
+              <td>{{ stat.totalSales | number:'1.0-2' }} ton</td>
+              <td>{{ stat.averageProduction | number:'1.0-2' }} ton</td>
+              <td>{{ stat.recordCount }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Map Modal -->
 <div class="map-modal" *ngIf="selectedProduction" (click)="closeMap()">
   <div class="map-modal-content" (click)="$event.stopPropagation()">
@@ -439,9 +513,9 @@
           {{selectedProduction.weekEndDate | date:'dd.MM.yyyy'}}
         </div>
         <div class="info-item" *ngIf="selectedProduction.utmEasting && selectedProduction.utmNorthing">
-          <strong>UTM:</strong>
-          X: {{selectedProduction.utmEasting | number:'1.2-2'}}, 
-          Y: {{selectedProduction.utmNorthing | number:'1.2-2'}}
+          <strong>GPS UTM:</strong>
+          X: {{selectedProduction.utmEasting}}, 
+          Y: {{selectedProduction.utmNorthing}}
         </div>
         <div class="info-item" *ngIf="selectedProduction.altitude">
           <strong>Yükseklik:</strong>
