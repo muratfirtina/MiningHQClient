@@ -156,10 +156,11 @@
               </div>
               <div class="info-item">
                 <label>Koordinatlar</label>
-                <span *ngIf="quarry.latitude && quarry.longitude">
-                  {{quarry.latitude}}, {{quarry.longitude}}
+                <span *ngIf="quarry.utmEasting && quarry.utmNorthing">
+                  {{quarry.utmEasting}}, {{quarry.utmNorthing}}
                 </span>
-                <span *ngIf="!quarry.latitude || !quarry.longitude">-</span>
+                <span *ngIf="!quarry.utmEasting || !quarry.utmNorthing">-</span>
+                <span>Yükseklik: {{quarry.altitude}}m Pafta: {{quarry.pafta}}</span>
               </div>
               <div class="info-item full-width">
                 <label>Koordinat Açıklaması</label>
@@ -384,10 +385,10 @@
               </iframe>
               <div class="map-info">
                 <i class="fas fa-map-marker-alt"></i> 
-                Koordinatlar: {{quarry.latitude}}, {{quarry.longitude}}
+                Koordinatlar: UTM: {{quarry.utmEasting}}, {{quarry.utmNorthing}} , WGS84: {{quarry.latitude}}, {{quarry.longitude}}
               </div>
             </div>
-            <div *ngIf="!quarry.latitude || !quarry.longitude" class="empty-state">
+            <div *ngIf="!quarry.utmEasting || !quarry.utmNorthing" class="empty-state">
               <i class="fas fa-map fa-4x"></i>
               <p>Bu ocak için koordinat bilgisi bulunmamaktadır</p>
             </div>
