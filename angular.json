@@ -79,10 +79,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "MiningHQClient:build:production"
+              "buildTarget": "MiningHQClient:build:production"
             },
             "development": {
-              "browserTarget": "MiningHQClient:build:development"
+              "buildTarget": "MiningHQClient:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -90,7 +90,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "MiningHQClient:build"
+            "buildTarget": "MiningHQClient:build"
           }
         },
         "test": {
