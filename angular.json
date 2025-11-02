@@ -19,7 +19,7 @@
           "options": {
             "outputPath": "dist/mining-hqclient",
             "allowedCommonJsDependencies": [
-              "jspdf", "jspdf-autotable"
+              "jspdf", "jspdf-autotable","html2canvas","dompurify"
            ],
             "index": "src/index.html",
             "main": "src/main.ts",

@@ -27,7 +27,6 @@ interface MachineFileWithSafeUrl extends ListImageFile {
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    FileUploadComponent,
     MatDialogModule,
     MatCardModule
   ],

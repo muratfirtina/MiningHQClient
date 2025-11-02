@@ -55,7 +55,6 @@ declare var $: any;
     FormsModule,
     ReactiveFormsModule,
     BloodTypeDisplayPipe,
-    FileUploadComponent,
     MatDialogModule,
   ],
   templateUrl: './employee-page.component.html',

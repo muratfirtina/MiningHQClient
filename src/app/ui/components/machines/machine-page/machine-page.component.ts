@@ -42,7 +42,6 @@ declare var $: any;
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    FileUploadComponent
   ],
   templateUrl: './machine-page.component.html',
   styleUrls: ['./machine-page.component.scss', '../../../../../styles.scss']

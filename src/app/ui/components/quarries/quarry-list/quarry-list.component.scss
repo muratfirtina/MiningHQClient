@@ -1,5 +1,5 @@
 /* Import quarries.component.scss styles */
-@import '../quarries/quarries.component.scss';
+@use '../quarries/quarries.component.scss';
 
 /* Additional styles specific to quarry-list */
 .row-number {

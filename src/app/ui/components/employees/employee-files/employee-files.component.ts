@@ -23,8 +23,6 @@ import { DomSanitizer } from '@angular/platform-browser';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    BloodTypeDisplayPipe,
-    FileUploadComponent,
     MatDialogModule,
     MatCardModule],
   templateUrl: './employee-files.component.html',
