@@ -1,0 +1,154 @@
+// MiningHQ Custom Theme - Poseidon Inspired
+// Theme Variables
+
+// ============================================
+// Primary Colors (Mining Industry Theme)
+// ============================================
+$primary-color: #1e88e5;           // Main blue
+$primary-lighter: #42a5f5;         // Lighter blue
+$primary-darker: #1565c0;          // Darker blue
+$primary-text: #ffffff;            // Text on primary
+
+// ============================================
+// Secondary Colors
+// ============================================
+$secondary-color: #455a64;         // Dark grey-blue
+$secondary-lighter: #607d8b;       // Lighter grey-blue
+$secondary-darker: #37474f;        // Darker grey-blue
+$secondary-text: #ffffff;          // Text on secondary
+
+// ============================================
+// Accent Colors
+// ============================================
+$accent-color: #ff9800;            // Orange (for warnings/highlights)
+$success-color: #4caf50;           // Green
+$warning-color: #ff9800;           // Orange
+$danger-color: #f44336;            // Red
+$info-color: #2196f3;              // Blue
+
+// ============================================
+// Layout Colors
+// ============================================
+$topbar-bg: #1e293b;               // Dark topbar background
+$topbar-text: #e2e8f0;             // Topbar text color
+$topbar-icon: #94a3b8;             // Topbar icon color
+
+$sidebar-bg: #0f172a;              // Dark sidebar background
+$sidebar-text: #cbd5e1;            // Sidebar text color
+$sidebar-icon: #64748b;            // Sidebar icon color
+$sidebar-hover-bg: #1e293b;        // Sidebar item hover
+$sidebar-active-bg: #1e88e5;       // Sidebar active item
+
+$content-bg: #f1f5f9;              // Main content background
+$card-bg: #ffffff;                 // Card background
+$card-border: #e2e8f0;             // Card border
+
+// ============================================
+// Typography
+// ============================================
+$font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$font-size-base: 14px;
+$font-size-lg: 16px;
+$font-size-sm: 12px;
+$font-size-xs: 11px;
+
+$heading-color: #1e293b;
+$text-color: #334155;
+$text-secondary-color: #64748b;
+$text-muted-color: #94a3b8;
+
+// ============================================
+// Spacing
+// ============================================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// ============================================
+// Border Radius
+// ============================================
+$border-radius: 8px;
+$border-radius-sm: 4px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+
+// ============================================
+// Shadows
+// ============================================
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+// ============================================
+// Transitions
+// ============================================
+$transition-duration: 0.3s;
+$transition-timing: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+// ============================================
+// Layout Dimensions
+// ============================================
+$topbar-height: 60px;
+$sidebar-width: 250px;
+$sidebar-collapsed-width: 80px;
+
+// ============================================
+// Breakpoints
+// ============================================
+$breakpoint-xs: 576px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 992px;
+$breakpoint-lg: 1200px;
+$breakpoint-xl: 1400px;
+
+// ============================================
+// Table Colors
+// ============================================
+$table-header-bg: #f8fafc;
+$table-header-text: #475569;
+$table-border: #e2e8f0;
+$table-hover-bg: #f8fafc;
+$table-stripe-bg: #fafbfc;
+
+// ============================================
+// Form Colors
+// ============================================
+$input-bg: #ffffff;
+$input-border: #cbd5e1;
+$input-border-focus: #1e88e5;
+$input-placeholder: #94a3b8;
+$input-disabled-bg: #f1f5f9;
+
+// ============================================
+// Button Colors
+// ============================================
+$button-primary-bg: $primary-color;
+$button-primary-hover: $primary-darker;
+$button-secondary-bg: $secondary-color;
+$button-secondary-hover: $secondary-darker;
+
+// ============================================
+// Badge & Tag Colors
+// ============================================
+$badge-primary-bg: #dbeafe;
+$badge-primary-text: #1e40af;
+$badge-success-bg: #dcfce7;
+$badge-success-text: #166534;
+$badge-warning-bg: #fef3c7;
+$badge-warning-text: #92400e;
+$badge-danger-bg: #fee2e2;
+$badge-danger-text: #991b1b;
+
+// ============================================
+// z-index Layers
+// ============================================
+$z-sidebar: 1000;
+$z-topbar: 1001;
+$z-dropdown: 1002;
+$z-modal: 1050;
+$z-overlay: 1040;
+$z-toast: 1060;

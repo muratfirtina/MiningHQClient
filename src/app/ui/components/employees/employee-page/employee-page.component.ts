@@ -71,6 +71,8 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
   quarries: Quarry[] = [];
   employeeForm: FormGroup;
   employeeImages: ListImageFile;
+  isEditMode: boolean = false;
+  originalFormValues: any;
 
   // Kan grubu seçenekleri
   bloodTypeOptions = [
@@ -187,8 +189,24 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
           address: this.employee.address,
         });
         
+        // Orijinal form değerlerini sakla
+        this.originalFormValues = this.employeeForm.value;
+        // Düzenleme modunu kapat
+        this.isEditMode = false;
+        
         console.log('Form patched values:', this.employeeForm.value);
       });
+  }
+
+  enableEditMode() {
+    this.isEditMode = true;
+  }
+
+  cancelEdit() {
+    // Form değerlerini orijinal değerlere geri döndür
+    this.employeeForm.patchValue(this.originalFormValues);
+    this.isEditMode = false;
+    this.toastr.info('Değişiklikler iptal edildi.');
   }
 
   async updateEmployee(formValue: any) {
@@ -226,6 +244,7 @@ export class EmployeePageComponent extends BaseComponent implements OnInit {
       update_employee,
       () => {
         this.loadEmployeeDetails(this.employee.id);
+        this.isEditMode = false;
         this.toastr.success('Çalışan başarıyla güncellendi.');
       },
       (errorMessage: string) => {

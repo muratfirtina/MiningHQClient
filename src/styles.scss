@@ -1,78 +1,418 @@
-.input{
-  background-color: rgba(224, 201, 103, 0.33);
+// ============================================
+// PrimeNG Icons Import
+// ============================================
+@import '~primeicons/primeicons.css';
+
+// ============================================
+// Poseidon Theme - Google Fonts
+// ============================================
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+// ============================================
+// Poseidon Theme - CSS Variables
+// ============================================
+:root {
+  // Primary Blue Colors
+  --p-primary-50: #eff6ff;
+  --p-primary-100: #dbeafe;
+  --p-primary-200: #bfdbfe;
+  --p-primary-300: #93c5fd;
+  --p-primary-400: #60a5fa;
+  --p-primary-500: #3b82f6;
+  --p-primary-600: #2563eb;
+  --p-primary-700: #1d4ed8;
+  --p-primary-800: #1e40af;
+  --p-primary-900: #1e3a8a;
+  --p-primary-950: #172554;
+
+  // Surface/Gray Colors
+  --p-surface-0: #ffffff;
+  --p-surface-50: #f8fafc;
+  --p-surface-100: #f1f5f9;
+  --p-surface-200: #e2e8f0;
+  --p-surface-300: #cbd5e1;
+  --p-surface-400: #94a3b8;
+  --p-surface-500: #64748b;
+  --p-surface-600: #475569;
+  --p-surface-700: #334155;
+  --p-surface-800: #1e293b;
+  --p-surface-900: #0f172a;
+  --p-surface-950: #020617;
+
+  // Accent Colors
+  --p-orange-400: #fb923c;
+  --p-orange-500: #f97316;
+  --p-orange-600: #ea580c;
+  
+  --p-yellow-400: #facc15;
+  --p-yellow-500: #eab308;
+  --p-yellow-600: #ca8a04;
+  
+  --p-green-400: #4ade80;
+  --p-green-500: #22c55e;
+  --p-green-600: #16a34a;
+  
+  --p-red-400: #f87171;
+  --p-red-500: #ef4444;
+  --p-red-600: #dc2626;
+
+  // Poseidon Theme Variables
+  --primary-color: var(--p-primary-500);
+  --primary-contrast-color: #ffffff;
+  --text-color: var(--p-surface-700);
+  --text-muted-color: var(--p-surface-500);
+  --surface-ground: linear-gradient(180deg, #e0e7f5 0%, rgba(224, 231, 245, 0.3) 100%);
+  --surface-card: #ffffff;
+  --surface-border: var(--p-surface-200);
+  --surface-hover: var(--p-surface-50);
+  
+  // Sidebar Colors
+  --sidebar-bg: #f8fafc;
+  --sidebar-text: var(--p-surface-700);
+  --sidebar-hover: var(--p-surface-100);
+  --sidebar-active: var(--p-primary-50);
+  --sidebar-active-text: var(--p-primary-700);
+  
+  // Shadow
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  // Border Radius
+  --border-radius-sm: 0.375rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --border-radius-xl: 1rem;
+  
+  // Transitions
+  --transition-duration: 0.2s;
 }
+
+// ============================================
+// Global Reset & Base Styles
+// ============================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+  height: 100%;
+}
+
+body {
+  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  color: var(--text-color);
+  background: var(--surface-ground);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  height: 100%;
+}
+
+// ============================================
+// Typography Utilities
+// ============================================
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+.text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+
+.font-light { font-weight: 300; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.text-muted { color: var(--text-muted-color); }
+
+// ============================================
+// Card Styles (Poseidon Style)
+// ============================================
+.card, .p-card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: all var(--transition-duration);
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.p-card-body {
+  padding: 0;
+}
+
+.p-card-content {
+  padding: 0;
+}
+
+// ============================================
+// Button Styles (Poseidon Style)
+// ============================================
+.p-button {
+  font-family: 'Figtree', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-duration);
+  
+  &.p-button-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    
+    &:hover {
+      background: var(--p-primary-600);
+      border-color: var(--p-primary-600);
+    }
+  }
+}
+
+// ============================================
+// Layout Container
+// ============================================
+.layout-wrapper {
+  min-height: 100vh;
+  background: var(--surface-ground);
+}
+
+// ============================================
+// Spacing Utilities
+// ============================================
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 0.75rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+
+// ============================================
+// Color Utilities
+// ============================================
+.text-primary { color: var(--primary-color); }
+.text-muted { color: var(--text-muted-color); }
+.bg-primary { background-color: var(--primary-color); }
+.bg-surface { background-color: var(--surface-card); }
+
+// ============================================
+// Grid & Flexbox Utilities
+// ============================================
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+
+// ============================================
+// Width & Height Utilities
+// ============================================
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+// ============================================
+// Border Radius Utilities
+// ============================================
+.rounded { border-radius: var(--border-radius-sm); }
+.rounded-md { border-radius: var(--border-radius-md); }
+.rounded-lg { border-radius: var(--border-radius-lg); }
+.rounded-xl { border-radius: var(--border-radius-xl); }
+
+// ============================================
+// Shadow Utilities
+// ============================================
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+// ============================================
+// Remove default styles
+// ============================================
+.input {
+  background-color: transparent;
+}
+
 .form-control:focus {
-  color: var(--bs-body-color);
-  background-color: var(--bs-body-bg);
-  border-color: #ffc107;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem #ffc1074a;
-} /* You can add global styles to this file, and also import other style files */
-
-.form-select:focus {
-  color: var(--bs-body-color);
-  background-color: var(--bs-body-bg);
-  border-color: #ffc107;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem #ffc1074a;
-}
-.dropdown-item{
-  color: #003353 ;
+  box-shadow: none;
+  border-color: var(--primary-color);
 }
 
-.dropdown-item:active {
-  text-decoration: none;
-  background-color: #ffc107;
+// ============================================
+// PrimeNG Overrides for Poseidon Theme
+// ============================================
+
+// Panel/Card overrides
+.p-panel {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
-.dropdown-menu {
-  border-radius: 10%;
-  position: absolute;
-  inset: 0px auto auto 0px;
-  margin: 0px;
-  transform: translate3d(5px, 38px, 0px) !important;
-  background-color: #ffcd39;
-  color: #003353;
-}
-.dropdown-item:hover{
-  background-color: #dea702;
-  color: #003353;
+.p-panel-header {
+  background: transparent;
+  border: none;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--surface-border);
 }
 
-
-
-.link-secondary {
-    color: wheat !important;
-}
-.link-secondary:hover{
-    color: #ffc107 !important;
+.p-panel-content {
+  padding: 1.25rem;
+  background: transparent;
 }
 
-.btn-primary {
-  /* margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 20px; */
-  box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
-   rgba(253, 253, 253, 0.5) 5px 10px 15px;
-}
-.btn-primary:hover{
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
-      rgba(2, 111, 245, 0.378) 5px 5px 15px;
+// Table overrides
+.p-datatable {
+  background: var(--surface-card);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
   
-}
-.btn-danger {
-  /* margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 20px; */
-  box-shadow: rgba(255, 255, 255, 0.35) 0px 5px 15px,
-   rgba(253, 253, 253, 0.5) 5px 10px 15px;
-}
-.btn-danger:hover{
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 15px,
-      rgba(253, 31, 1, 0.378) 5px 5px 15px;
+  .p-datatable-header {
+    background: transparent;
+    border: none;
+    padding: 1rem;
+  }
   
+  .p-datatable-thead > tr > th {
+    background: var(--surface-50);
+    color: var(--text-color);
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 1px solid var(--surface-border);
+  }
+  
+  .p-datatable-tbody > tr {
+    background: transparent;
+    
+    &:hover {
+      background: var(--surface-hover);
+    }
+    
+    > td {
+      padding: 0.75rem 1rem;
+      border: none;
+      border-bottom: 1px solid var(--surface-border);
+    }
+  }
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Input overrides
+.p-inputtext {
+  font-family: 'Figtree', sans-serif;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-0);
+  border: 1px solid var(--surface-300);
+  border-radius: var(--border-radius-md);
+  color: var(--text-color);
+  
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+  }
+}
 
+// Dropdown overrides
+.p-dropdown {
+  background: var(--surface-0);
+  border: 1px solid var(--surface-300);
+  border-radius: var(--border-radius-md);
+  
+  &:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+// ============================================
+// Scrollbar Styling
+// ============================================
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-400);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--surface-500);
+  }
+}
+
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-400) var(--surface-100);
+}
+
+// ============================================
+// Animation Classes
+// ============================================
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// Responsive Utilities
+// ============================================
+@media (max-width: 768px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,408 @@
+// MiningHQ Custom Theme - Main Theme File
+// Inspired by Poseidon Design
+
+@import 'variables';
+
+// ============================================
+// Global Styles
+// ============================================
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $font-family;
+  font-size: $font-size-base;
+  color: $text-color;
+  background-color: $content-bg;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ============================================
+// Typography
+// ============================================
+h1, h2, h3, h4, h5, h6 {
+  color: $heading-color;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: $spacing-md;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-duration $transition-timing;
+  
+  &:hover {
+    color: $primary-darker;
+  }
+}
+
+// ============================================
+// Utility Classes
+// ============================================
+.text-primary { color: $primary-color !important; }
+.text-secondary { color: $secondary-color !important; }
+.text-success { color: $success-color !important; }
+.text-warning { color: $warning-color !important; }
+.text-danger { color: $danger-color !important; }
+.text-info { color: $info-color !important; }
+.text-muted { color: $text-muted-color !important; }
+
+.bg-primary { background-color: $primary-color !important; }
+.bg-secondary { background-color: $secondary-color !important; }
+.bg-success { background-color: $success-color !important; }
+.bg-warning { background-color: $warning-color !important; }
+.bg-danger { background-color: $danger-color !important; }
+.bg-info { background-color: $info-color !important; }
+
+// ============================================
+// Card Component
+// ============================================
+.card {
+  background: $card-bg;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  border: 1px solid $card-border;
+  overflow: hidden;
+  
+  &-header {
+    padding: $spacing-lg;
+    border-bottom: 1px solid $card-border;
+    background: $card-bg;
+    
+    h3, h4, h5 {
+      margin: 0;
+      font-weight: 600;
+      color: $heading-color;
+    }
+  }
+  
+  &-body {
+    padding: $spacing-lg;
+  }
+  
+  &-footer {
+    padding: $spacing-lg;
+    border-top: 1px solid $card-border;
+    background: $table-header-bg;
+  }
+  
+  &.card-hover {
+    transition: all $transition-duration $transition-timing;
+    
+    &:hover {
+      box-shadow: $shadow-lg;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// ============================================
+// Button Overrides for PrimeNG
+// ============================================
+.p-button {
+  font-weight: 500;
+  border-radius: $border-radius-sm;
+  transition: all $transition-duration $transition-timing;
+  
+  &.p-button-primary {
+    background: $button-primary-bg;
+    border-color: $button-primary-bg;
+    
+    &:hover:not(:disabled) {
+      background: $button-primary-hover;
+      border-color: $button-primary-hover;
+    }
+  }
+  
+  &.p-button-secondary {
+    background: $button-secondary-bg;
+    border-color: $button-secondary-bg;
+    
+    &:hover:not(:disabled) {
+      background: $button-secondary-hover;
+      border-color: $button-secondary-hover;
+    }
+  }
+  
+  &.p-button-success {
+    background: $success-color;
+    border-color: $success-color;
+  }
+  
+  &.p-button-warning {
+    background: $warning-color;
+    border-color: $warning-color;
+  }
+  
+  &.p-button-danger {
+    background: $danger-color;
+    border-color: $danger-color;
+  }
+  
+  &.p-button-sm {
+    padding: 0.5rem 1rem;
+    font-size: $font-size-sm;
+  }
+  
+  &.p-button-lg {
+    padding: 0.875rem 1.5rem;
+    font-size: $font-size-lg;
+  }
+}
+
+// ============================================
+// Table Overrides for PrimeNG
+// ============================================
+.p-datatable {
+  .p-datatable-header {
+    background: $table-header-bg;
+    color: $table-header-text;
+    border: 1px solid $table-border;
+    padding: $spacing-md;
+    font-weight: 600;
+  }
+  
+  .p-datatable-thead > tr > th {
+    background: $table-header-bg;
+    color: $table-header-text;
+    border: 1px solid $table-border;
+    padding: $spacing-md;
+    font-weight: 600;
+    font-size: $font-size-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .p-datatable-tbody > tr {
+    &:hover {
+      background: $table-hover-bg !important;
+    }
+    
+    > td {
+      border: 1px solid $table-border;
+      padding: $spacing-md;
+    }
+  }
+  
+  &.p-datatable-striped {
+    .p-datatable-tbody > tr:nth-child(even) {
+      background: $table-stripe-bg;
+    }
+  }
+}
+
+// ============================================
+// Form Controls for PrimeNG
+// ============================================
+.p-inputtext,
+.p-dropdown,
+.p-multiselect,
+.p-calendar .p-inputtext {
+  border-radius: $border-radius-sm;
+  border: 1px solid $input-border;
+  padding: 0.75rem;
+  font-size: $font-size-base;
+  transition: all $transition-duration $transition-timing;
+  
+  &:enabled:focus {
+    border-color: $input-border-focus;
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+  }
+  
+  &:disabled {
+    background: $input-disabled-bg;
+    cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: $input-placeholder;
+  }
+}
+
+// ============================================
+// Badge & Tag for PrimeNG
+// ============================================
+.p-badge {
+  border-radius: $border-radius-sm;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  font-size: $font-size-xs;
+  
+  &.p-badge-primary {
+    background: $badge-primary-bg;
+    color: $badge-primary-text;
+  }
+  
+  &.p-badge-success {
+    background: $badge-success-bg;
+    color: $badge-success-text;
+  }
+  
+  &.p-badge-warning {
+    background: $badge-warning-bg;
+    color: $badge-warning-text;
+  }
+  
+  &.p-badge-danger {
+    background: $badge-danger-bg;
+    color: $badge-danger-text;
+  }
+}
+
+// ============================================
+// Panel for PrimeNG
+// ============================================
+.p-panel {
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  border: 1px solid $card-border;
+  
+  .p-panel-header {
+    background: $table-header-bg;
+    border-bottom: 1px solid $card-border;
+    padding: $spacing-md $spacing-lg;
+    font-weight: 600;
+  }
+  
+  .p-panel-content {
+    padding: $spacing-lg;
+  }
+}
+
+// ============================================
+// Dialog for PrimeNG
+// ============================================
+.p-dialog {
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-xl;
+  
+  .p-dialog-header {
+    background: $table-header-bg;
+    border-bottom: 1px solid $card-border;
+    padding: $spacing-lg;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    
+    .p-dialog-title {
+      font-weight: 600;
+      font-size: $font-size-lg;
+      color: $heading-color;
+    }
+  }
+  
+  .p-dialog-content {
+    padding: $spacing-lg;
+  }
+  
+  .p-dialog-footer {
+    padding: $spacing-lg;
+    border-top: 1px solid $card-border;
+    background: $table-header-bg;
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
+  }
+}
+
+// ============================================
+// Menu for PrimeNG
+// ============================================
+.p-menu {
+  border-radius: $border-radius;
+  box-shadow: $shadow-lg;
+  border: 1px solid $card-border;
+  
+  .p-menuitem-link {
+    padding: 0.75rem 1rem;
+    transition: background $transition-duration $transition-timing;
+    
+    &:hover {
+      background: $table-hover-bg;
+    }
+    
+    .p-menuitem-icon {
+      color: $sidebar-icon;
+      margin-right: $spacing-sm;
+    }
+  }
+}
+
+// ============================================
+// Toast for PrimeNG
+// ============================================
+.p-toast {
+  .p-toast-message {
+    border-radius: $border-radius;
+    box-shadow: $shadow-lg;
+    
+    &.p-toast-message-success {
+      background: $success-color;
+      border: 1px solid darken($success-color, 10%);
+    }
+    
+    &.p-toast-message-warn {
+      background: $warning-color;
+      border: 1px solid darken($warning-color, 10%);
+    }
+    
+    &.p-toast-message-error {
+      background: $danger-color;
+      border: 1px solid darken($danger-color, 10%);
+    }
+    
+    &.p-toast-message-info {
+      background: $info-color;
+      border: 1px solid darken($info-color, 10%);
+    }
+  }
+}
+
+// ============================================
+// Responsive Utilities
+// ============================================
+@media (max-width: $breakpoint-md) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: $breakpoint-md) {
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+// ============================================
+// Scrollbar Styling
+// ============================================
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $content-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $sidebar-icon;
+  border-radius: 4px;
+  
+  &:hover {
+    background: $secondary-color;
+  }
+}

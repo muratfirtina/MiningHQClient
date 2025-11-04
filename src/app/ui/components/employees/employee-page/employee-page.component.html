@@ -69,6 +69,11 @@
             <i class="fas fa-folder-open"></i>
             <span>Dosyalar</span>
           </button>
+          
+          <button *ngIf="!isEditMode" class="action-btn success" (click)="enableEditMode()">
+            <i class="fas fa-edit"></i>
+            <span>Düzenle</span>
+          </button>
         </div>
       </div>
 
@@ -94,6 +99,7 @@
                 <input type="text" 
                        id="firstName" 
                        formControlName="firstName" 
+                       [disabled]="!isEditMode"
                        class="form-input"
                        placeholder="Adını giriniz">
               </div>
@@ -103,6 +109,7 @@
                 <input type="text" 
                        id="lastName" 
                        formControlName="lastName" 
+                       [disabled]="!isEditMode"
                        class="form-input"
                        placeholder="Soyadını giriniz">
               </div>
@@ -112,6 +119,7 @@
                 <input type="date" 
                        id="birthDate" 
                        formControlName="birthDate" 
+                       [disabled]="!isEditMode"
                        class="form-input">
               </div>
 
@@ -120,6 +128,7 @@
                 <input type="tel" 
                        id="phone" 
                        formControlName="phone" 
+                       [disabled]="!isEditMode"
                        class="form-input"
                        placeholder="(5XX) XXX XX XX">
               </div>
@@ -147,6 +156,7 @@
                 <label for="jobName">Meslek</label>
                 <select id="jobName" 
                         formControlName="jobName" 
+                        [disabled]="!isEditMode"
                         class="form-select">
                   <option value="">Meslek seçiniz</option>
                   <option *ngFor="let job of jobs" [value]="job.name">
@@ -159,6 +169,7 @@
                 <label for="quarryName">Ocak</label>
                 <select id="quarryName" 
                         formControlName="quarryName" 
+                        [disabled]="!isEditMode"
                         class="form-select">
                   <option value="">Ocak seçiniz</option>
                   <option *ngFor="let quarry of quarries" [value]="quarry.name">
@@ -172,6 +183,7 @@
                 <input type="date" 
                        id="hireDate" 
                        formControlName="hireDate" 
+                       [disabled]="!isEditMode"
                        class="form-input">
               </div>
 
@@ -180,6 +192,7 @@
                 <input type="date" 
                        id="departureDate" 
                        formControlName="departureDate" 
+                       [disabled]="!isEditMode"
                        class="form-input">
               </div>
 
@@ -187,6 +200,7 @@
                 <label for="licenseType">Ehliyet Tipi</label>
                 <select id="licenseType" 
                         formControlName="licenseType" 
+                        [disabled]="!isEditMode"
                         class="form-select">
                   <option *ngFor="let option of licenseTypeOptions" [value]="option.key">
                     {{option.display}}
@@ -199,6 +213,7 @@
                 <label for="operatorLicense">Operatör Lisansı</label>
                 <select id="operatorLicense" 
                         formControlName="operatorLicense" 
+                        [disabled]="!isEditMode"
                         class="form-select">
                   <option *ngFor="let option of operatorLicenseOptions" [value]="option.key">
                     {{option.display}}
@@ -220,6 +235,7 @@
                 <label for="typeOfBlood">Kan Grubu</label>
                 <select id="typeOfBlood" 
                         formControlName="typeOfBlood" 
+                        [disabled]="!isEditMode"
                         class="form-select">
                   <option *ngFor="let option of bloodTypeOptions" [value]="option.key">
                     {{option.display}}
@@ -232,6 +248,7 @@
                 <input type="tel" 
                        id="emergencyContact" 
                        formControlName="emergencyContact" 
+                       [disabled]="!isEditMode"
                        class="form-input"
                        placeholder="Acil durum telefonu">
               </div>
@@ -240,6 +257,7 @@
                 <label for="address">Ev Adresi</label>
                 <textarea id="address" 
                           formControlName="address" 
+                          [disabled]="!isEditMode"
                           class="form-textarea"
                           rows="3"
                           placeholder="Tam adres bilgisini giriniz"></textarea>
@@ -248,10 +266,10 @@
           </div>
 
           <!-- Form Actions -->
-          <div class="form-actions">
+          <div class="form-actions" *ngIf="isEditMode">
             <button type="button" 
                     class="btn btn-secondary" 
-                    (click)="goBack()">
+                    (click)="cancelEdit()">
               <i class="fas fa-times"></i>
               İptal
             </button>
