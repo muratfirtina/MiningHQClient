@@ -1,1 +1,179 @@
-<p>users works!</p>
+<div class="container-fluid p-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="mb-0">Kullanıcı Yönetimi</h3>
+      <button
+        pButton
+        type="button"
+        label="Yeni Kullanıcı"
+        icon="pi pi-plus"
+        class="p-button-success"
+        (click)="openCreateDialog()">
+      </button>
+    </div>
+
+    <div class="card-body">
+      <p-table
+        [value]="users"
+        [paginator]="true"
+        [rows]="pageSize"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="onPageChange($event)"
+        [loading]="false"
+        styleClass="p-datatable-gridlines"
+        [tableStyle]="{ 'min-width': '50rem' }">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 3rem">#</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Email</th>
+            <th>Roller</th>
+            <th>Durum</th>
+            <th style="width: 10rem">İşlemler</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ rowIndex + 1 + (pageIndex * pageSize) }}</td>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <p-tag
+                *ngFor="let role of getUserRoles(user.id)"
+                [value]="role.name"
+                severity="info"
+                class="me-1">
+              </p-tag>
+            </td>
+            <td>
+              <p-tag
+                [value]="user.status ? 'Aktif' : 'Pasif'"
+                [severity]="user.status ? 'success' : 'danger'">
+              </p-tag>
+            </td>
+            <td>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-warning me-2"
+                (click)="openEditDialog(user)"
+                pTooltip="Düzenle"
+                tooltipPosition="top">
+              </button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-danger"
+                (click)="confirmDelete(user)"
+                pTooltip="Sil"
+                tooltipPosition="top">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">Kullanıcı bulunamadı</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- User Create/Edit Dialog -->
+<p-dialog
+  [(visible)]="displayDialog"
+  [header]="dialogMode === 'create' ? 'Yeni Kullanıcı Ekle' : 'Kullanıcı Düzenle'"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div class="p-fluid">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="firstName" class="form-label">Ad <span class="text-danger">*</span></label>
+        <input
+          pInputText
+          id="firstName"
+          [(ngModel)]="userForm.firstName"
+          placeholder="Ad"
+          class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label for="lastName" class="form-label">Soyad <span class="text-danger">*</span></label>
+        <input
+          pInputText
+          id="lastName"
+          [(ngModel)]="userForm.lastName"
+          placeholder="Soyad"
+          class="form-control">
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+      <input
+        pInputText
+        id="email"
+        type="email"
+        [(ngModel)]="userForm.email"
+        placeholder="email@example.com"
+        class="form-control">
+    </div>
+
+    <div class="mb-3" *ngIf="dialogMode === 'create'">
+      <label for="password" class="form-label">Şifre <span class="text-danger">*</span></label>
+      <input
+        pInputText
+        id="password"
+        type="password"
+        [(ngModel)]="userForm.password"
+        placeholder="********"
+        class="form-control">
+    </div>
+
+    <div class="mb-3">
+      <label for="roles" class="form-label">Roller</label>
+      <p-multiSelect
+        [options]="allOperationClaims"
+        [(ngModel)]="selectedRoles"
+        optionLabel="name"
+        placeholder="Rol Seçin"
+        [style]="{ width: '100%' }"
+        display="chip">
+      </p-multiSelect>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="İptal"
+      icon="pi pi-times"
+      class="p-button-secondary"
+      (click)="hideDialog()">
+    </button>
+    <button
+      pButton
+      type="button"
+      label="Kaydet"
+      icon="pi pi-check"
+      class="p-button-primary"
+      (click)="saveUser()">
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirm Dialog -->
+<p-confirmDialog></p-confirmDialog>

@@ -21,13 +21,13 @@
           </button>
           <ul class="submenu" [class.show]="!items[0].isCollapsed">
             <li class="submenu-item">
-              <a routerLink="/admin/users/user-list" routerLinkActive="active" class="submenu-link">
+              <a routerLink="/admin/users" routerLinkActive="active" class="submenu-link" (click)="onSubmenuClick()">
                 <span class="submenu-dot"></span>
-                <span>Kullanıcı Listesi</span>
+                <span>Kullanıcı Yönetimi</span>
               </a>
             </li>
             <li class="submenu-item">
-              <a routerLink="/admin/moderator-management" routerLinkActive="active" class="submenu-link">
+              <a routerLink="/admin/moderator-management" routerLinkActive="active" class="submenu-link" (click)="onSubmenuClick()">
                 <span class="submenu-dot"></span>
                 <span>Moderatör Yönetimi</span>
               </a>
