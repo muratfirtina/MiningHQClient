@@ -1,0 +1,56 @@
+<header class="admin-header">
+  <div class="header-container">
+    <!-- Left Section: Menu Toggle & Logo -->
+    <div class="header-left">
+      <button class="sidebar-toggle" (click)="toggleSidebar()" aria-label="Toggle Sidebar">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="header-brand">
+        <i class="fas fa-mountain header-brand-icon"></i>
+        <h1 class="header-title">MiningHQ Admin</h1>
+      </div>
+    </div>
+
+    <!-- Right Section: User Menu -->
+    <div class="header-right">
+      <!-- Notifications -->
+      <div class="header-item notifications" title="Bildirimler">
+        <button class="icon-button" aria-label="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </button>
+      </div>
+
+      <!-- User Menu -->
+      <div class="header-item user-menu">
+        <div class="user-info" (click)="toggleUserMenu()">
+          <div class="user-avatar">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ currentUser?.name || 'Admin' }}</span>
+            <span class="user-role">{{ currentUser?.role || 'Yönetici' }}</span>
+          </div>
+          <i class="fas fa-chevron-down dropdown-icon" [class.rotated]="isUserMenuOpen"></i>
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div class="user-dropdown" [class.show]="isUserMenuOpen">
+          <a href="#" class="dropdown-item" (click)="navigateToProfile($event)">
+            <i class="fas fa-user"></i>
+            <span>Profilim</span>
+          </a>
+          <a href="#" class="dropdown-item" (click)="navigateToSettings($event)">
+            <i class="fas fa-cog"></i>
+            <span>Ayarlar</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout" (click)="logout($event)">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Ç1k1_ Yap</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

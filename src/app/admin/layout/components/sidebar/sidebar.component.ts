@@ -1,7 +1,8 @@
-// sidebar.component.ts - Mobil sidebar destekli tam versiyon
-import { Component, ViewChild, OnInit, HostListener } from '@angular/core';
-import { RouterLink } from '@angular/router';
+// sidebar.component.ts - Modern collapsable sidebar
+import { Component, ViewChild, OnInit, HostListener, Input } from '@angular/core';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
+import { filter } from 'rxjs/operators';
 import { DynamicLoadComponentDirective } from 'src/app/directives/common/dynamic-load-component.directive';
 import { ComponentName, DynamicLoadComponentService } from 'src/app/services/common/dynamic-load-component.service';
 import { JobAddComponent } from 'src/app/admin/components/jobs/job-add/job-add.component';
@@ -19,21 +20,32 @@ import { LeaveTypeAddComponent } from 'src/app/admin/components/leave-types/leav
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
     standalone: true,
-    imports: [NgFor, NgIf, RouterLink, JobAddComponent, MachineAddComponent,
-      MachineTypeAddComponent, ModelAddComponent, BrandAddComponent, QuarryAddComponent, DepartmentAddComponent,LeaveTypeAddComponent]
+    imports: [NgFor, NgIf, RouterLink, RouterLinkActive, JobAddComponent, MachineAddComponent,
+      MachineTypeAddComponent, ModelAddComponent, BrandAddComponent, QuarryAddComponent,
+      DepartmentAddComponent, LeaveTypeAddComponent]
 })
 export class SidebarComponent implements OnInit {
-
+  @Input() isCollapsed: boolean = false;
   @ViewChild(JobListComponent) listComponents: JobListComponent;
-  
+
   // Mobile sidebar control
   isMobileSidebarOpen: boolean = false;
 
-  constructor(private dynamicLoadComponentService: DynamicLoadComponentService) { }
+  constructor(
+    private dynamicLoadComponentService: DynamicLoadComponentService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     // Component yüklendiğinde yapılacak işlemler
     this.initializeSidebar();
+
+    // Router events'i dinle
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.setActiveMenuByRoute();
+      });
   }
   
   items: { name: string, isCollapsed: boolean }[] = [
