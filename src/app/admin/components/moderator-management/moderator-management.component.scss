@@ -1,0 +1,45 @@
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    padding: 15px 20px;
+
+    .card-title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+}
+
+h5 {
+  margin-bottom: 15px;
+  color: #495057;
+  font-weight: 500;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+button[type="submit"] {
+  height: 56px;
+  width: 100%;
+}
+
+.mat-table {
+  width: 100%;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+mat-divider {
+  margin: 30px 0;
+}

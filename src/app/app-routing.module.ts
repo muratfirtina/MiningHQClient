@@ -3,11 +3,29 @@ import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './admin/layout/layout.component';
 import { DashboardComponent } from './admin/components/dashboard/dashboard.component';
 import { HomeComponent } from './ui/components/home/home.component';
+import { UnauthorizedComponent } from './ui/components/unauthorized/unauthorized.component';
+import { ModeratorManagementComponent } from './admin/components/moderator-management/moderator-management.component';
+import { LoginComponent } from './ui/components/login/login.component';
+import { LoginGuard } from './guards/login.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { RoleGuard } from './guards/role.guard';
+import { Role } from './contracts/enums/role.enum';
 
   
 const routes: Routes = [
   {
-    path:'admin', component:LayoutComponent, children:[
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent
+  },
+  {
+    path:'admin', 
+    component:LayoutComponent,
+    canActivate: [LoginGuard, AdminGuard],
+    children:[
       {path: "", component: DashboardComponent},
       {path:'dashboard',loadComponent:()=>import('./admin/components/dashboard/dashboard.component').then(m=>m.DashboardComponent)},
       {path:'users',loadComponent:()=>import('./admin/components/users/users.component').then(m=>m.UsersComponent)},
@@ -42,21 +60,27 @@ const routes: Routes = [
       {path:'department/department-list/:pageNo',loadComponent:()=>import('./admin/components/department/department-list/department-list.component').then(m=>m.DepartmentListComponent)},
       {path:'leave-types',loadComponent:()=>import('./admin/components/leave-types/leave-types.component').then(m=>m.LeaveTypesComponent)},
       {path:'leave-types/leave-type-list',loadComponent:()=>import('./admin/components/leave-types/leave-type-list/leave-type-list.component').then(m=>m.LeaveTypeListComponent)},
-      {path:'leave-types/leave-type-list/:pageNo',loadComponent:()=>import('./admin/components/leave-types/leave-type-list/leave-type-list.component').then(m=>m.LeaveTypeListComponent)}
+      {path:'leave-types/leave-type-list/:pageNo',loadComponent:()=>import('./admin/components/leave-types/leave-type-list/leave-type-list.component').then(m=>m.LeaveTypeListComponent)},
+      {path:'moderator-management', component: ModeratorManagementComponent}
     ]
   },
-  {path:'', component:HomeComponent,data:{breadcrumb:'Anasayfa'}},
+  {
+    path:'', 
+    component:HomeComponent,
+    canActivate: [LoginGuard],
+    data:{breadcrumb:'Anasayfa'}
+  },
   
   // Employee Routes
-  {path:'personeller',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent),data:{breadcrumb:'Personeller'}},
-  {path:'personeller/personel-listesi',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent),data:{breadcrumb:'Personel Listesi'}},
-  {path:'personeller/personel-listesi/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
-  {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),data:{breadcrumb:'Personel Bilgileri'}},
-  {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),data:{breadcrumb:'Personel Ekle'}},
-  {path:'personeller/personel/personel-dosyalar/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-files/employee-files.component').then(m=>m.EmployeeFilesComponent),data:{breadcrumb:'Personel Dosyaları'}},
+  {path:'personeller',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personeller', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/personel-listesi',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Listesi'}},
+  {path:'personeller/personel-listesi/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Bilgileri'}},
+  {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Bilgileri'}},
+  {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Ekle'}},
+  {path:'personeller/personel/personel-dosyalar/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-files/employee-files.component').then(m=>m.EmployeeFilesComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Dosyaları'}},
   
   // Machine Routes - UI (SPECIFIC ROUTES FIRST!)
-  {path:'makinalar',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makinalar'}},
+  {path:'makinalar',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makinalar', roles: [Role.Admin, Role.Moderator]}},
   {path:'makinalar/makina-listesi',loadComponent:()=>import('./ui/components/machines/machine-list/machine-list.component').then(m=>m.MachineListComponent),data:{breadcrumb:'Makina Listesi'}},
   {path:'makinalar/makina-ekle',loadComponent:()=>import('./ui/components/machines/machine-add/machine-add.component').then(m=>m.MachineAddComponent),data:{breadcrumb:'Makina Ekle'}},
   {path:'makinalar/makina-raporlari',loadComponent:()=>import('./ui/components/machines/machine-reports/machine-reports.component').then(m=>m.MachineReportsComponent),data:{breadcrumb:'Makina Raporları'}},
@@ -89,7 +113,7 @@ const routes: Routes = [
   {path:'personeller/izinler/izinkullanimi',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent),data:{breadcrumb:'İzin Kullanımı'}},
   
   // Quarry Routes - UI
-  {path:'ocaklar',loadComponent:()=>import('./ui/components/quarries/quarries/quarries.component').then(m=>m.QuarriesComponent),data:{breadcrumb:'Ocaklar'}},
+  {path:'ocaklar',loadComponent:()=>import('./ui/components/quarries/quarries/quarries.component').then(m=>m.QuarriesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Ocaklar', roles: [Role.Admin, Role.Moderator]}},
   {path:'ocaklar/ocak-listesi',loadComponent:()=>import('./ui/components/quarries/quarry-list/quarry-list.component').then(m=>m.QuarryListComponent),data:{breadcrumb:'Ocak Listesi'}},
   {path:'ocaklar/ocak-ekle',loadComponent:()=>import('./ui/components/quarries/quarry-add/quarry-add.component').then(m=>m.QuarryAddComponent),data:{breadcrumb:'Ocak Ekle'}},
   {path:'ocaklar/ocak/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-page/quarry-page.component').then(m=>m.QuarryPageComponent),data:{breadcrumb:'Ocak Bilgileri'}},

@@ -1,0 +1,91 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Moderatör - Ocak Yönetimi</h3>
+        </div>
+        <div class="card-body">
+          <!-- Assignment Form -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5>Yeni Atama</h5>
+              <form [formGroup]="assignmentForm" (ngSubmit)="assignQuarry()">
+                <div class="row">
+                  <div class="col-md-5">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Moderatör</mat-label>
+                      <mat-select formControlName="userId">
+                        <mat-option *ngFor="let moderator of moderators" 
+                                    [value]="moderator.id">
+                          {{moderator.firstName}} {{moderator.lastName}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-5">
+                    <mat-form-field appearance="outline" class="w-100">
+                      <mat-label>Ocak</mat-label>
+                      <mat-select formControlName="quarryId">
+                        <mat-option *ngFor="let quarry of quarries" 
+                                    [value]="quarry.id">
+                          {{quarry.name}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-md-2">
+                    <button mat-raised-button color="primary" 
+                            type="submit"
+                            [disabled]="loading || assignmentForm.invalid">
+                      <mat-icon>add</mat-icon>
+                      Ata
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!-- Assignments List -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <h5>Mevcut Atamalar</h5>
+              <table mat-table [dataSource]="assignments" class="w-100">
+                
+                <ng-container matColumnDef="moderator">
+                  <th mat-header-cell *matHeaderCellDef>Moderatör</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    {{assignment.moderatorName}}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="quarry">
+                  <th mat-header-cell *matHeaderCellDef>Ocak</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    {{assignment.quarryName}}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>İşlemler</th>
+                  <td mat-cell *matCellDef="let assignment">
+                    <button mat-icon-button color="warn"
+                            (click)="removeAssignment(assignment.moderatorId, assignment.quarryId)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['moderator', 'quarry', 'actions']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['moderator', 'quarry', 'actions']"></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

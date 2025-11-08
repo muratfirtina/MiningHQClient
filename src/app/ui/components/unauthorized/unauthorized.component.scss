@@ -1,0 +1,43 @@
+.unauthorized-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  .error-content {
+    text-align: center;
+    color: white;
+
+    h1 {
+      font-size: 120px;
+      font-weight: bold;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      font-size: 32px;
+      margin: 20px 0;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 20px 0 40px;
+      opacity: 0.9;
+    }
+
+    button {
+      padding: 12px 40px;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+}
