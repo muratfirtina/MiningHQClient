@@ -73,51 +73,51 @@ const routes: Routes = [
   
   // Employee Routes
   {path:'personeller',loadComponent:()=>import('./ui/components/employees/employees.component').then(m=>m.EmployeesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personeller', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
-  {path:'personeller/personel-listesi',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Listesi'}},
-  {path:'personeller/personel-listesi/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Bilgileri'}},
-  {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Bilgileri'}},
-  {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Ekle'}},
-  {path:'personeller/personel/personel-dosyalar/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-files/employee-files.component').then(m=>m.EmployeeFilesComponent),canActivate: [LoginGuard],data:{breadcrumb:'Personel Dosyaları'}},
+  {path:'personeller/personel-listesi',loadComponent:()=>import('./ui/components/employees/employee-list/employee-list.component').then(m=>m.EmployeeListComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personel Listesi', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/personel-listesi/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personel Bilgileri', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/personel/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-page/employee-page.component').then(m=>m.EmployeePageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personel Bilgileri', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/personel-ekle',loadComponent:()=>import('./ui/components/employees/employee-add/employee-add.component').then(m=>m.EmployeeAddComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personel Ekle', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/personel/personel-dosyalar/:employeeId',loadComponent:()=>import('./ui/components/employees/employee-files/employee-files.component').then(m=>m.EmployeeFilesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Personel Dosyaları', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
   
   // Machine Routes - UI (SPECIFIC ROUTES FIRST!)
   {path:'makinalar',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makinalar', roles: [Role.Admin, Role.Moderator]}},
-  {path:'makinalar/makina-listesi',loadComponent:()=>import('./ui/components/machines/machine-list/machine-list.component').then(m=>m.MachineListComponent),data:{breadcrumb:'Makina Listesi'}},
-  {path:'makinalar/makina-ekle',loadComponent:()=>import('./ui/components/machines/machine-add/machine-add.component').then(m=>m.MachineAddComponent),data:{breadcrumb:'Makina Ekle'}},
-  {path:'makinalar/makina-raporlari',loadComponent:()=>import('./ui/components/machines/machine-reports/machine-reports.component').then(m=>m.MachineReportsComponent),data:{breadcrumb:'Makina Raporları'}},
-  {path:'makinalar/bakim-takvimi',loadComponent:()=>import('./ui/components/machines/maintenance-schedule/maintenance-schedule.component').then(m=>m.MaintenanceScheduleComponent),data:{breadcrumb:'Bakım Takvimi'}},
-  {path:'makinalar/makina-puantaji',loadComponent:()=>import('./ui/components/daily-entry/daily-entry.component').then(m=>m.DailyEntryComponent),data:{breadcrumb:'Makina Puantajı'}},
-  {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),data:{breadcrumb:'Makina Arama'}},
-  
+  {path:'makinalar/makina-listesi',loadComponent:()=>import('./ui/components/machines/machine-list/machine-list.component').then(m=>m.MachineListComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Listesi', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina-ekle',loadComponent:()=>import('./ui/components/machines/machine-add/machine-add.component').then(m=>m.MachineAddComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Ekle', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina-raporlari',loadComponent:()=>import('./ui/components/machines/machine-reports/machine-reports.component').then(m=>m.MachineReportsComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Raporları', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/bakim-takvimi',loadComponent:()=>import('./ui/components/machines/maintenance-schedule/maintenance-schedule.component').then(m=>m.MaintenanceScheduleComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Bakım Takvimi', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina-puantaji',loadComponent:()=>import('./ui/components/daily-entry/daily-entry.component').then(m=>m.DailyEntryComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Puantajı', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/ara',loadComponent:()=>import('./ui/components/machines/machines.component').then(m=>m.MachinesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Arama', roles: [Role.Admin, Role.Moderator]}},
+
   // Specific machine routes (must come BEFORE general :machineId route)
-  {path:'makinalar/makina/:machineId/dosyalar',loadComponent:()=>import('./ui/components/machines/machine-files/machine-files.component').then(m=>m.MachineFilesComponent),data:{breadcrumb:'Makina Dosyaları'}},
-  {path:'makinalar/makina/:machineId/bakim-ekle',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-add/maintenance-add.component').then(m=>m.MaintenanceAddComponent),data:{breadcrumb:'Bakım Ekle'}},
-  {path:'makinalar/makina/:machineId/bakim/:maintenanceId',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-detail/maintenance-detail.component').then(m=>m.MaintenanceDetailComponent),data:{breadcrumb:'Bakım Detayı'}},
-  {path:'makinalar/makina/:machineId/bakim',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-list/maintenance-list.component').then(m=>m.MaintenanceListComponent),data:{breadcrumb:'Bakım Geçmişi'}},
-  {path:'makinalar/makina/:machineId/is-verileri',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'İş Verileri'}},
-  {path:'makinalar/makina/:machineId/yakit',loadComponent:()=>import('./ui/components/fuel-consumption-report/fuel-consumption-report.component').then(m=>m.FuelConsumptionReportComponent),data:{breadcrumb:'Yakıt Tüketimi'}},
-  {path:'makinalar/makina-listesi/makina/:machineId',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Makina Bilgileri'}},
-  
+  {path:'makinalar/makina/:machineId/dosyalar',loadComponent:()=>import('./ui/components/machines/machine-files/machine-files.component').then(m=>m.MachineFilesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Dosyaları', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina/:machineId/bakim-ekle',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-add/maintenance-add.component').then(m=>m.MaintenanceAddComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Bakım Ekle', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina/:machineId/bakim/:maintenanceId',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-detail/maintenance-detail.component').then(m=>m.MaintenanceDetailComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Bakım Detayı', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina/:machineId/bakim',loadComponent:()=>import('./ui/components/machines/maintenance/maintenance-list/maintenance-list.component').then(m=>m.MaintenanceListComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Bakım Geçmişi', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina/:machineId/is-verileri',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'İş Verileri', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina/:machineId/yakit',loadComponent:()=>import('./ui/components/fuel-consumption-report/fuel-consumption-report.component').then(m=>m.FuelConsumptionReportComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Yakıt Tüketimi', roles: [Role.Admin, Role.Moderator]}},
+  {path:'makinalar/makina-listesi/makina/:machineId',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Bilgileri', roles: [Role.Admin, Role.Moderator]}},
+
   // General machine route (MUST come AFTER specific routes)
-  {path:'makinalar/makina/:machineId',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),data:{breadcrumb:'Makina Bilgileri'}},
+  {path:'makinalar/makina/:machineId',loadComponent:()=>import('./ui/components/machines/machine-page/machine-page.component').then(m=>m.MachinePageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Makina Bilgileri', roles: [Role.Admin, Role.Moderator]}},
   
   // Leave and Timeekeeping Routes
-  {path:'personeller/puantaj',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent),data:{breadcrumb:'İzinler'}},
-  {path:'personeller/puantaj/izinislemleri',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler'}},
-  {path:'personeller/puantaj/izinislemleri/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),data:{breadcrumb:'Hak Edilen İzinler :pageNo'}},
-  {path:'personeller/puantaj/takvim',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent),data:{breadcrumb:'İzin Takvimi'}},
-  {path:'personeller/puantaj/puantaj-tablosu',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj'}},
-  {path:'personeller/puantaj/puantaj/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),data:{breadcrumb:'Puantaj :year :month'}},
-  {path:'personeller/puantaj/mesai-takip',loadComponent:()=>import('./ui/components/overtime/overtime.component').then(m=>m.OvertimeComponent),data:{breadcrumb:'Mesailer'}},
-  
+  {path:'personeller/puantaj',loadComponent:()=>import('./ui/components/leave/leave.component').then(m=>m.LeaveComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'İzinler', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/puantaj/izinislemleri',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Hak Edilen İzinler', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/puantaj/izinislemleri/:pageNo',loadComponent:()=>import('./ui/components/leave/entitled-leave/entitled-leave.component').then(m=>m.EntitledLeaveComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Hak Edilen İzinler :pageNo', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/puantaj/takvim',loadComponent:()=>import('./ui/components/leave/calender/calender.component').then(m=>m.CalendarComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'İzin Takvimi', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/puantaj/puantaj-tablosu',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Puantaj', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/puantaj/puantaj/:year/:month',loadComponent:()=>import('./ui/components/leave/timekeeping/timekeeping.component').then(m=>m.TimekeepingComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Puantaj :year :month', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+  {path:'personeller/puantaj/mesai-takip',loadComponent:()=>import('./ui/components/overtime/overtime.component').then(m=>m.OvertimeComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Mesailer', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
+
   // Leave Usage Routes
-  {path:'personeller/izinler/izinkullanimi',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent),data:{breadcrumb:'İzin Kullanımı'}},
+  {path:'personeller/izinler/izinkullanimi',loadComponent:()=>import('./ui/components/leave/leave-usage/leave-usage.component').then(m=>m.LeaveUsageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'İzin Kullanımı', roles: [Role.Admin, Role.Moderator, Role.HRAssistant]}},
   
   // Quarry Routes - UI
   {path:'ocaklar',loadComponent:()=>import('./ui/components/quarries/quarries/quarries.component').then(m=>m.QuarriesComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Ocaklar', roles: [Role.Admin, Role.Moderator]}},
-  {path:'ocaklar/ocak-listesi',loadComponent:()=>import('./ui/components/quarries/quarry-list/quarry-list.component').then(m=>m.QuarryListComponent),data:{breadcrumb:'Ocak Listesi'}},
-  {path:'ocaklar/ocak-ekle',loadComponent:()=>import('./ui/components/quarries/quarry-add/quarry-add.component').then(m=>m.QuarryAddComponent),data:{breadcrumb:'Ocak Ekle'}},
-  {path:'ocaklar/ocak/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-page/quarry-page.component').then(m=>m.QuarryPageComponent),data:{breadcrumb:'Ocak Bilgileri'}},
-  {path:'ocaklar/uretim/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-production/quarry-production.component').then(m=>m.QuarryProductionComponent),data:{breadcrumb:'Üretim Verileri'}},
+  {path:'ocaklar/ocak-listesi',loadComponent:()=>import('./ui/components/quarries/quarry-list/quarry-list.component').then(m=>m.QuarryListComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Ocak Listesi', roles: [Role.Admin, Role.Moderator]}},
+  {path:'ocaklar/ocak-ekle',loadComponent:()=>import('./ui/components/quarries/quarry-add/quarry-add.component').then(m=>m.QuarryAddComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Ocak Ekle', roles: [Role.Admin, Role.Moderator]}},
+  {path:'ocaklar/ocak/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-page/quarry-page.component').then(m=>m.QuarryPageComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Ocak Bilgileri', roles: [Role.Admin, Role.Moderator]}},
+  {path:'ocaklar/uretim/:quarryId',loadComponent:()=>import('./ui/components/quarries/quarry-production/quarry-production.component').then(m=>m.QuarryProductionComponent),canActivate: [LoginGuard, RoleGuard],data:{breadcrumb:'Üretim Verileri', roles: [Role.Admin, Role.Moderator]}},
   
 ];
 
