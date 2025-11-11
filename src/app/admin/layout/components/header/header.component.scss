@@ -1,10 +1,11 @@
+// Modern Header Styles - Blue/Gray Theme
 .admin-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 3px solid #3498db;
 }
 
 .header-container {
@@ -24,8 +25,8 @@
 }
 
 .sidebar-toggle {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(52, 152, 219, 0.2);
+  border: 1px solid rgba(52, 152, 219, 0.3);
   color: white;
   width: 45px;
   height: 45px;
@@ -42,9 +43,10 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(52, 152, 219, 0.3);
+    border-color: rgba(52, 152, 219, 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
   }
 
   &:active {
@@ -60,8 +62,13 @@
 
 .header-brand-icon {
   font-size: 28px;
-  color: #ffd700;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  color: #3498db;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .header-title {
@@ -70,7 +77,7 @@
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 // Right Section
@@ -87,8 +94,8 @@
 // Notifications
 .notifications {
   .icon-button {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(52, 152, 219, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.3);
     color: white;
     width: 45px;
     height: 45px;
@@ -106,9 +113,10 @@
     }
 
     &:hover {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(52, 152, 219, 0.3);
+      border-color: rgba(52, 152, 219, 0.5);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
     }
   }
 
@@ -116,15 +124,16 @@
     position: absolute;
     top: -5px;
     right: -5px;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     color: white;
     font-size: 11px;
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 10px;
-    border: 2px solid #667eea;
+    border: 2px solid #2c3e50;
     min-width: 20px;
     text-align: center;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
   }
 }
 
@@ -138,17 +147,18 @@
   align-items: center;
   gap: 12px;
   padding: 8px 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(52, 152, 219, 0.2);
+  border: 1px solid rgba(52, 152, 219, 0.3);
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(52, 152, 219, 0.3);
+    border-color: rgba(52, 152, 219, 0.5);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
   }
 }
 
@@ -156,13 +166,14 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   border: 2px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .user-details {
@@ -202,7 +213,7 @@
   right: 0;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   min-width: 220px;
   opacity: 0;
   visibility: hidden;
@@ -250,11 +261,11 @@
   }
 
   &:hover {
-    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
-    color: #667eea;
+    background: linear-gradient(90deg, rgba(52, 152, 219, 0.1), transparent);
+    color: #3498db;
 
     i {
-      color: #667eea;
+      color: #3498db;
       transform: translateX(3px);
     }
   }
@@ -369,9 +380,29 @@
   }
 }
 
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Notification badge animation
+.notification-badge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
 // Print styles
 @media print {
   .admin-header {
     display: none;
   }
+}
+
+// Smooth font rendering
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
