@@ -141,150 +141,309 @@
   </p-card>
 </div>
 
-<!-- Create/Edit Dialog -->
+<!-- Modern Create/Edit Dialog -->
 <p-dialog
   [(visible)]="displayDialog"
-  [header]="getDialogHeader()"
   [modal]="true"
-  [style]="{width: '700px'}"
+  [style]="{width: '800px', maxHeight: '90vh'}"
   [draggable]="false"
-  [resizable]="false">
+  [resizable]="false"
+  [closable]="true"
+  styleClass="modern-user-dialog">
 
-  <ng-template pTemplate="content">
-    <div class="p-fluid">
-      <!-- User Info Section -->
-      <div class="section-header">
-        <i class="pi pi-user"></i>
-        <h4>Kullanıcı Bilgileri</h4>
+  <ng-template pTemplate="header">
+    <div class="modern-dialog-header">
+      <div class="header-icon-wrapper">
+        <i class="pi" [ngClass]="dialogMode === 'create' ? 'pi-user-plus' : 'pi-user-edit'"></i>
       </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label for="firstName" class="required-field">Ad</label>
-          <input
-            id="firstName"
-            type="text"
-            pInputText
-            [(ngModel)]="userForm.firstName"
-            placeholder="Ad"
-            required>
-        </div>
-
-        <div class="field">
-          <label for="lastName" class="required-field">Soyad</label>
-          <input
-            id="lastName"
-            type="text"
-            pInputText
-            [(ngModel)]="userForm.lastName"
-            placeholder="Soyad"
-            required>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="email" class="required-field">Email</label>
-        <input
-          id="email"
-          type="email"
-          pInputText
-          [(ngModel)]="userForm.email"
-          placeholder="email@example.com"
-          required>
-      </div>
-
-      <div class="field" *ngIf="dialogMode === 'create'">
-        <label for="password" class="required-field">Şifre</label>
-        <input
-          id="password"
-          type="password"
-          pInputText
-          [(ngModel)]="userForm.password"
-          placeholder="********"
-          required>
-      </div>
-
-      <p-divider></p-divider>
-
-      <!-- Roles Section -->
-      <div class="section-header">
-        <i class="pi pi-shield"></i>
-        <h4>Roller</h4>
-      </div>
-
-      <div class="field">
-        <label for="roles">Kullanıcı Rolleri</label>
-        <p-multiSelect
-          id="roles"
-          [options]="allRoles"
-          [(ngModel)]="selectedRoles"
-          optionLabel="name"
-          placeholder="Rol seçin"
-          [filter]="true"
-          filterBy="name"
-          [showClear]="true"
-          [style]="{width: '100%'}"
-          display="chip">
-          <ng-template let-role pTemplate="item">
-            <div class="select-option">
-              <i class="pi pi-shield"></i>
-              <span>{{ role.name }}</span>
-            </div>
-          </ng-template>
-        </p-multiSelect>
-        <small class="p-text-secondary">Kullanıcıya atanacak roller</small>
-      </div>
-
-      <p-divider></p-divider>
-
-      <!-- Extra Claims Section -->
-      <div class="section-header">
-        <i class="pi pi-key"></i>
-        <h4>Ekstra Yetkiler (Opsiyonel)</h4>
-      </div>
-
-      <div class="field">
-        <label for="extraClaims">Ek Yetkiler</label>
-        <p-multiSelect
-          id="extraClaims"
-          [options]="allOperationClaims"
-          [(ngModel)]="selectedExtraClaims"
-          optionLabel="name"
-          placeholder="Ek yetki seçin (opsiyonel)"
-          [filter]="true"
-          filterBy="name"
-          [showClear]="true"
-          [style]="{width: '100%'}"
-          display="chip">
-          <ng-template let-claim pTemplate="item">
-            <div class="select-option">
-              <i class="pi pi-key"></i>
-              <span>{{ claim.name }}</span>
-            </div>
-          </ng-template>
-        </p-multiSelect>
-        <small class="p-text-secondary">Roller dışında kullanıcıya özel yetkiler</small>
+      <div class="header-text-wrapper">
+        <h2>{{ getDialogHeader() }}</h2>
+        <p class="header-description">{{ dialogMode === 'create' ? 'Yeni kullanıcı oluşturun ve yetkilerini atayın' : 'Kullanıcı bilgilerini ve yetkilerini güncelleyin' }}</p>
       </div>
     </div>
   </ng-template>
 
+  <ng-template pTemplate="content">
+    <div class="modern-dialog-content">
+
+      <!-- Progress Steps -->
+      <div class="progress-steps">
+        <div class="step-item active">
+          <div class="step-circle">
+            <i class="pi pi-user"></i>
+          </div>
+          <span class="step-label">Bilgiler</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item active">
+          <div class="step-circle">
+            <i class="pi pi-shield"></i>
+          </div>
+          <span class="step-label">Roller</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item active">
+          <div class="step-circle">
+            <i class="pi pi-key"></i>
+          </div>
+          <span class="step-label">Yetkiler</span>
+        </div>
+      </div>
+
+      <!-- User Info Panel -->
+      <p-panel [toggleable]="false" styleClass="info-panel">
+        <ng-template pTemplate="header">
+          <div class="panel-header">
+            <i class="pi pi-id-card"></i>
+            <span>Kullanıcı Bilgileri</span>
+          </div>
+        </ng-template>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="firstName" class="modern-label">
+              <i class="pi pi-user label-icon"></i>
+              <span>Ad <span class="required-star">*</span></span>
+            </label>
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                <i class="pi pi-user"></i>
+              </p-inputGroupAddon>
+              <input
+                id="firstName"
+                type="text"
+                pInputText
+                [(ngModel)]="userForm.firstName"
+                placeholder="Kullanıcının adını girin"
+                class="modern-input"
+                required>
+            </p-inputGroup>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName" class="modern-label">
+              <i class="pi pi-user label-icon"></i>
+              <span>Soyad <span class="required-star">*</span></span>
+            </label>
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                <i class="pi pi-user"></i>
+              </p-inputGroupAddon>
+              <input
+                id="lastName"
+                type="text"
+                pInputText
+                [(ngModel)]="userForm.lastName"
+                placeholder="Kullanıcının soyadını girin"
+                class="modern-input"
+                required>
+            </p-inputGroup>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="email" class="modern-label">
+              <i class="pi pi-envelope label-icon"></i>
+              <span>Email Adresi <span class="required-star">*</span></span>
+            </label>
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                <i class="pi pi-at"></i>
+              </p-inputGroupAddon>
+              <input
+                id="email"
+                type="email"
+                pInputText
+                [(ngModel)]="userForm.email"
+                placeholder="email@example.com"
+                class="modern-input"
+                required>
+            </p-inputGroup>
+          </div>
+
+          <div class="form-group full-width" *ngIf="dialogMode === 'create'">
+            <label for="password" class="modern-label">
+              <i class="pi pi-lock label-icon"></i>
+              <span>Şifre <span class="required-star">*</span></span>
+            </label>
+            <p-inputGroup>
+              <p-inputGroupAddon>
+                <i class="pi pi-lock"></i>
+              </p-inputGroupAddon>
+              <input
+                id="password"
+                type="password"
+                pInputText
+                [(ngModel)]="userForm.password"
+                placeholder="Güvenli bir şifre girin"
+                class="modern-input"
+                required>
+            </p-inputGroup>
+            <small class="input-hint">
+              <i class="pi pi-info-circle"></i>
+              Şifre en az 8 karakter olmalıdır
+            </small>
+          </div>
+        </div>
+      </p-panel>
+
+      <p-divider></p-divider>
+
+      <!-- Roles Panel -->
+      <p-panel [toggleable]="false" styleClass="roles-panel">
+        <ng-template pTemplate="header">
+          <div class="panel-header">
+            <i class="pi pi-shield"></i>
+            <span>Rol Atamaları</span>
+          </div>
+        </ng-template>
+
+        <div class="panel-content">
+          <p-message
+            severity="info"
+            text="Kullanıcıya atanacak rolleri seçin. Roller otomatik olarak ilgili yetkileri içerir."
+            [style]="{width: '100%', marginBottom: '1rem'}">
+          </p-message>
+
+          <div class="form-group full-width">
+            <label for="roles" class="modern-label">
+              <i class="pi pi-users label-icon"></i>
+              <span>Kullanıcı Rolleri</span>
+            </label>
+            <p-multiSelect
+              id="roles"
+              [options]="allRoles"
+              [(ngModel)]="selectedRoles"
+              optionLabel="name"
+              placeholder="Rol seçin veya arayın..."
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              [showToggleAll]="true"
+              display="chip"
+              [style]="{width: '100%'}"
+              class="modern-multiselect">
+              <ng-template let-role pTemplate="item">
+                <div class="multiselect-item">
+                  <div class="item-badge role-badge">
+                    <i class="pi pi-shield"></i>
+                  </div>
+                  <div class="item-content">
+                    <span class="item-title">{{ role.name }}</span>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template let-value pTemplate="selectedItems">
+                <div class="selected-items-wrapper" *ngIf="value && value.length">
+                  <p-chip
+                    *ngFor="let role of value"
+                    [label]="role.name"
+                    styleClass="selected-role-chip"
+                    [removable]="false">
+                  </p-chip>
+                </div>
+                <span *ngIf="!value || value.length === 0" class="placeholder-text">
+                  Rol seçilmedi
+                </span>
+              </ng-template>
+            </p-multiSelect>
+            <small class="input-hint" *ngIf="selectedRoles && selectedRoles.length > 0">
+              <i class="pi pi-check-circle"></i>
+              {{ selectedRoles.length }} rol seçildi
+            </small>
+          </div>
+        </div>
+      </p-panel>
+
+      <p-divider></p-divider>
+
+      <!-- Extra Claims Panel -->
+      <p-panel [toggleable]="false" styleClass="claims-panel">
+        <ng-template pTemplate="header">
+          <div class="panel-header">
+            <i class="pi pi-key"></i>
+            <span>Ekstra Yetkiler (Opsiyonel)</span>
+          </div>
+        </ng-template>
+
+        <div class="panel-content">
+          <p-message
+            severity="warn"
+            text="Roller dışında kullanıcıya özel yetkiler atayabilirsiniz. Bu yetkiler rollerdeki yetkilerle birleşir."
+            [style]="{width: '100%', marginBottom: '1rem'}">
+          </p-message>
+
+          <div class="form-group full-width">
+            <label for="extraClaims" class="modern-label">
+              <i class="pi pi-unlock label-icon"></i>
+              <span>Ek Yetkiler</span>
+            </label>
+            <p-multiSelect
+              id="extraClaims"
+              [options]="allOperationClaims"
+              [(ngModel)]="selectedExtraClaims"
+              optionLabel="name"
+              placeholder="Ek yetki seçin (opsiyonel)..."
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              [showToggleAll]="true"
+              display="chip"
+              [style]="{width: '100%'}"
+              class="modern-multiselect">
+              <ng-template let-claim pTemplate="item">
+                <div class="multiselect-item">
+                  <div class="item-badge claim-badge">
+                    <i class="pi pi-key"></i>
+                  </div>
+                  <div class="item-content">
+                    <span class="item-title">{{ claim.name }}</span>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template let-value pTemplate="selectedItems">
+                <div class="selected-items-wrapper" *ngIf="value && value.length">
+                  <p-chip
+                    *ngFor="let claim of value"
+                    [label]="claim.name"
+                    styleClass="selected-claim-chip"
+                    [removable]="false">
+                  </p-chip>
+                </div>
+                <span *ngIf="!value || value.length === 0" class="placeholder-text">
+                  Ek yetki seçilmedi
+                </span>
+              </ng-template>
+            </p-multiSelect>
+            <small class="input-hint" *ngIf="selectedExtraClaims && selectedExtraClaims.length > 0">
+              <i class="pi pi-check-circle"></i>
+              {{ selectedExtraClaims.length }} ek yetki seçildi
+            </small>
+          </div>
+        </div>
+      </p-panel>
+
+    </div>
+  </ng-template>
+
   <ng-template pTemplate="footer">
-    <button
-      pButton
-      pRipple
-      label="İptal"
-      icon="pi pi-times"
-      class="p-button-text"
-      (click)="hideDialog()">
-    </button>
-    <button
-      pButton
-      pRipple
-      [label]="dialogMode === 'create' ? 'Oluştur' : 'Güncelle'"
-      icon="pi pi-check"
-      class="p-button-primary"
-      (click)="saveUser()">
-    </button>
+    <div class="modern-dialog-footer">
+      <button
+        pButton
+        pRipple
+        label="İptal"
+        icon="pi pi-times"
+        class="p-button-text p-button-secondary"
+        (click)="hideDialog()">
+      </button>
+      <button
+        pButton
+        pRipple
+        [label]="dialogMode === 'create' ? 'Kullanıcı Oluştur' : 'Değişiklikleri Kaydet'"
+        [icon]="dialogMode === 'create' ? 'pi pi-user-plus' : 'pi pi-save'"
+        class="p-button-success"
+        (click)="saveUser()">
+      </button>
+    </div>
   </ng-template>
 </p-dialog>
 

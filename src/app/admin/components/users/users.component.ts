@@ -28,6 +28,10 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { DividerModule } from 'primeng/divider';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
+import { PanelModule } from 'primeng/panel';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { MessageModule } from 'primeng/message';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
@@ -49,7 +53,11 @@ import { ConfirmationService } from 'primeng/api';
     ToolbarModule,
     DividerModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    PanelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    MessageModule
   ],
   providers: [ConfirmationService]
 })
