@@ -111,11 +111,20 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
   async loadRoleOperationClaims(): Promise<void> {
     try {
-      const response = await this.roleOperationClaimService.list(0, 1000);
-      this.roleOperationClaims = response.items;
+      // Backend'de list endpoint'i olmadığı için her role için ayrı ayrı yükleyelim
+      this.roleOperationClaims = [];
+      for (const role of this.roles) {
+        const claims = await this.roleOperationClaimService.getRoleClaims(role.id);
+        claims.forEach(claim => {
+          this.roleOperationClaims.push({
+            id: claim.id,
+            roleId: role.id,
+            operationClaimId: claim.operationClaimId
+          });
+        });
+      }
     } catch (error) {
-      // Backend endpoint hazır değilse sessizce devam et
-      console.warn('RoleOperationClaims endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      console.warn('RoleOperationClaims yüklenirken hata oluştu.', error);
       this.roleOperationClaims = [];
     }
   }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { Observable, firstValueFrom } from 'rxjs';
-import { ListRoleOperationClaim } from 'src/app/contracts/roleOperationClaim/list-role-operation-claim';
 import { RoleOperationClaim } from 'src/app/contracts/roleOperationClaim/role-operation-claim';
 import { CreateRoleOperationClaim } from 'src/app/contracts/roleOperationClaim/create-role-operation-claim';
 
@@ -12,10 +11,17 @@ export class RoleOperationClaimService {
 
   constructor(private httpClientService: HttpClientService) { }
 
-  async list(pageIndex: number = 0, pageSize: number = 1000, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListRoleOperationClaim> {
-    const observable: Observable<ListRoleOperationClaim> = this.httpClientService.get<ListRoleOperationClaim>({
+  // Backend'de list all endpoint'i yok, bu yüzden boş döndür
+  async list(pageIndex: number = 0, pageSize: number = 1000): Promise<{ items: RoleOperationClaim[], count: number }> {
+    console.warn('RoleOperationClaims list endpoint backend\'de mevcut değil. Sadece getRoleClaims(roleId) kullanılabilir.');
+    return { items: [], count: 0 };
+  }
+
+  // Backend endpoint: GET /api/roleoperationclaims/role/{roleId}
+  async getRoleClaims(roleId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<RoleOperationClaim[]> {
+    const observable: Observable<RoleOperationClaim[]> = this.httpClientService.get<RoleOperationClaim[]>({
       controller: 'roleoperationclaims',
-      queryString: `pageIndex=${pageIndex}&pageSize=${pageSize}`
+      action: `role/${roleId}`
     });
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
@@ -23,14 +29,11 @@ export class RoleOperationClaimService {
     return await promiseData;
   }
 
-  async getRoleClaims(roleId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<RoleOperationClaim[]> {
-    const allClaims = await this.list(0, 1000);
-    return allClaims.items.filter(claim => claim.roleId === roleId);
-  }
-
+  // Backend endpoint: POST /api/roleoperationclaims/assign
   async create(roleClaim: CreateRoleOperationClaim, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<RoleOperationClaim> {
     const observable: Observable<RoleOperationClaim> = this.httpClientService.post<RoleOperationClaim>({
-      controller: 'roleoperationclaims'
+      controller: 'roleoperationclaims',
+      action: 'assign'
     }, roleClaim);
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
@@ -38,6 +41,7 @@ export class RoleOperationClaimService {
     return await promiseData;
   }
 
+  // Backend endpoint: DELETE /api/roleoperationclaims/{id}
   async delete(id: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<any> {
     const observable: Observable<any> = this.httpClientService.delete<any>({
       controller: 'roleoperationclaims'
