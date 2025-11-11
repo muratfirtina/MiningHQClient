@@ -8,11 +8,12 @@ import { User } from 'src/app/contracts/user/user';
 import { CreateUser } from 'src/app/contracts/user/create-user';
 import { UpdateUser } from 'src/app/contracts/user/update-user';
 import { UserService } from 'src/app/services/common/models/user.service';
+import { Role } from 'src/app/contracts/role/role';
+import { RoleService } from 'src/app/services/common/models/role.service';
+import { UserRoleService } from 'src/app/services/common/models/user-role.service';
+import { OperationClaim } from 'src/app/contracts/operationClaim/operation-claim';
 import { OperationClaimService } from 'src/app/services/common/models/operation-claim.service';
 import { UserOperationClaimService } from 'src/app/services/common/models/user-operation-claim.service';
-import { OperationClaim } from 'src/app/contracts/operationClaim/operation-claim';
-import { UserOperationClaim } from 'src/app/contracts/userOperationClaim/user-operation-claim';
-import { CreateUserOperationClaim } from 'src/app/contracts/userOperationClaim/create-user-operation-claim';
 
 // PrimeNG imports
 import { TableModule } from 'primeng/table';
@@ -21,6 +22,10 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TagModule } from 'primeng/tag';
+import { ChipModule } from 'primeng/chip';
+import { CardModule } from 'primeng/card';
+import { ToolbarModule } from 'primeng/toolbar';
+import { DividerModule } from 'primeng/divider';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
@@ -39,6 +44,10 @@ import { ConfirmationService } from 'primeng/api';
     InputTextModule,
     MultiSelectModule,
     TagModule,
+    ChipModule,
+    CardModule,
+    ToolbarModule,
+    DividerModule,
     ConfirmDialogModule,
     TooltipModule
   ],
@@ -47,8 +56,10 @@ import { ConfirmationService } from 'primeng/api';
 export class UsersComponent extends BaseComponent implements OnInit {
 
   users: User[] = [];
+  allRoles: Role[] = [];
   allOperationClaims: OperationClaim[] = [];
-  userOperationClaims: UserOperationClaim[] = [];
+  userRoles: any[] = [];
+  userOperationClaims: any[] = [];
 
   displayDialog: boolean = false;
   dialogMode: 'create' | 'edit' = 'create';
@@ -61,7 +72,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
     password: ''
   };
 
-  selectedRoles: OperationClaim[] = [];
+  selectedRoles: Role[] = [];
+  selectedExtraClaims: OperationClaim[] = [];
 
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -70,6 +82,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
   constructor(
     spinner: NgxSpinnerService,
     private userService: UserService,
+    private roleService: RoleService,
+    private userRoleService: UserRoleService,
     private operationClaimService: OperationClaimService,
     private userOperationClaimService: UserOperationClaimService,
     private toastr: ToastrService,
@@ -80,7 +94,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.loadUsers();
+    await this.loadRoles();
     await this.loadOperationClaims();
+    await this.loadUserRoles();
     await this.loadUserOperationClaims();
   }
 
@@ -97,12 +113,30 @@ export class UsersComponent extends BaseComponent implements OnInit {
     }
   }
 
+  async loadRoles(): Promise<void> {
+    try {
+      const response = await this.roleService.list(0, 100);
+      this.allRoles = response.items;
+    } catch (error) {
+      this.toastr.error('Roller yüklenirken hata oluştu');
+    }
+  }
+
   async loadOperationClaims(): Promise<void> {
     try {
       const response = await this.operationClaimService.list(0, 100);
       this.allOperationClaims = response.items;
     } catch (error) {
-      this.toastr.error('Roller yüklenirken hata oluştu');
+      this.toastr.error('Yetkiler yüklenirken hata oluştu');
+    }
+  }
+
+  async loadUserRoles(): Promise<void> {
+    try {
+      const response = await this.userRoleService.list(0, 1000);
+      this.userRoles = response.items;
+    } catch (error) {
+      this.toastr.error('Kullanıcı rolleri yüklenirken hata oluştu');
     }
   }
 
@@ -111,11 +145,19 @@ export class UsersComponent extends BaseComponent implements OnInit {
       const response = await this.userOperationClaimService.list(0, 1000);
       this.userOperationClaims = response.items;
     } catch (error) {
-      this.toastr.error('Kullanıcı rolleri yüklenirken hata oluştu');
+      this.toastr.error('Kullanıcı yetkileri yüklenirken hata oluştu');
     }
   }
 
-  getUserRoles(userId: string): OperationClaim[] {
+  getUserRoles(userId: string): Role[] {
+    const userRoleIds = this.userRoles
+      .filter(ur => ur.userId === userId)
+      .map(ur => ur.roleId);
+
+    return this.allRoles.filter(r => userRoleIds.includes(r.id));
+  }
+
+  getUserExtraClaims(userId: string): OperationClaim[] {
     const userClaimIds = this.userOperationClaims
       .filter(uc => uc.userId === userId)
       .map(uc => uc.operationClaimId);
@@ -133,6 +175,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
       password: ''
     };
     this.selectedRoles = [];
+    this.selectedExtraClaims = [];
     this.displayDialog = true;
   }
 
@@ -146,8 +189,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
       email: user.email
     };
 
-    // Load user's current roles
+    // Load user's current roles and extra claims
     this.selectedRoles = this.getUserRoles(user.id);
+    this.selectedExtraClaims = this.getUserExtraClaims(user.id);
     this.displayDialog = true;
   }
 
@@ -155,6 +199,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
     this.displayDialog = false;
     this.currentUser = null;
     this.selectedRoles = [];
+    this.selectedExtraClaims = [];
   }
 
   async saveUser(): Promise<void> {
@@ -175,10 +220,12 @@ export class UsersComponent extends BaseComponent implements OnInit {
         this.toastr.success('Kullanıcı başarıyla güncellendi');
       }
 
-      // Update user roles
+      // Update user roles and extra claims
       await this.updateUserRoles(savedUser.id);
+      await this.updateUserExtraClaims(savedUser.id);
 
       await this.loadUsers();
+      await this.loadUserRoles();
       await this.loadUserOperationClaims();
       this.hideDialog();
 
@@ -191,10 +238,46 @@ export class UsersComponent extends BaseComponent implements OnInit {
   }
 
   async updateUserRoles(userId: string): Promise<void> {
-    // Get current user claims
+    // Get current user roles
+    const currentRoles = this.userRoles.filter(ur => ur.userId === userId);
+    const currentRoleIds = currentRoles.map(ur => ur.roleId);
+    const selectedRoleIds = this.selectedRoles.map(role => role.id);
+
+    // Remove roles that are no longer selected
+    const rolesToRemove = currentRoles.filter(
+      ur => !selectedRoleIds.includes(ur.roleId)
+    );
+
+    for (const role of rolesToRemove) {
+      try {
+        await this.userRoleService.delete(role.id);
+      } catch (error) {
+        console.error('Error removing role:', error);
+      }
+    }
+
+    // Add new roles
+    const rolesToAdd = selectedRoleIds.filter(
+      id => !currentRoleIds.includes(id)
+    );
+
+    for (const roleId of rolesToAdd) {
+      try {
+        await this.userRoleService.create({
+          userId: userId,
+          roleId: roleId
+        });
+      } catch (error) {
+        console.error('Error adding role:', error);
+      }
+    }
+  }
+
+  async updateUserExtraClaims(userId: string): Promise<void> {
+    // Get current user extra claims
     const currentClaims = this.userOperationClaims.filter(uc => uc.userId === userId);
     const currentClaimIds = currentClaims.map(uc => uc.operationClaimId);
-    const selectedClaimIds = this.selectedRoles.map(role => role.id);
+    const selectedClaimIds = this.selectedExtraClaims.map(claim => claim.id);
 
     // Remove claims that are no longer selected
     const claimsToRemove = currentClaims.filter(
@@ -216,11 +299,10 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
     for (const claimId of claimsToAdd) {
       try {
-        const newClaim: CreateUserOperationClaim = {
+        await this.userOperationClaimService.create({
           userId: userId,
           operationClaimId: claimId
-        };
-        await this.userOperationClaimService.create(newClaim);
+        });
       } catch (error) {
         console.error('Error adding claim:', error);
       }
@@ -266,6 +348,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
       await this.userService.delete(userId);
       this.toastr.success('Kullanıcı başarıyla silindi');
       await this.loadUsers();
+      await this.loadUserRoles();
       await this.loadUserOperationClaims();
     } catch (error) {
       this.toastr.error('Kullanıcı silinirken hata oluştu');
@@ -278,5 +361,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
     this.pageIndex = event.first / event.rows;
     this.pageSize = event.rows;
     this.loadUsers();
+  }
+
+  getDialogHeader(): string {
+    return this.dialogMode === 'create' ? 'Yeni Kullanıcı Ekle' : 'Kullanıcı Düzenle';
   }
 }
