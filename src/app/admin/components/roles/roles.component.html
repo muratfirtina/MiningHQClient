@@ -3,10 +3,10 @@
     <ng-template pTemplate="header">
       <div class="card-header-custom">
         <div class="header-content">
-          <i class="pi pi-shield" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+          <i class="pi pi-shield" style="font-size: 1.5rem; color: white;"></i>
           <div class="header-text">
             <h2>Rol Yönetimi</h2>
-            <p class="header-subtitle">Sistem rollerini yönetin ve düzenleyin</p>
+            <p class="header-subtitle">Sistem rollerini ve yetkilerini yönetin</p>
           </div>
         </div>
       </div>
@@ -55,15 +55,16 @@
       <ng-template pTemplate="header">
         <tr>
           <th style="width: 5%">#</th>
-          <th pSortableColumn="name" style="width: 35%">
+          <th pSortableColumn="name" style="width: 25%">
             Rol Adı
             <p-sortIcon field="name"></p-sortIcon>
           </th>
-          <th pSortableColumn="createdDate" style="width: 30%">
-            Oluşturulma Tarihi
+          <th style="width: 40%">Yetkiler</th>
+          <th pSortableColumn="createdDate" style="width: 15%">
+            Tarih
             <p-sortIcon field="createdDate"></p-sortIcon>
           </th>
-          <th style="width: 30%">İşlemler</th>
+          <th style="width: 15%">İşlemler</th>
         </tr>
       </ng-template>
 
@@ -71,16 +72,31 @@
         <tr>
           <td>{{ pageIndex * pageSize + rowIndex + 1 }}</td>
           <td>
-            <strong>{{ role.name }}</strong>
+            <div class="role-name">
+              <i class="pi pi-shield role-icon"></i>
+              <strong>{{ role.name }}</strong>
+            </div>
           </td>
-          <td>{{ role.createdDate | date: 'dd.MM.yyyy HH:mm' }}</td>
+          <td>
+            <div class="claims-container">
+              <p-chip
+                *ngFor="let claim of getRoleClaims(role.id)"
+                [label]="claim.name"
+                styleClass="claim-chip">
+              </p-chip>
+              <span *ngIf="getRoleClaims(role.id).length === 0" class="no-claims">
+                <i class="pi pi-info-circle"></i> Yetki atanmamış
+              </span>
+            </div>
+          </td>
+          <td>{{ role.createdDate | date: 'dd.MM.yyyy' }}</td>
           <td>
             <div class="action-buttons">
               <button
                 pButton
                 pRipple
                 icon="pi pi-pencil"
-                class="p-button-rounded p-button-warning p-button-text mr-2"
+                class="p-button-rounded p-button-warning p-button-text"
                 (click)="openEditDialog(role)"
                 pTooltip="Düzenle"
                 tooltipPosition="top">
@@ -101,7 +117,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="4" class="text-center">
+          <td colspan="5" class="text-center">
             <div class="empty-message">
               <i class="pi pi-info-circle" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
               <p>Henüz rol bulunmamaktadır.</p>
@@ -118,23 +134,46 @@
   [(visible)]="displayDialog"
   [header]="getDialogHeader()"
   [modal]="true"
-  [style]="{width: '450px'}"
+  [style]="{width: '600px'}"
   [draggable]="false"
   [resizable]="false">
 
   <ng-template pTemplate="content">
     <div class="p-fluid">
-      <div class="field">
+      <div class="field mb-4">
         <label for="roleName" class="required-field">Rol Adı</label>
         <input
           id="roleName"
           type="text"
           pInputText
           [(ngModel)]="roleForm.name"
-          placeholder="Örn: Admin, Moderator, User"
+          placeholder="Örn: Admin, Moderator, Manager"
           required
           autofocus>
         <small class="p-text-secondary">Rolün sistem içindeki benzersiz adı</small>
+      </div>
+
+      <div class="field">
+        <label for="claims" class="required-field">Rol Yetkileri</label>
+        <p-multiSelect
+          id="claims"
+          [options]="allOperationClaims"
+          [(ngModel)]="selectedClaims"
+          optionLabel="name"
+          placeholder="Yetki seçin"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [style]="{width: '100%'}"
+          display="chip">
+          <ng-template let-claim pTemplate="item">
+            <div class="claim-option">
+              <i class="pi pi-key"></i>
+              <span>{{ claim.name }}</span>
+            </div>
+          </ng-template>
+        </p-multiSelect>
+        <small class="p-text-secondary">Bu role atanacak yetkileri seçin</small>
       </div>
     </div>
   </ng-template>
