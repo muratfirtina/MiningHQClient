@@ -135,10 +135,20 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
   async loadUserRoles(): Promise<void> {
     try {
-      const response = await this.userRoleService.list(0, 1000);
-      this.userRoles = response.items;
+      // Backend'de list endpoint'i olmadığı için her user için ayrı ayrı yükleyelim
+      this.userRoles = [];
+      for (const user of this.users) {
+        const roles = await this.userRoleService.getUserRoles(user.id);
+        roles.forEach(role => {
+          this.userRoles.push({
+            id: role.id,
+            userId: user.id,
+            roleId: role.roleId
+          });
+        });
+      }
     } catch (error) {
-      console.warn('UserRoles endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      console.warn('UserRoles yüklenirken hata oluştu.', error);
       this.userRoles = [];
     }
   }

@@ -416,3 +416,38 @@ body {
     font-size: 12px;
   }
 }
+
+// ============================================
+// PrimeNG Dialog Mask - Fix Transparency Issue
+// ============================================
+.p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+  animation: dialogMaskFadeIn 0.3s ease-in-out;
+}
+
+@keyframes dialogMaskFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Dialog Container Base Styles
+.p-dialog {
+  background: white !important;
+
+  .p-dialog-header {
+    background: var(--surface-card) !important;
+  }
+
+  .p-dialog-content {
+    background: white !important;
+  }
+
+  .p-dialog-footer {
+    background: var(--surface-50) !important;
+  }
+}

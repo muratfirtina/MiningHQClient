@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClientService } from '../http-client.service';
 import { Observable, firstValueFrom } from 'rxjs';
-import { ListUserRole } from 'src/app/contracts/userRole/list-user-role';
 import { UserRole } from 'src/app/contracts/userRole/user-role';
 import { CreateUserRole } from 'src/app/contracts/userRole/create-user-role';
 
@@ -12,10 +11,18 @@ export class UserRoleService {
 
   constructor(private httpClientService: HttpClientService) { }
 
-  async list(pageIndex: number = 0, pageSize: number = 1000, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<ListUserRole> {
-    const observable: Observable<ListUserRole> = this.httpClientService.get<ListUserRole>({
+  // Backend'de list endpoint'i yok, bu yüzden tüm user'lar için manuel toplamıyoruz
+  // Sadece getUserRoles metodunu kullanacağız
+  async list(pageIndex: number = 0, pageSize: number = 1000): Promise<{ items: UserRole[], count: number }> {
+    // Backend'de genel list endpoint'i olmadığı için boş döndür
+    console.warn('UserRoles list endpoint backend\'de mevcut değil. Sadece getUserRoles() kullanılabilir.');
+    return { items: [], count: 0 };
+  }
+
+  async getUserRoles(userId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<UserRole[]> {
+    const observable: Observable<UserRole[]> = this.httpClientService.get<UserRole[]>({
       controller: 'userroles',
-      queryString: `pageIndex=${pageIndex}&pageSize=${pageSize}`
+      action: `user/${userId}`
     });
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
@@ -23,14 +30,10 @@ export class UserRoleService {
     return await promiseData;
   }
 
-  async getUserRoles(userId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<UserRole[]> {
-    const allRoles = await this.list(0, 1000);
-    return allRoles.items.filter(role => role.userId === userId);
-  }
-
   async create(userRole: CreateUserRole, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<UserRole> {
     const observable: Observable<UserRole> = this.httpClientService.post<UserRole>({
-      controller: 'userroles'
+      controller: 'userroles',
+      action: 'assign'
     }, userRole);
     const promiseData = firstValueFrom(observable);
     promiseData.then(successCallback)
