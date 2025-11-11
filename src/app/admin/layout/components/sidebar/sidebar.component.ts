@@ -172,9 +172,9 @@ export class SidebarComponent implements OnInit {
    */
   private setActiveMenuByRoute(): void {
     const currentUrl = window.location.pathname;
-    
+
     // Route'a göre hangi menünün açılacağını belirle
-    if (currentUrl.includes('/users')) {
+    if (currentUrl.includes('/users') || currentUrl.includes('/roles') || currentUrl.includes('/moderator-management')) {
       this.openMenuByName('Yetkili Kullanıcılar');
     } else if (currentUrl.includes('/dashboard')) {
       this.openMenuByName('Gösterge Paneli');

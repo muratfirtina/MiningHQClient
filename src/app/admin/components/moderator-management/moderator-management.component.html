@@ -1,91 +1,179 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Moderatör - Ocak Yönetimi</h3>
-        </div>
-        <div class="card-body">
-          <!-- Assignment Form -->
-          <div class="row mb-4">
-            <div class="col-12">
-              <h5>Yeni Atama</h5>
-              <form [formGroup]="assignmentForm" (ngSubmit)="assignQuarry()">
-                <div class="row">
-                  <div class="col-md-5">
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-label>Moderatör</mat-label>
-                      <mat-select formControlName="userId">
-                        <mat-option *ngFor="let moderator of moderators" 
-                                    [value]="moderator.id">
-                          {{moderator.firstName}} {{moderator.lastName}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
-                  <div class="col-md-5">
-                    <mat-form-field appearance="outline" class="w-100">
-                      <mat-label>Ocak</mat-label>
-                      <mat-select formControlName="quarryId">
-                        <mat-option *ngFor="let quarry of quarries" 
-                                    [value]="quarry.id">
-                          {{quarry.name}}
-                        </mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                  </div>
-                  <div class="col-md-2">
-                    <button mat-raised-button color="primary" 
-                            type="submit"
-                            [disabled]="loading || assignmentForm.invalid">
-                      <mat-icon>add</mat-icon>
-                      Ata
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <mat-divider></mat-divider>
-
-          <!-- Assignments List -->
-          <div class="row mt-4">
-            <div class="col-12">
-              <h5>Mevcut Atamalar</h5>
-              <table mat-table [dataSource]="assignments" class="w-100">
-                
-                <ng-container matColumnDef="moderator">
-                  <th mat-header-cell *matHeaderCellDef>Moderatör</th>
-                  <td mat-cell *matCellDef="let assignment">
-                    {{assignment.moderatorName}}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="quarry">
-                  <th mat-header-cell *matHeaderCellDef>Ocak</th>
-                  <td mat-cell *matCellDef="let assignment">
-                    {{assignment.quarryName}}
-                  </td>
-                </ng-container>
-
-                <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef>İşlemler</th>
-                  <td mat-cell *matCellDef="let assignment">
-                    <button mat-icon-button color="warn"
-                            (click)="removeAssignment(assignment.moderatorId, assignment.quarryId)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </td>
-                </ng-container>
-
-                <tr mat-header-row *matHeaderRowDef="['moderator', 'quarry', 'actions']"></tr>
-                <tr mat-row *matRowDef="let row; columns: ['moderator', 'quarry', 'actions']"></tr>
-              </table>
-            </div>
+<div class="moderator-management-container">
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="card-header-custom">
+        <div class="header-content">
+          <i class="pi pi-user-edit" style="font-size: 1.5rem; color: white;"></i>
+          <div class="header-text">
+            <h2>Moderatör Yönetimi</h2>
+            <p class="header-subtitle">Moderatörlere ocak ataması yapın ve yönetin</p>
           </div>
         </div>
       </div>
+    </ng-template>
+
+    <!-- Assignment Form -->
+    <div class="assignment-section mb-4">
+      <h4 class="section-title">
+        <i class="pi pi-plus-circle"></i>
+        Yeni Ocak Ataması
+      </h4>
+
+      <form [formGroup]="assignmentForm" class="p-fluid">
+        <div class="p-grid p-formgrid">
+          <div class="p-col-12 p-md-5">
+            <div class="field">
+              <label for="moderator" class="required-field">Moderatör</label>
+              <p-dropdown
+                id="moderator"
+                [options]="moderators"
+                formControlName="userId"
+                optionLabel="fullName"
+                optionValue="id"
+                placeholder="Moderatör seçin"
+                [filter]="true"
+                filterBy="fullName"
+                [showClear]="true">
+                <ng-template let-moderator pTemplate="item">
+                  <div class="moderator-item">
+                    <span>{{ moderator.firstName }} {{ moderator.lastName }}</span>
+                    <small class="text-muted d-block">{{ moderator.email }}</small>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="p-col-12 p-md-5">
+            <div class="field">
+              <label for="quarry" class="required-field">Ocak</label>
+              <p-dropdown
+                id="quarry"
+                [options]="quarries"
+                formControlName="quarryId"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Ocak seçin"
+                [filter]="true"
+                filterBy="name"
+                [showClear]="true">
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="p-col-12 p-md-2">
+            <div class="field">
+              <label>&nbsp;</label>
+              <button
+                pButton
+                type="button"
+                label="Ata"
+                icon="pi pi-check"
+                class="p-button-success w-100"
+                [disabled]="assignmentForm.invalid || loading"
+                [loading]="loading"
+                (click)="assignQuarry()">
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
-  </div>
+
+    <p-divider></p-divider>
+
+    <!-- Assignments Table -->
+    <div class="assignments-section">
+      <h4 class="section-title">
+        <i class="pi pi-list"></i>
+        Mevcut Atamalar
+      </h4>
+
+      <p-table
+        [value]="assignments"
+        [paginator]="true"
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="{first} - {last} arası, toplam {totalRecords} atama"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-gridlines p-datatable-striped"
+        [loading]="loading">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 5%">#</th>
+            <th pSortableColumn="moderatorName" style="width: 35%">
+              Moderatör
+              <p-sortIcon field="moderatorName"></p-sortIcon>
+            </th>
+            <th pSortableColumn="quarryName" style="width: 35%">
+              Ocak
+              <p-sortIcon field="quarryName"></p-sortIcon>
+            </th>
+            <th style="width: 25%">İşlemler</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-assignment let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ rowIndex + 1 }}</td>
+            <td>
+              <div class="moderator-info">
+                <i class="pi pi-user text-primary me-2"></i>
+                <strong>{{ assignment.moderatorName }}</strong>
+              </div>
+            </td>
+            <td>
+              <div class="quarry-info">
+                <i class="pi pi-map-marker text-success me-2"></i>
+                {{ assignment.quarryName }}
+              </div>
+            </td>
+            <td>
+              <button
+                pButton
+                pRipple
+                icon="pi pi-trash"
+                label="Kaldır"
+                class="p-button-danger p-button-sm"
+                (click)="confirmRemoveAssignment(assignment.moderatorId, assignment.quarryId)"
+                pTooltip="Atamayı kaldır"
+                tooltipPosition="top">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center">
+              <div class="empty-message">
+                <i class="pi pi-info-circle" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
+                <p>Henüz atama bulunmamaktadır.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td colspan="4">
+              <div class="loading-message">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+                <p>Yükleniyor...</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-card>
 </div>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog
+  [style]="{width: '450px'}"
+  acceptButtonStyleClass="p-button-danger"
+  rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>
