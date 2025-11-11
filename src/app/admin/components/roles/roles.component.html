@@ -1,0 +1,206 @@
+<div class="roles-container">
+  <p-card>
+    <ng-template pTemplate="header">
+      <div class="card-header-custom">
+        <div class="header-content">
+          <i class="pi pi-shield" style="font-size: 1.5rem; color: white;"></i>
+          <div class="header-text">
+            <h2>Rol Yönetimi</h2>
+            <p class="header-subtitle">Sistem rollerini ve yetkilerini yönetin</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <p-toolbar styleClass="mb-4">
+      <ng-template pTemplate="left">
+        <button
+          pButton
+          pRipple
+          label="Yeni Rol"
+          icon="pi pi-plus"
+          class="p-button-success"
+          (click)="openCreateDialog()"
+          pTooltip="Yeni rol oluştur"
+          tooltipPosition="bottom">
+        </button>
+      </ng-template>
+
+      <ng-template pTemplate="right">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-refresh"
+          class="p-button-help"
+          (click)="loadRoles()"
+          pTooltip="Listeyi yenile"
+          tooltipPosition="bottom">
+        </button>
+      </ng-template>
+    </p-toolbar>
+
+    <p-table
+      [value]="roles"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onLazyLoad)="onPageChange($event)"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first} - {last} arası, toplam {totalRecords} kayıt"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      styleClass="p-datatable-gridlines p-datatable-striped">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 5%">#</th>
+          <th pSortableColumn="name" style="width: 25%">
+            Rol Adı
+            <p-sortIcon field="name"></p-sortIcon>
+          </th>
+          <th style="width: 40%">Yetkiler</th>
+          <th pSortableColumn="createdDate" style="width: 15%">
+            Tarih
+            <p-sortIcon field="createdDate"></p-sortIcon>
+          </th>
+          <th style="width: 15%">İşlemler</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-role let-rowIndex="rowIndex">
+        <tr>
+          <td>{{ pageIndex * pageSize + rowIndex + 1 }}</td>
+          <td>
+            <div class="role-name">
+              <i class="pi pi-shield role-icon"></i>
+              <strong>{{ role.name }}</strong>
+            </div>
+          </td>
+          <td>
+            <div class="claims-container">
+              <p-chip
+                *ngFor="let claim of getRoleClaims(role.id)"
+                [label]="claim.name"
+                styleClass="claim-chip">
+              </p-chip>
+              <span *ngIf="getRoleClaims(role.id).length === 0" class="no-claims">
+                <i class="pi pi-info-circle"></i> Yetki atanmamış
+              </span>
+            </div>
+          </td>
+          <td>{{ role.createdDate | date: 'dd.MM.yyyy' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                pRipple
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-warning p-button-text"
+                (click)="openEditDialog(role)"
+                pTooltip="Düzenle"
+                tooltipPosition="top">
+              </button>
+              <button
+                pButton
+                pRipple
+                icon="pi pi-trash"
+                class="p-button-rounded p-button-danger p-button-text"
+                (click)="confirmDelete(role)"
+                pTooltip="Sil"
+                tooltipPosition="top">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center">
+            <div class="empty-message">
+              <i class="pi pi-info-circle" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
+              <p>Henüz rol bulunmamaktadır.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</div>
+
+<!-- Create/Edit Dialog -->
+<p-dialog
+  [(visible)]="displayDialog"
+  [header]="getDialogHeader()"
+  [modal]="true"
+  [style]="{width: '600px'}"
+  [draggable]="false"
+  [resizable]="false">
+
+  <ng-template pTemplate="content">
+    <div class="p-fluid">
+      <div class="field mb-4">
+        <label for="roleName" class="required-field">Rol Adı</label>
+        <input
+          id="roleName"
+          type="text"
+          pInputText
+          [(ngModel)]="roleForm.name"
+          placeholder="Örn: Admin, Moderator, Manager"
+          required
+          autofocus>
+        <small class="p-text-secondary">Rolün sistem içindeki benzersiz adı</small>
+      </div>
+
+      <div class="field">
+        <label for="claims" class="required-field">Rol Yetkileri</label>
+        <p-multiSelect
+          id="claims"
+          [options]="allOperationClaims"
+          [(ngModel)]="selectedClaims"
+          optionLabel="name"
+          placeholder="Yetki seçin"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [style]="{width: '100%'}"
+          display="chip">
+          <ng-template let-claim pTemplate="item">
+            <div class="claim-option">
+              <i class="pi pi-key"></i>
+              <span>{{ claim.name }}</span>
+            </div>
+          </ng-template>
+        </p-multiSelect>
+        <small class="p-text-secondary">Bu role atanacak yetkileri seçin</small>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      label="İptal"
+      icon="pi pi-times"
+      class="p-button-text"
+      (click)="hideDialog()">
+    </button>
+    <button
+      pButton
+      pRipple
+      [label]="dialogMode === 'create' ? 'Oluştur' : 'Güncelle'"
+      icon="pi pi-check"
+      class="p-button-primary"
+      (click)="saveRole()">
+    </button>
+  </ng-template>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog
+  [style]="{width: '450px'}"
+  acceptButtonStyleClass="p-button-danger"
+  rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

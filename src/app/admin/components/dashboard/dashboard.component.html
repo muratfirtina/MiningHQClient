@@ -1,152 +1,240 @@
-<div class="container-fluid mt-4">
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <h2>Dashboard</h2>
-      <p class="text-muted">Madencilik Yönetim Sistemi</p>
+<div class="modern-dashboard">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="dashboard-title">
+          <i class="fas fa-chart-line title-icon"></i>
+          Dashboard
+        </h1>
+        <p class="dashboard-subtitle">Madencilik Yönetim Sistemi Özet Görünümü</p>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn refresh-btn">
+          <i class="fas fa-sync-alt"></i>
+          <span>Yenile</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- İstatistik Kartları -->
-  <div class="row mb-4">
-    <!-- Personel Kaydı -->
-    <div class="col-md-4 mb-3">
-      <div class="card stat-card bg-primary text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="card-subtitle mb-2">Toplam Personel</h6>
-              <h2 class="card-title mb-0">{{ employeeCount }}</h2>
-            </div>
-            <div class="icon-box">
-              <i class="fas fa-users fa-3x"></i>
-            </div>
-          </div>
+  <div class="stats-grid">
+    <!-- Personel Kartı -->
+    <div class="stat-card stat-card-blue">
+      <div class="stat-card-header">
+        <div class="stat-icon-wrapper">
+          <i class="fas fa-users"></i>
         </div>
+        <div class="stat-badge">Aktif</div>
+      </div>
+      <div class="stat-card-body">
+        <h3 class="stat-title">Toplam Personel</h3>
+        <div class="stat-value-wrapper">
+          <span class="stat-value">{{ employeeCount }}</span>
+          <span class="stat-trend up">
+            <i class="fas fa-arrow-up"></i> 12%
+          </span>
+        </div>
+        <p class="stat-description">Son 30 günde artış</p>
+      </div>
+      <div class="stat-card-footer">
+        <a [routerLink]="['/admin/employees']" class="stat-link">
+          Detaylar <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
-    <!-- Makina Sayısı -->
-    <div class="col-md-4 mb-3">
-      <div class="card stat-card bg-success text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="card-subtitle mb-2">Toplam Makina</h6>
-              <h2 class="card-title mb-0">{{ machineCount }}</h2>
-            </div>
-            <div class="icon-box">
-              <i class="fas fa-truck fa-3x"></i>
-            </div>
-          </div>
+    <!-- Makina Kartı -->
+    <div class="stat-card stat-card-green">
+      <div class="stat-card-header">
+        <div class="stat-icon-wrapper">
+          <i class="fas fa-truck"></i>
         </div>
+        <div class="stat-badge">Operasyonel</div>
+      </div>
+      <div class="stat-card-body">
+        <h3 class="stat-title">Toplam Makina</h3>
+        <div class="stat-value-wrapper">
+          <span class="stat-value">{{ machineCount }}</span>
+          <span class="stat-trend up">
+            <i class="fas fa-arrow-up"></i> 8%
+          </span>
+        </div>
+        <p class="stat-description">Aktif olarak çalışan</p>
+      </div>
+      <div class="stat-card-footer">
+        <a [routerLink]="['/admin/machines']" class="stat-link">
+          Detaylar <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
 
-    <!-- Ocak Sayısı -->
-    <div class="col-md-4 mb-3">
-      <div class="card stat-card bg-warning text-white">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="card-subtitle mb-2">Toplam Ocak</h6>
-              <h2 class="card-title mb-0">{{ quarryCount }}</h2>
-            </div>
-            <div class="icon-box">
-              <i class="fas fa-mountain fa-3x"></i>
-            </div>
-          </div>
+    <!-- Ocak Kartı -->
+    <div class="stat-card stat-card-orange">
+      <div class="stat-card-header">
+        <div class="stat-icon-wrapper">
+          <i class="fas fa-mountain"></i>
         </div>
+        <div class="stat-badge">Üretimde</div>
+      </div>
+      <div class="stat-card-body">
+        <h3 class="stat-title">Toplam Ocak</h3>
+        <div class="stat-value-wrapper">
+          <span class="stat-value">{{ quarryCount }}</span>
+          <span class="stat-trend stable">
+            <i class="fas fa-minus"></i> 0%
+          </span>
+        </div>
+        <p class="stat-description">Üretim yapan ocaklar</p>
+      </div>
+      <div class="stat-card-footer">
+        <a [routerLink]="['/admin/quarries']" class="stat-link">
+          Detaylar <i class="fas fa-arrow-right"></i>
+        </a>
       </div>
     </div>
   </div>
 
   <!-- Yönetim Modulleri -->
-  <div class="row">
-    <div class="col-md-12 mb-3">
-      <h4>Yönetim Modülleri</h4>
+  <div class="modules-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-th-large"></i>
+        Yönetim Modülleri
+      </h2>
     </div>
 
-    <!-- Personel Yönetimi -->
-    <div class="col-md-4 mb-3">
-      <div class="card module-card">
-        <div class="card-body text-center">
-          <i class="fas fa-users fa-4x text-primary mb-3"></i>
-          <h5 class="card-title">Personel Yönetimi</h5>
-          <p class="card-text text-muted">Personel bilgileri, izinler, mesai takibi</p>
-          <a [routerLink]="['/admin/employees']" class="btn btn-primary">Git <i class="fas fa-arrow-right ms-2"></i></a>
+    <div class="modules-grid">
+      <!-- Personel Yönetimi -->
+      <div class="module-card module-blue">
+        <div class="module-icon-wrapper">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">Personel Yönetimi</h3>
+          <p class="module-description">Personel bilgileri, izinler, mesai ve performans takibi</p>
+          <ul class="module-features">
+            <li><i class="fas fa-check"></i> Personel kayıt ve yönetim</li>
+            <li><i class="fas fa-check"></i> İzin ve mesai takibi</li>
+            <li><i class="fas fa-check"></i> Performans raporları</li>
+          </ul>
+        </div>
+        <div class="module-footer">
+          <a [routerLink]="['/admin/employees']" class="module-btn">
+            <span>Modüle Git</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
       </div>
-    </div>
 
-    <!-- Makina Yönetimi -->
-    <div class="col-md-4 mb-3">
-      <div class="card module-card">
-        <div class="card-body text-center">
-          <i class="fas fa-truck fa-4x text-success mb-3"></i>
-          <h5 class="card-title">Makina Yönetimi</h5>
-          <p class="card-text text-muted">Makina envanteri, bakım, yakıt takibi</p>
-          <a [routerLink]="['/admin/machines']" class="btn btn-success">Git <i class="fas fa-arrow-right ms-2"></i></a>
+      <!-- Makina Yönetimi -->
+      <div class="module-card module-green">
+        <div class="module-icon-wrapper">
+          <i class="fas fa-truck"></i>
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">Makina Yönetimi</h3>
+          <p class="module-description">Makina envanteri, bakım planları ve yakıt takibi</p>
+          <ul class="module-features">
+            <li><i class="fas fa-check"></i> Makina kayıt ve envanter</li>
+            <li><i class="fas fa-check"></i> Bakım ve arıza takibi</li>
+            <li><i class="fas fa-check"></i> Yakıt tüketim analizi</li>
+          </ul>
+        </div>
+        <div class="module-footer">
+          <a [routerLink]="['/admin/machines']" class="module-btn">
+            <span>Modüle Git</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
       </div>
-    </div>
 
-    <!-- Ocak Yönetimi -->
-    <div class="col-md-4 mb-3">
-      <div class="card module-card">
-        <div class="card-body text-center">
-          <i class="fas fa-mountain fa-4x text-warning mb-3"></i>
-          <h5 class="card-title">Ocak Yönetimi</h5>
-          <p class="card-text text-muted">Ocak bilgileri, üretim, stok takibi</p>
-          <a [routerLink]="['/admin/quarries']" class="btn btn-warning">Git <i class="fas fa-arrow-right ms-2"></i></a>
+      <!-- Ocak Yönetimi -->
+      <div class="module-card module-orange">
+        <div class="module-icon-wrapper">
+          <i class="fas fa-mountain"></i>
+        </div>
+        <div class="module-content">
+          <h3 class="module-title">Ocak Yönetimi</h3>
+          <p class="module-description">Ocak bilgileri, üretim takibi ve stok yönetimi</p>
+          <ul class="module-features">
+            <li><i class="fas fa-check"></i> Ocak kayıt ve bilgileri</li>
+            <li><i class="fas fa-check"></i> Üretim takibi ve analiz</li>
+            <li><i class="fas fa-check"></i> Stok ve sevkiyat yönetimi</li>
+          </ul>
+        </div>
+        <div class="module-footer">
+          <a [routerLink]="['/admin/quarries']" class="module-btn">
+            <span>Modüle Git</span>
+            <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Hızlı Erişim -->
-  <div class="row mt-4">
-    <div class="col-md-12 mb-3">
-      <h4>Hızlı Erişim</h4>
+  <div class="quick-access-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fas fa-bolt"></i>
+        Hızlı Erişim
+      </h2>
     </div>
 
-    <div class="col-md-3 mb-3">
-      <div class="card quick-access-card">
-        <div class="card-body">
-          <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
-          <h6>Personel Ekle</h6>
-          <a [routerLink]="['/personeller/personel-ekle']" class="stretched-link"></a>
+    <div class="quick-access-grid">
+      <a [routerLink]="['/personeller/personel-ekle']" class="quick-access-card qac-blue">
+        <div class="qac-icon">
+          <i class="fas fa-user-plus"></i>
         </div>
-      </div>
-    </div>
+        <div class="qac-content">
+          <h4>Personel Ekle</h4>
+          <p>Yeni personel kaydı oluştur</p>
+        </div>
+        <div class="qac-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
 
-    <div class="col-md-3 mb-3">
-      <div class="card quick-access-card">
-        <div class="card-body">
-          <i class="fas fa-truck-loading fa-2x text-success mb-2"></i>
-          <h6>Makina Ekle</h6>
-          <a [routerLink]="['/makinalar/makina-ekle']" class="stretched-link"></a>
+      <a [routerLink]="['/makinalar/makina-ekle']" class="quick-access-card qac-green">
+        <div class="qac-icon">
+          <i class="fas fa-truck-loading"></i>
         </div>
-      </div>
-    </div>
+        <div class="qac-content">
+          <h4>Makina Ekle</h4>
+          <p>Yeni makina kaydı oluştur</p>
+        </div>
+        <div class="qac-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
 
-    <div class="col-md-3 mb-3">
-      <div class="card quick-access-card">
-        <div class="card-body">
-          <i class="fas fa-mountain fa-2x text-warning mb-2"></i>
-          <h6>Ocak Ekle</h6>
-          <a [routerLink]="['/admin/quarries/quarry-add']" class="stretched-link"></a>
+      <a [routerLink]="['/admin/quarries/quarry-add']" class="quick-access-card qac-orange">
+        <div class="qac-icon">
+          <i class="fas fa-mountain"></i>
         </div>
-      </div>
-    </div>
+        <div class="qac-content">
+          <h4>Ocak Ekle</h4>
+          <p>Yeni ocak kaydı oluştur</p>
+        </div>
+        <div class="qac-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
 
-    <div class="col-md-3 mb-3">
-      <div class="card quick-access-card">
-        <div class="card-body">
-          <i class="fas fa-wrench fa-2x text-danger mb-2"></i>
-          <h6>Bakım Kaydı</h6>
-          <a [routerLink]="['/makinalar']" class="stretched-link"></a>
+      <a [routerLink]="['/makinalar']" class="quick-access-card qac-red">
+        <div class="qac-icon">
+          <i class="fas fa-wrench"></i>
         </div>
-      </div>
+        <div class="qac-content">
+          <h4>Bakım Kaydı</h4>
+          <p>Bakım ve onarım işlemleri</p>
+        </div>
+        <div class="qac-arrow">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </a>
     </div>
   </div>
 </div>

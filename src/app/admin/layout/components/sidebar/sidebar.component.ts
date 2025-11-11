@@ -1,7 +1,6 @@
 // sidebar.component.ts - Modern collapsable sidebar
 import { Component, ViewChild, OnInit, HostListener, Input } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
-import { NgFor, NgIf } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { DynamicLoadComponentDirective } from 'src/app/directives/common/dynamic-load-component.directive';
 import { ComponentName, DynamicLoadComponentService } from 'src/app/services/common/dynamic-load-component.service';
@@ -20,7 +19,7 @@ import { LeaveTypeAddComponent } from 'src/app/admin/components/leave-types/leav
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
     standalone: true,
-    imports: [NgFor, NgIf, RouterLink, RouterLinkActive, JobAddComponent, MachineAddComponent,
+    imports: [RouterLink, RouterLinkActive, JobAddComponent, MachineAddComponent,
       MachineTypeAddComponent, ModelAddComponent, BrandAddComponent, QuarryAddComponent,
       DepartmentAddComponent, LeaveTypeAddComponent]
 })
@@ -172,9 +171,9 @@ export class SidebarComponent implements OnInit {
    */
   private setActiveMenuByRoute(): void {
     const currentUrl = window.location.pathname;
-    
+
     // Route'a göre hangi menünün açılacağını belirle
-    if (currentUrl.includes('/users')) {
+    if (currentUrl.includes('/users') || currentUrl.includes('/roles') || currentUrl.includes('/moderator-management')) {
       this.openMenuByName('Yetkili Kullanıcılar');
     } else if (currentUrl.includes('/dashboard')) {
       this.openMenuByName('Gösterge Paneli');
