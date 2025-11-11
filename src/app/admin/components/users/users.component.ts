@@ -118,7 +118,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
       const response = await this.roleService.list(0, 100);
       this.allRoles = response.items;
     } catch (error) {
-      this.toastr.error('Roller yüklenirken hata oluştu');
+      console.warn('Roles endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      this.allRoles = [];
     }
   }
 
@@ -127,7 +128,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
       const response = await this.operationClaimService.list(0, 100);
       this.allOperationClaims = response.items;
     } catch (error) {
-      this.toastr.error('Yetkiler yüklenirken hata oluştu');
+      console.warn('OperationClaims endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      this.allOperationClaims = [];
     }
   }
 
@@ -136,7 +138,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
       const response = await this.userRoleService.list(0, 1000);
       this.userRoles = response.items;
     } catch (error) {
-      this.toastr.error('Kullanıcı rolleri yüklenirken hata oluştu');
+      console.warn('UserRoles endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      this.userRoles = [];
     }
   }
 
@@ -145,7 +148,8 @@ export class UsersComponent extends BaseComponent implements OnInit {
       const response = await this.userOperationClaimService.list(0, 1000);
       this.userOperationClaims = response.items;
     } catch (error) {
-      this.toastr.error('Kullanıcı yetkileri yüklenirken hata oluştu');
+      console.warn('UserOperationClaims endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      this.userOperationClaims = [];
     }
   }
 

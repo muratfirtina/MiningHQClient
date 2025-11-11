@@ -104,7 +104,8 @@ export class RolesComponent extends BaseComponent implements OnInit {
       const response = await this.operationClaimService.list(0, 100);
       this.allOperationClaims = response.items;
     } catch (error) {
-      this.toastr.error('Yetkiler yüklenirken hata oluştu');
+      console.warn('OperationClaims endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      this.allOperationClaims = [];
     }
   }
 
@@ -113,7 +114,9 @@ export class RolesComponent extends BaseComponent implements OnInit {
       const response = await this.roleOperationClaimService.list(0, 1000);
       this.roleOperationClaims = response.items;
     } catch (error) {
-      this.toastr.error('Rol yetkileri yüklenirken hata oluştu');
+      // Backend endpoint hazır değilse sessizce devam et
+      console.warn('RoleOperationClaims endpoint bulunamadı. Backend henüz hazır olmayabilir.', error);
+      this.roleOperationClaims = [];
     }
   }
 
