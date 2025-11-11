@@ -24,7 +24,7 @@
           <div class="p-col-12 p-md-5">
             <div class="field">
               <label for="moderator" class="required-field">Moderatör</label>
-              <p-dropdown
+              <p-select
                 id="moderator"
                 [options]="moderators"
                 formControlName="userId"
@@ -40,14 +40,14 @@
                     <small class="text-muted d-block">{{ moderator.email }}</small>
                   </div>
                 </ng-template>
-              </p-dropdown>
+              </p-select>
             </div>
           </div>
 
           <div class="p-col-12 p-md-5">
             <div class="field">
               <label for="quarry" class="required-field">Ocak</label>
-              <p-dropdown
+              <p-select
                 id="quarry"
                 [options]="quarries"
                 formControlName="quarryId"
@@ -57,7 +57,7 @@
                 [filter]="true"
                 filterBy="name"
                 [showClear]="true">
-              </p-dropdown>
+              </p-select>
             </div>
           </div>
 

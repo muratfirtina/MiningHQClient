@@ -8,13 +8,13 @@ import { QuarryService } from 'src/app/services/common/models/quarry.service';
 
 // PrimeNG imports
 import { CardModule } from 'primeng/card';
-import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { DividerModule } from 'primeng/divider';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { Select } from 'primeng/select';
 
 interface ModeratorQuarry {
   moderatorId: string;
@@ -32,7 +32,7 @@ interface ModeratorQuarry {
     CommonModule,
     ReactiveFormsModule,
     CardModule,
-    DropdownModule,
+    Select,
     ButtonModule,
     TableModule,
     DividerModule,
