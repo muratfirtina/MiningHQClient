@@ -99,20 +99,28 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
     i {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       color: #3498db;
+      padding: 0.5rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(52, 152, 219, 0.2);
     }
 
     h4 {
       margin: 0;
       color: #2c3e50;
-      font-size: 1.2rem;
-      font-weight: 600;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
   }
 
@@ -121,6 +129,11 @@
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
     margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
   }
 
   .required-field::after {
@@ -264,64 +277,183 @@
       }
     }
 
+    // Dialog Backdrop/Overlay
+    .p-dialog-mask {
+      background-color: rgba(0, 0, 0, 0.6) !important;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    // Dialog Container
     .p-dialog {
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: white !important;
+      animation: slideDown 0.3s ease-out;
 
+      @keyframes slideDown {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      // Dialog Header
       .p-dialog-header {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        color: white;
-        padding: 1.5rem 2rem;
-        border-radius: 16px 16px 0 0;
-        font-weight: 600;
-        font-size: 1.2rem;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+        color: white !important;
+        padding: 2rem 2.5rem;
+        border-radius: 20px 20px 0 0;
+        font-weight: 700;
+        font-size: 1.4rem;
+        border-bottom: 3px solid #ffa726;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+          pointer-events: none;
+        }
+
+        .p-dialog-header-icon {
+          color: white !important;
+          width: 2.5rem;
+          height: 2.5rem;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: rotate(90deg);
+          }
+        }
+
+        .p-dialog-title {
+          color: white !important;
+          font-weight: 700;
+          font-size: 1.4rem;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
       }
 
+      // Dialog Content
       .p-dialog-content {
-        padding: 2rem;
-        background: #fafafa;
+        padding: 2.5rem;
+        background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%) !important;
+        max-height: 70vh;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+          border-radius: 10px;
+
+          &:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #21618c 100%);
+          }
+        }
       }
 
+      // Dialog Footer
       .p-dialog-footer {
-        padding: 1.5rem 2rem;
-        background: #f5f6fa;
-        border-top: 1px solid #e0e0e0;
+        padding: 1.75rem 2.5rem;
+        background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%) !important;
+        border-top: 2px solid #e9ecef;
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+
+        button {
+          min-width: 120px;
+          font-size: 1rem;
+        }
       }
 
+      // Form Fields
       .field {
-        margin-bottom: 1.75rem;
+        margin-bottom: 2rem;
 
         label {
           display: block;
           margin-bottom: 0.75rem;
           font-weight: 600;
           color: #2c3e50;
-          font-size: 0.95rem;
+          font-size: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          &::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 1rem;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 2px;
+          }
         }
 
         input,
         .p-multiselect {
           width: 100%;
-          border-radius: 8px;
+          border-radius: 10px;
           border: 2px solid #e0e0e0;
           transition: all 0.3s ease;
+          background: white;
+          font-size: 1rem;
 
-          &:focus {
+          &:hover {
+            border-color: #bdc3c7;
+          }
+
+          &:focus,
+          &:focus-within {
             border-color: #3498db;
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+            outline: none;
           }
         }
 
         input {
-          padding: 0.75rem 1rem;
+          padding: 0.875rem 1.25rem;
         }
 
         small {
           display: block;
-          margin-top: 0.5rem;
+          margin-top: 0.625rem;
           color: #7f8c8d;
-          font-size: 0.85rem;
+          font-size: 0.875rem;
+          padding-left: 1rem;
+          font-style: italic;
         }
       }
     }
@@ -365,18 +497,112 @@
     }
 
     .p-divider {
-      margin: 2rem 0;
+      margin: 2.5rem 0;
 
       &.p-divider-horizontal {
         &:before {
-          border-top: 1px solid #d5dbdb;
+          border-top: 2px solid #e9ecef !important;
+          background: linear-gradient(to right, transparent, #3498db, transparent);
+          height: 2px;
+          border: none;
+        }
+
+        .p-divider-content {
+          background: white;
+          padding: 0 1rem;
+          color: #3498db;
+          font-weight: 600;
         }
       }
     }
 
+    // Confirm Dialog
     .p-confirm-dialog {
+      .p-dialog {
+        border: 2px solid #e74c3c;
+      }
+
       .p-dialog-header {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+        color: white !important;
+        border-bottom: 3px solid #ffa726;
+
+        .p-dialog-title {
+          color: white !important;
+        }
+
+        .p-dialog-header-icon {
+          color: white !important;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+          }
+        }
+      }
+
+      .p-dialog-content {
+        padding: 2rem 2.5rem !important;
+        background: white !important;
+      }
+
+      .p-dialog-footer {
+        background: #f8f9fa !important;
+      }
+    }
+
+    // MultiSelect Panel
+    .p-multiselect-panel {
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      border: 2px solid #e0e0e0;
+      margin-top: 0.5rem;
+
+      .p-multiselect-header {
+        background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+        padding: 1rem 1.25rem;
+        border-bottom: 2px solid #bdc3c7;
+        border-radius: 12px 12px 0 0;
+
+        .p-multiselect-filter-container {
+          input {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+
+            &:focus {
+              border-color: #3498db;
+              box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            }
+          }
+        }
+      }
+
+      .p-multiselect-items {
+        padding: 0.5rem;
+
+        .p-multiselect-item {
+          padding: 0.875rem 1rem;
+          border-radius: 8px;
+          margin: 0.25rem 0;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: linear-gradient(135deg, #ecf0f1 0%, #d5dbdb 100%);
+          }
+
+          &.p-highlight {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+          }
+        }
+      }
+
+      .p-multiselect-empty-message {
+        padding: 2rem;
+        text-align: center;
+        color: #7f8c8d;
+        font-style: italic;
       }
     }
 
