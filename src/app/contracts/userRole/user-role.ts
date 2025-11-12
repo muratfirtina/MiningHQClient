@@ -1,6 +1,6 @@
 export interface UserRole {
   id: string;
   userId: string;
-  roleId: string;
+  roleId: number;
   createdDate: Date;
 }

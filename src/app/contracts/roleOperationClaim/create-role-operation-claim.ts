@@ -1,4 +1,4 @@
 export interface CreateRoleOperationClaim {
-  roleId: string;
+  roleId: number;
   operationClaimId: string;
 }

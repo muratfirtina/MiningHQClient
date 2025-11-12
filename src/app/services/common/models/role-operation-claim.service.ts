@@ -18,7 +18,7 @@ export class RoleOperationClaimService {
   }
 
   // Backend endpoint: GET /api/roleoperationclaims/role/{roleId}
-  async getRoleClaims(roleId: string, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<RoleOperationClaim[]> {
+  async getRoleClaims(roleId: number, successCallback?: () => void, errorCallback?: (errorMessage: string) => void): Promise<RoleOperationClaim[]> {
     const observable: Observable<RoleOperationClaim[]> = this.httpClientService.get<RoleOperationClaim[]>({
       controller: 'roleoperationclaims',
       action: `role/${roleId}`

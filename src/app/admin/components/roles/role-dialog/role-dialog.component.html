@@ -1,0 +1,143 @@
+<div class="role-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header" mat-dialog-title>
+    <div class="header-icon">
+      <mat-icon>{{ getDialogIcon() }}</mat-icon>
+    </div>
+    <div class="header-content">
+      <h2>{{ getDialogTitle() }}</h2>
+      <p>{{ getDialogSubtitle() }}</p>
+    </div>
+  </div>
+
+  <!-- Dialog Content -->
+  <div mat-dialog-content class="dialog-content">
+    
+    <!-- Role Information Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">
+          <mat-icon>label</mat-icon>
+        </div>
+        <div class="section-title">
+          <h3>Rol Bilgileri</h3>
+          <p>Role ait temel bilgileri giriniz</p>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rol Adı</mat-label>
+        <input 
+          matInput 
+          [(ngModel)]="roleName"
+          placeholder="Örn: Yönetici, Editör, Kullanıcı"
+          required
+          autocomplete="off">
+        <mat-icon matPrefix>shield</mat-icon>
+        <mat-hint>Rol adı sistemde benzersiz olmalıdır</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-divider class="section-divider"></mat-divider>
+
+    <!-- Permissions Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-icon">
+          <mat-icon>vpn_key</mat-icon>
+        </div>
+        <div class="section-title">
+          <h3>Yetki Atamaları</h3>
+          <p>Role atanacak yetkileri seçiniz</p>
+        </div>
+      </div>
+
+      <!-- Info Message -->
+      <div class="permissions-info">
+        <mat-icon class="info-icon">info</mat-icon>
+        <div class="info-content">
+          <strong>Bilgi:</strong>
+          <span>Bu role atanacak yetkiler, bu role sahip tüm kullanıcılar için geçerli olacaktır. İhtiyacınıza göre yetkileri seçiniz.</span>
+        </div>
+      </div>
+
+      <!-- Select All Checkbox -->
+      <div class="select-all-container">
+        <mat-checkbox 
+          [(ngModel)]="isAllSelected"
+          (change)="toggleSelectAll($event)"
+          color="primary">
+          Tüm Yetkileri Seç
+        </mat-checkbox>
+      </div>
+
+      <!-- Permissions Select -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Yetkiler</mat-label>
+        <mat-select 
+          [(ngModel)]="selectedClaims"
+          multiple
+          (selectionChange)="onClaimSelectionChange($event.value)">
+          <mat-option 
+            *ngFor="let claim of data.allOperationClaims" 
+            [value]="claim">
+            {{ claim.name }}
+          </mat-option>
+        </mat-select>
+        <mat-icon matPrefix>security</mat-icon>
+        <mat-hint *ngIf="selectedClaims.length > 0">
+          <mat-icon class="hint-icon">check_circle</mat-icon>
+          {{ selectedClaims.length }} yetki seçildi
+        </mat-hint>
+      </mat-form-field>
+
+      <!-- Selected Permissions Display -->
+      <div class="selected-permissions">
+        <div class="permissions-title">
+          <h4>Seçili Yetkiler</h4>
+          <span class="permissions-count">{{ selectedClaims.length }}</span>
+        </div>
+
+        <div class="permissions-list" *ngIf="selectedClaims.length > 0; else noPermissions">
+          <mat-chip-set>
+            <mat-chip 
+              *ngFor="let claim of selectedClaims"
+              class="permission-chip"
+              (removed)="removeClaim(claim)">
+              <mat-icon matChipAvatar>shield</mat-icon>
+              {{ claim.name }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <ng-template #noPermissions>
+          <div class="no-permissions">
+            <mat-icon>remove_circle_outline</mat-icon>
+            <span>Henüz yetki seçilmedi</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      mat-stroked-button 
+      class="cancel-button"
+      (click)="onCancel()">
+      İptal
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary"
+      class="save-button"
+      (click)="onSave()">
+      <mat-icon>{{ data.mode === 'create' ? 'add' : 'save' }}</mat-icon>
+      {{ getSaveButtonLabel() }}
+    </button>
+  </div>
+</div>

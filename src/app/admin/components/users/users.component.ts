@@ -5,8 +5,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { User } from 'src/app/contracts/user/user';
-import { CreateUser } from 'src/app/contracts/user/create-user';
-import { UpdateUser } from 'src/app/contracts/user/update-user';
 import { UserService } from 'src/app/services/common/models/user.service';
 import { Role } from 'src/app/contracts/role/role';
 import { RoleService } from 'src/app/services/common/models/role.service';
@@ -15,24 +13,20 @@ import { OperationClaim } from 'src/app/contracts/operationClaim/operation-claim
 import { OperationClaimService } from 'src/app/services/common/models/operation-claim.service';
 import { UserOperationClaimService } from 'src/app/services/common/models/user-operation-claim.service';
 
-// PrimeNG imports
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { TagModule } from 'primeng/tag';
-import { ChipModule } from 'primeng/chip';
-import { CardModule } from 'primeng/card';
-import { ToolbarModule } from 'primeng/toolbar';
-import { DividerModule } from 'primeng/divider';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TooltipModule } from 'primeng/tooltip';
-import { PanelModule } from 'primeng/panel';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { MessageModule } from 'primeng/message';
-import { ConfirmationService } from 'primeng/api';
+// Angular Material imports
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatBadgeModule } from '@angular/material/badge';
+
+import { UserDialogComponent } from './user-dialog/user-dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -41,25 +35,18 @@ import { ConfirmationService } from 'primeng/api';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    TableModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    MultiSelectModule,
-    TagModule,
-    ChipModule,
-    CardModule,
-    ToolbarModule,
-    DividerModule,
-    ConfirmDialogModule,
-    TooltipModule,
-    PanelModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    MessageModule
-  ],
-  providers: [ConfirmationService]
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatChipsModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    MatBadgeModule
+  ]
 })
 export class UsersComponent extends BaseComponent implements OnInit {
 
@@ -69,23 +56,14 @@ export class UsersComponent extends BaseComponent implements OnInit {
   userRoles: any[] = [];
   userOperationClaims: any[] = [];
 
-  displayDialog: boolean = false;
-  dialogMode: 'create' | 'edit' = 'create';
-
-  currentUser: User | null = null;
-  userForm: CreateUser | UpdateUser = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: ''
-  };
-
-  selectedRoles: Role[] = [];
-  selectedExtraClaims: OperationClaim[] = [];
+  displayedColumns: string[] = ['index', 'name', 'email', 'roles', 'extraClaims', 'actions'];
 
   pageIndex: number = 0;
   pageSize: number = 10;
   totalRecords: number = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 50];
+
+  isLoading: boolean = false;
 
   constructor(
     spinner: NgxSpinnerService,
@@ -95,7 +73,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
     private operationClaimService: OperationClaimService,
     private userOperationClaimService: UserOperationClaimService,
     private toastr: ToastrService,
-    private confirmationService: ConfirmationService
+    private dialog: MatDialog
   ) {
     super(spinner);
   }
@@ -109,6 +87,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
   }
 
   async loadUsers(): Promise<void> {
+    this.isLoading = true;
     this.showSpinner(SpinnerType.BallSpinClockwise);
     try {
       const response = await this.userService.list(this.pageIndex, this.pageSize);
@@ -117,6 +96,7 @@ export class UsersComponent extends BaseComponent implements OnInit {
     } catch (error) {
       this.toastr.error('Kullanıcılar yüklenirken hata oluştu');
     } finally {
+      this.isLoading = false;
       this.hideSpinner(SpinnerType.BallSpinClockwise);
     }
   }
@@ -143,7 +123,6 @@ export class UsersComponent extends BaseComponent implements OnInit {
 
   async loadUserRoles(): Promise<void> {
     try {
-      // Backend'de list endpoint'i olmadığı için her user için ayrı ayrı yükleyelim
       this.userRoles = [];
       for (const user of this.users) {
         const roles = await this.userRoleService.getUserRoles(user.id);
@@ -188,68 +167,84 @@ export class UsersComponent extends BaseComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    this.dialogMode = 'create';
-    this.currentUser = null;
-    this.userForm = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: ''
-    };
-    this.selectedRoles = [];
-    this.selectedExtraClaims = [];
-    this.displayDialog = true;
+    const dialogRef = this.dialog.open(UserDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      data: {
+        mode: 'create',
+        user: null,
+        allRoles: this.allRoles,
+        allOperationClaims: this.allOperationClaims,
+        selectedRoles: [],
+        selectedExtraClaims: []
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        await this.handleSaveUser(result);
+      }
+    });
   }
 
-  async openEditDialog(user: User): Promise<void> {
-    this.dialogMode = 'edit';
-    this.currentUser = user;
-    this.userForm = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email
-    };
+  openEditDialog(user: User): void {
+    const selectedRoles = this.getUserRoles(user.id);
+    const selectedExtraClaims = this.getUserExtraClaims(user.id);
 
-    // Load user's current roles and extra claims
-    this.selectedRoles = this.getUserRoles(user.id);
-    this.selectedExtraClaims = this.getUserExtraClaims(user.id);
-    this.displayDialog = true;
+    const dialogRef = this.dialog.open(UserDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      data: {
+        mode: 'edit',
+        user: user,
+        allRoles: this.allRoles,
+        allOperationClaims: this.allOperationClaims,
+        selectedRoles: selectedRoles,
+        selectedExtraClaims: selectedExtraClaims
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        await this.handleSaveUser(result);
+      }
+    });
   }
 
-  hideDialog(): void {
-    this.displayDialog = false;
-    this.currentUser = null;
-    this.selectedRoles = [];
-    this.selectedExtraClaims = [];
-  }
-
-  async saveUser(): Promise<void> {
-    if (!this.validateForm()) {
-      return;
-    }
-
+  async handleSaveUser(data: any): Promise<void> {
     this.showSpinner(SpinnerType.BallSpinClockwise);
 
     try {
       let savedUser: User;
 
-      if (this.dialogMode === 'create') {
-        savedUser = await this.userService.create(this.userForm as CreateUser);
+      if (data.mode === 'create') {
+        savedUser = await this.userService.create({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          password: data.password
+        });
         this.toastr.success('Kullanıcı başarıyla oluşturuldu');
       } else {
-        savedUser = await this.userService.update(this.userForm as UpdateUser);
+        savedUser = await this.userService.update({
+          id: data.userId,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email
+        });
         this.toastr.success('Kullanıcı başarıyla güncellendi');
       }
 
-      // Update user roles and extra claims
-      await this.updateUserRoles(savedUser.id);
-      await this.updateUserExtraClaims(savedUser.id);
+      await this.updateUserRoles(savedUser.id, data.roleIds);
+      await this.updateUserExtraClaims(savedUser.id, data.extraClaimIds);
 
       await this.loadUsers();
       await this.loadUserRoles();
       await this.loadUserOperationClaims();
-      this.hideDialog();
 
     } catch (error: any) {
       const errorMessage = error?.error?.message || 'İşlem sırasında hata oluştu';
@@ -259,11 +254,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
     }
   }
 
-  async updateUserRoles(userId: string): Promise<void> {
-    // Get current user roles
+  async updateUserRoles(userId: string, selectedRoleIds: number[]): Promise<void> {
     const currentRoles = this.userRoles.filter(ur => ur.userId === userId);
     const currentRoleIds = currentRoles.map(ur => ur.roleId);
-    const selectedRoleIds = this.selectedRoles.map(role => role.id);
 
     // Remove roles that are no longer selected
     const rolesToRemove = currentRoles.filter(
@@ -295,11 +288,9 @@ export class UsersComponent extends BaseComponent implements OnInit {
     }
   }
 
-  async updateUserExtraClaims(userId: string): Promise<void> {
-    // Get current user extra claims
+  async updateUserExtraClaims(userId: string, selectedClaimIds: string[]): Promise<void> {
     const currentClaims = this.userOperationClaims.filter(uc => uc.userId === userId);
     const currentClaimIds = currentClaims.map(uc => uc.operationClaimId);
-    const selectedClaimIds = this.selectedExtraClaims.map(claim => claim.id);
 
     // Remove claims that are no longer selected
     const claimsToRemove = currentClaims.filter(
@@ -331,43 +322,16 @@ export class UsersComponent extends BaseComponent implements OnInit {
     }
   }
 
-  validateForm(): boolean {
-    if (!this.userForm.firstName || !this.userForm.lastName || !this.userForm.email) {
-      this.toastr.warning('Lütfen tüm zorunlu alanları doldurun');
-      return false;
+  async deleteUser(user: User): Promise<void> {
+    const confirmed = confirm(`${user.firstName} ${user.lastName} kullanıcısını silmek istediğinizden emin misiniz?`);
+    
+    if (!confirmed) {
+      return;
     }
 
-    if (this.dialogMode === 'create' && !(this.userForm as CreateUser).password) {
-      this.toastr.warning('Şifre alanı zorunludur');
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.userForm.email)) {
-      this.toastr.warning('Geçerli bir email adresi girin');
-      return false;
-    }
-
-    return true;
-  }
-
-  confirmDelete(user: User): void {
-    this.confirmationService.confirm({
-      message: `${user.firstName} ${user.lastName} kullanıcısını silmek istediğinizden emin misiniz?`,
-      header: 'Silme Onayı',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Evet',
-      rejectLabel: 'Hayır',
-      accept: () => {
-        this.deleteUser(user.id);
-      }
-    });
-  }
-
-  async deleteUser(userId: string): Promise<void> {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     try {
-      await this.userService.delete(userId);
+      await this.userService.delete(user.id);
       this.toastr.success('Kullanıcı başarıyla silindi');
       await this.loadUsers();
       await this.loadUserRoles();
@@ -379,13 +343,13 @@ export class UsersComponent extends BaseComponent implements OnInit {
     }
   }
 
-  onPageChange(event: any): void {
-    this.pageIndex = event.first / event.rows;
-    this.pageSize = event.rows;
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.loadUsers();
   }
 
-  getDialogHeader(): string {
-    return this.dialogMode === 'create' ? 'Yeni Kullanıcı Ekle' : 'Kullanıcı Düzenle';
+  getRowNumber(index: number): number {
+    return this.pageIndex * this.pageSize + index + 1;
   }
 }

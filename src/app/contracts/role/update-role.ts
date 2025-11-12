@@ -1,5 +1,5 @@
 export interface UpdateRole {
-  id: string;
+  id: number;
   name: string;
   operationClaimIds?: string[];
 }

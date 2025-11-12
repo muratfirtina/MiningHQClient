@@ -1,0 +1,267 @@
+<div class="user-dialog">
+  <!-- Dialog Header -->
+  <div class="dialog-header" mat-dialog-title>
+    <div class="header-icon">
+      <mat-icon>{{ getDialogIcon() }}</mat-icon>
+    </div>
+    <div class="header-content">
+      <h2>{{ getDialogTitle() }}</h2>
+      <p>{{ getDialogSubtitle() }}</p>
+    </div>
+  </div>
+
+  <!-- Dialog Content with Stepper -->
+  <div mat-dialog-content class="dialog-content">
+    <mat-stepper #stepper linear>
+      
+      <!-- Step 1: User Information -->
+      <mat-step [stepControl]="userInfoFormGroup" label="Kullanıcı Bilgileri">
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-icon">
+              <mat-icon>badge</mat-icon>
+            </div>
+            <div class="step-title">
+              <h3>Temel Bilgiler</h3>
+              <p>Kullanıcının temel bilgilerini girin</p>
+            </div>
+          </div>
+
+          <form [formGroup]="userInfoFormGroup">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Ad</mat-label>
+                <input 
+                  matInput 
+                  formControlName="firstName"
+                  placeholder="Adını girin"
+                  required>
+                <mat-icon matPrefix>person</mat-icon>
+                <mat-error *ngIf="userInfoFormGroup.get('firstName')?.hasError('required')">
+                  Ad alanı zorunludur
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Soyad</mat-label>
+                <input 
+                  matInput 
+                  formControlName="lastName"
+                  placeholder="Soyadını girin"
+                  required>
+                <mat-icon matPrefix>person</mat-icon>
+                <mat-error *ngIf="userInfoFormGroup.get('lastName')?.hasError('required')">
+                  Soyad alanı zorunludur
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email Adresi</mat-label>
+              <input 
+                matInput 
+                type="email"
+                formControlName="email"
+                placeholder="email@example.com"
+                required>
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="userInfoFormGroup.get('email')?.hasError('required')">
+                Email alanı zorunludur
+              </mat-error>
+              <mat-error *ngIf="userInfoFormGroup.get('email')?.hasError('email')">
+                Geçerli bir email adresi girin
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width" *ngIf="data.mode === 'create'">
+              <mat-label>Şifre</mat-label>
+              <input 
+                matInput 
+                type="password"
+                formControlName="password"
+                placeholder="Güvenli bir şifre girin"
+                required>
+              <mat-icon matPrefix>lock</mat-icon>
+              <mat-hint>Şifre en az 8 karakter olmalıdır</mat-hint>
+              <mat-error *ngIf="userInfoFormGroup.get('password')?.hasError('required')">
+                Şifre alanı zorunludur
+              </mat-error>
+              <mat-error *ngIf="userInfoFormGroup.get('password')?.hasError('minlength')">
+                Şifre en az 8 karakter olmalıdır
+              </mat-error>
+            </mat-form-field>
+          </form>
+
+          <div class="step-actions">
+            <button mat-button matStepperNext [disabled]="userInfoFormGroup.invalid">
+              Sonraki
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+      <!-- Step 2: Roles -->
+      <mat-step [stepControl]="rolesFormGroup" label="Roller">
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-icon">
+              <mat-icon>shield</mat-icon>
+            </div>
+            <div class="step-title">
+              <h3>Rol Atamaları</h3>
+              <p>Kullanıcıya atanacak rolleri seçin</p>
+            </div>
+          </div>
+
+          <!-- Info Banner -->
+          <div class="info-banner">
+            <mat-icon>info</mat-icon>
+            <span>Roller, kullanıcıya otomatik olarak ilgili yetkileri sağlar. Bir kullanıcı birden fazla rol alabilir.</span>
+          </div>
+
+          <form [formGroup]="rolesFormGroup">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Kullanıcı Rolleri</mat-label>
+              <mat-select 
+                [(ngModel)]="selectedRoles"
+                [ngModelOptions]="{standalone: true}"
+                multiple
+                (selectionChange)="onRoleSelectionChange($event.value)">
+                <mat-option 
+                  *ngFor="let role of data.allRoles" 
+                  [value]="role">
+                  {{ role.name }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matPrefix>security</mat-icon>
+              <mat-hint *ngIf="selectedRoles.length > 0">
+                <mat-icon class="hint-icon">check_circle</mat-icon>
+                {{ selectedRoles.length }} rol seçildi
+              </mat-hint>
+            </mat-form-field>
+          </form>
+
+          <!-- Selected Roles Display -->
+          <div class="selected-items" *ngIf="selectedRoles.length > 0">
+            <div class="items-header">
+              <h4>Seçili Roller</h4>
+              <span class="items-count">{{ selectedRoles.length }}</span>
+            </div>
+            <mat-chip-set>
+              <mat-chip 
+                *ngFor="let role of selectedRoles"
+                class="selected-chip"
+                (removed)="removeRole(role)">
+                <mat-icon matChipAvatar>shield</mat-icon>
+                {{ role.name }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Geri
+            </button>
+            <button mat-button matStepperNext>
+              Sonraki
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-step>
+
+      <!-- Step 3: Extra Claims -->
+      <mat-step [stepControl]="claimsFormGroup" label="Ekstra Yetkiler">
+        <div class="step-content">
+          <div class="step-header">
+            <div class="step-icon">
+              <mat-icon>vpn_key</mat-icon>
+            </div>
+            <div class="step-title">
+              <h3>Ekstra Yetkiler</h3>
+              <p>Roller dışında ek yetkiler atayabilirsiniz</p>
+            </div>
+          </div>
+
+          <!-- Warning Banner -->
+          <div class="warning-banner">
+            <mat-icon>warning</mat-icon>
+            <span>Ekstra yetkiler, rollerdeki yetkilerle birleşir. Dikkatli seçim yapın.</span>
+          </div>
+
+          <form [formGroup]="claimsFormGroup">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Ek Yetkiler</mat-label>
+              <mat-select 
+                [(ngModel)]="selectedExtraClaims"
+                [ngModelOptions]="{standalone: true}"
+                multiple
+                (selectionChange)="onClaimSelectionChange($event.value)">
+                <mat-option 
+                  *ngFor="let claim of data.allOperationClaims" 
+                  [value]="claim">
+                  {{ claim.name }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matPrefix>security</mat-icon>
+              <mat-hint *ngIf="selectedExtraClaims.length > 0">
+                <mat-icon class="hint-icon">check_circle</mat-icon>
+                {{ selectedExtraClaims.length }} ek yetki seçildi
+              </mat-hint>
+            </mat-form-field>
+          </form>
+
+          <!-- Selected Claims Display -->
+          <div class="selected-items" *ngIf="selectedExtraClaims.length > 0">
+            <div class="items-header">
+              <h4>Seçili Ekstra Yetkiler</h4>
+              <span class="items-count">{{ selectedExtraClaims.length }}</span>
+            </div>
+            <mat-chip-set>
+              <mat-chip 
+                *ngFor="let claim of selectedExtraClaims"
+                class="selected-chip claim-chip"
+                (removed)="removeClaim(claim)">
+                <mat-icon matChipAvatar>vpn_key</mat-icon>
+                {{ claim.name }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Geri
+            </button>
+          </div>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button 
+      mat-stroked-button 
+      class="cancel-button"
+      (click)="onCancel()">
+      İptal
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary"
+      class="save-button"
+      (click)="onSave()">
+      <mat-icon>{{ data.mode === 'create' ? 'add' : 'save' }}</mat-icon>
+      {{ getSaveButtonLabel() }}
+    </button>
+  </div>
+</div>

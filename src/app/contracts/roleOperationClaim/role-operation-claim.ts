@@ -1,6 +1,6 @@
 export interface RoleOperationClaim {
   id: string;
-  roleId: string;
+  roleId: number;
   operationClaimId: string;
   createdDate: Date;
 }

@@ -1,30 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { BaseComponent, SpinnerType } from 'src/app/base/base.component';
 import { Role } from 'src/app/contracts/role/role';
-import { CreateRole } from 'src/app/contracts/role/create-role';
-import { UpdateRole } from 'src/app/contracts/role/update-role';
 import { RoleService } from 'src/app/services/common/models/role.service';
 import { OperationClaim } from 'src/app/contracts/operationClaim/operation-claim';
 import { OperationClaimService } from 'src/app/services/common/models/operation-claim.service';
 import { RoleOperationClaimService } from 'src/app/services/common/models/role-operation-claim.service';
 
-// PrimeNG imports
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { TooltipModule } from 'primeng/tooltip';
-import { CardModule } from 'primeng/card';
-import { ToolbarModule } from 'primeng/toolbar';
-import { TagModule } from 'primeng/tag';
-import { ChipModule } from 'primeng/chip';
-import { ConfirmationService } from 'primeng/api';
+// Angular Material imports
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { RoleDialogComponent } from './role-dialog/role-dialog.component';
 
 @Component({
   selector: 'app-roles',
@@ -33,20 +30,17 @@ import { ConfirmationService } from 'primeng/api';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    TableModule,
-    ButtonModule,
-    DialogModule,
-    InputTextModule,
-    MultiSelectModule,
-    ConfirmDialogModule,
-    TooltipModule,
-    CardModule,
-    ToolbarModule,
-    TagModule,
-    ChipModule
-  ],
-  providers: [ConfirmationService]
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatChipsModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatDialogModule,
+    MatProgressSpinnerModule
+  ]
 })
 export class RolesComponent extends BaseComponent implements OnInit {
 
@@ -54,20 +48,14 @@ export class RolesComponent extends BaseComponent implements OnInit {
   allOperationClaims: OperationClaim[] = [];
   roleOperationClaims: any[] = [];
 
-  displayDialog: boolean = false;
-  dialogMode: 'create' | 'edit' = 'create';
-  currentRole: Role | null = null;
-
-  roleForm: CreateRole | UpdateRole = {
-    name: '',
-    operationClaimIds: []
-  };
-
-  selectedClaims: OperationClaim[] = [];
+  displayedColumns: string[] = ['index', 'name', 'claims', 'createdDate', 'actions'];
 
   pageIndex: number = 0;
   pageSize: number = 10;
   totalRecords: number = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 50];
+
+  isLoading: boolean = false;
 
   constructor(
     spinner: NgxSpinnerService,
@@ -75,7 +63,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
     private operationClaimService: OperationClaimService,
     private roleOperationClaimService: RoleOperationClaimService,
     private toastr: ToastrService,
-    private confirmationService: ConfirmationService
+    private dialog: MatDialog
   ) {
     super(spinner);
   }
@@ -87,6 +75,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
   }
 
   async loadRoles(): Promise<void> {
+    this.isLoading = true;
     this.showSpinner(SpinnerType.BallSpinClockwise);
     try {
       const response = await this.roleService.list(this.pageIndex, this.pageSize);
@@ -95,6 +84,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
     } catch (error) {
       this.toastr.error('Roller yüklenirken hata oluştu');
     } finally {
+      this.isLoading = false;
       this.hideSpinner(SpinnerType.BallSpinClockwise);
     }
   }
@@ -111,7 +101,6 @@ export class RolesComponent extends BaseComponent implements OnInit {
 
   async loadRoleOperationClaims(): Promise<void> {
     try {
-      // Backend'de list endpoint'i olmadığı için her role için ayrı ayrı yükleyelim
       this.roleOperationClaims = [];
       for (const role of this.roles) {
         const claims = await this.roleOperationClaimService.getRoleClaims(role.id);
@@ -129,7 +118,7 @@ export class RolesComponent extends BaseComponent implements OnInit {
     }
   }
 
-  getRoleClaims(roleId: string): OperationClaim[] {
+  getRoleClaims(roleId: number): OperationClaim[] {
     const roleClaimIds = this.roleOperationClaims
       .filter(rc => rc.roleId === roleId)
       .map(rc => rc.operationClaimId);
@@ -138,63 +127,73 @@ export class RolesComponent extends BaseComponent implements OnInit {
   }
 
   openCreateDialog(): void {
-    this.dialogMode = 'create';
-    this.currentRole = null;
-    this.roleForm = {
-      name: '',
-      operationClaimIds: []
-    };
-    this.selectedClaims = [];
-    this.displayDialog = true;
+    const dialogRef = this.dialog.open(RoleDialogComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      data: {
+        mode: 'create',
+        role: null,
+        allOperationClaims: this.allOperationClaims,
+        selectedClaims: []
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        await this.handleSaveRole(result);
+      }
+    });
   }
 
-  async openEditDialog(role: Role): Promise<void> {
-    this.dialogMode = 'edit';
-    this.currentRole = role;
-    this.roleForm = {
-      id: role.id,
-      name: role.name,
-      operationClaimIds: []
-    };
+  openEditDialog(role: Role): void {
+    const selectedClaims = this.getRoleClaims(role.id);
 
-    // Load role's current claims
-    this.selectedClaims = this.getRoleClaims(role.id);
-    this.displayDialog = true;
+    const dialogRef = this.dialog.open(RoleDialogComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: false,
+      data: {
+        mode: 'edit',
+        role: role,
+        allOperationClaims: this.allOperationClaims,
+        selectedClaims: selectedClaims
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        await this.handleSaveRole(result);
+      }
+    });
   }
 
-  hideDialog(): void {
-    this.displayDialog = false;
-    this.currentRole = null;
-    this.selectedClaims = [];
-  }
-
-  async saveRole(): Promise<void> {
-    if (!this.validateForm()) {
-      return;
-    }
-
+  async handleSaveRole(data: any): Promise<void> {
     this.showSpinner(SpinnerType.BallSpinClockwise);
 
     try {
-      // Set selected claim IDs
-      this.roleForm.operationClaimIds = this.selectedClaims.map(c => c.id);
-
       let savedRole: Role;
 
-      if (this.dialogMode === 'create') {
-        savedRole = await this.roleService.create(this.roleForm as CreateRole);
+      if (data.mode === 'create') {
+        savedRole = await this.roleService.create({
+          name: data.name,
+          operationClaimIds: data.operationClaimIds
+        });
         this.toastr.success('Rol başarıyla oluşturuldu');
       } else {
-        savedRole = await this.roleService.update(this.roleForm as UpdateRole);
+        savedRole = await this.roleService.update({
+          id: data.roleId,
+          name: data.name,
+          operationClaimIds: data.operationClaimIds
+        });
         this.toastr.success('Rol başarıyla güncellendi');
       }
 
-      // Update role claims
-      await this.updateRoleClaims(savedRole.id);
-
+      await this.updateRoleClaims(savedRole.id, data.operationClaimIds);
       await this.loadRoles();
       await this.loadRoleOperationClaims();
-      this.hideDialog();
 
     } catch (error: any) {
       const errorMessage = error?.error?.message || 'İşlem sırasında hata oluştu';
@@ -204,11 +203,9 @@ export class RolesComponent extends BaseComponent implements OnInit {
     }
   }
 
-  async updateRoleClaims(roleId: string): Promise<void> {
-    // Get current role claims
+  async updateRoleClaims(roleId: number, selectedClaimIds: string[]): Promise<void> {
     const currentClaims = this.roleOperationClaims.filter(rc => rc.roleId === roleId);
     const currentClaimIds = currentClaims.map(rc => rc.operationClaimId);
-    const selectedClaimIds = this.selectedClaims.map(claim => claim.id);
 
     // Remove claims that are no longer selected
     const claimsToRemove = currentClaims.filter(
@@ -240,32 +237,16 @@ export class RolesComponent extends BaseComponent implements OnInit {
     }
   }
 
-  validateForm(): boolean {
-    if (!this.roleForm.name || this.roleForm.name.trim() === '') {
-      this.toastr.warning('Rol adı zorunludur');
-      return false;
+  async deleteRole(role: Role): Promise<void> {
+    const confirmed = confirm(`"${role.name}" rolünü silmek istediğinizden emin misiniz?`);
+    
+    if (!confirmed) {
+      return;
     }
 
-    return true;
-  }
-
-  confirmDelete(role: Role): void {
-    this.confirmationService.confirm({
-      message: `"${role.name}" rolünü silmek istediğinizden emin misiniz?`,
-      header: 'Silme Onayı',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Evet',
-      rejectLabel: 'Hayır',
-      accept: () => {
-        this.deleteRole(role.id);
-      }
-    });
-  }
-
-  async deleteRole(roleId: string): Promise<void> {
     this.showSpinner(SpinnerType.BallSpinClockwise);
     try {
-      await this.roleService.delete(roleId);
+      await this.roleService.delete(role.id);
       this.toastr.success('Rol başarıyla silindi');
       await this.loadRoles();
       await this.loadRoleOperationClaims();
@@ -276,13 +257,13 @@ export class RolesComponent extends BaseComponent implements OnInit {
     }
   }
 
-  onPageChange(event: any): void {
-    this.pageIndex = event.first / event.rows;
-    this.pageSize = event.rows;
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.loadRoles();
   }
 
-  getDialogHeader(): string {
-    return this.dialogMode === 'create' ? 'Yeni Rol Oluştur' : 'Rol Düzenle';
+  getRowNumber(index: number): number {
+    return this.pageIndex * this.pageSize + index + 1;
   }
 }

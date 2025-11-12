@@ -13,69 +13,110 @@
     </ng-template>
 
     <!-- Assignment Form -->
-    <div class="assignment-section mb-4">
-      <h4 class="section-title">
-        <i class="pi pi-plus-circle"></i>
-        Yeni Ocak Ataması
-      </h4>
+    <div class="assignment-section">
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="pi pi-plus-circle"></i>
+        </div>
+        <div class="section-title-wrapper">
+          <h3 class="section-title">Yeni Ocak Ataması</h3>
+          <p class="section-subtitle">Moderatöre yeni bir ocak atayın</p>
+        </div>
+      </div>
 
-      <form [formGroup]="assignmentForm" class="p-fluid">
-        <div class="p-grid p-formgrid">
-          <div class="p-col-12 p-md-5">
-            <div class="field">
-              <label for="moderator" class="required-field">Moderatör</label>
-              <p-select
-                id="moderator"
-                [options]="moderators"
-                formControlName="userId"
-                optionLabel="fullName"
-                optionValue="id"
-                placeholder="Moderatör seçin"
-                [filter]="true"
-                filterBy="fullName"
-                [showClear]="true">
-                <ng-template let-moderator pTemplate="item">
-                  <div class="moderator-item">
-                    <span>{{ moderator.firstName }} {{ moderator.lastName }}</span>
-                    <small class="text-muted d-block">{{ moderator.email }}</small>
+      <form [formGroup]="assignmentForm" class="modern-assignment-form">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="moderator" class="modern-label">
+              <i class="pi pi-user label-icon"></i>
+              <span>Moderatör Seçin <span class="required-star">*</span></span>
+            </label>
+            <p-select
+              id="moderator"
+              [options]="moderators"
+              formControlName="userId"
+              optionLabel="fullName"
+              optionValue="id"
+              placeholder="Moderatör arayın veya seçin..."
+              [filter]="true"
+              filterBy="fullName"
+              [showClear]="true"
+              styleClass="w-full modern-select">
+              <ng-template let-moderator pTemplate="item">
+                <div class="select-item-wrapper">
+                  <div class="item-avatar">
+                    <i class="pi pi-user"></i>
                   </div>
-                </ng-template>
-              </p-select>
-            </div>
+                  <div class="item-details">
+                    <span class="item-name">{{ moderator.firstName }} {{ moderator.lastName }}</span>
+                    <small class="item-email">{{ moderator.email }}</small>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template let-moderator pTemplate="selectedItem">
+                <div class="selected-item-wrapper" *ngIf="moderator">
+                  <i class="pi pi-user"></i>
+                  <span>{{ moderator.firstName }} {{ moderator.lastName }}</span>
+                </div>
+              </ng-template>
+            </p-select>
+            <small class="field-hint">
+              <i class="pi pi-info-circle"></i>
+              Ocak atanacak moderatörü seçin
+            </small>
           </div>
 
-          <div class="p-col-12 p-md-5">
-            <div class="field">
-              <label for="quarry" class="required-field">Ocak</label>
-              <p-select
-                id="quarry"
-                [options]="quarries"
-                formControlName="quarryId"
-                optionLabel="name"
-                optionValue="id"
-                placeholder="Ocak seçin"
-                [filter]="true"
-                filterBy="name"
-                [showClear]="true">
-              </p-select>
-            </div>
+          <div class="form-field">
+            <label for="quarry" class="modern-label">
+              <i class="pi pi-map-marker label-icon"></i>
+              <span>Ocak Seçin <span class="required-star">*</span></span>
+            </label>
+            <p-select
+              id="quarry"
+              [options]="quarries"
+              formControlName="quarryId"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Ocak arayın veya seçin..."
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              styleClass="w-full modern-select">
+              <ng-template let-quarry pTemplate="item">
+                <div class="select-item-wrapper">
+                  <div class="item-avatar quarry-avatar">
+                    <i class="pi pi-map-marker"></i>
+                  </div>
+                  <div class="item-details">
+                    <span class="item-name">{{ quarry.name }}</span>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template let-quarry pTemplate="selectedItem">
+                <div class="selected-item-wrapper" *ngIf="quarry">
+                  <i class="pi pi-map-marker"></i>
+                  <span>{{ quarry.name }}</span>
+                </div>
+              </ng-template>
+            </p-select>
+            <small class="field-hint">
+              <i class="pi pi-info-circle"></i>
+              Moderatöre atanacak ocağı seçin
+            </small>
           </div>
+        </div>
 
-          <div class="p-col-12 p-md-2">
-            <div class="field">
-              <label>&nbsp;</label>
-              <button
-                pButton
-                type="button"
-                label="Ata"
-                icon="pi pi-check"
-                class="p-button-success w-100"
-                [disabled]="assignmentForm.invalid || loading"
-                [loading]="loading"
-                (click)="assignQuarry()">
-              </button>
-            </div>
-          </div>
+        <div class="form-actions">
+          <button
+            pButton
+            type="button"
+            label="Ocak Ata"
+            icon="pi pi-check"
+            class="p-button-success p-button-lg"
+            [disabled]="assignmentForm.invalid || loading"
+            [loading]="loading"
+            (click)="assignQuarry()">
+          </button>
         </div>
       </form>
     </div>
@@ -84,10 +125,15 @@
 
     <!-- Assignments Table -->
     <div class="assignments-section">
-      <h4 class="section-title">
-        <i class="pi pi-list"></i>
-        Mevcut Atamalar
-      </h4>
+      <div class="section-header">
+        <div class="section-icon">
+          <i class="pi pi-list"></i>
+        </div>
+        <div class="section-title-wrapper">
+          <h3 class="section-title">Mevcut Atamalar</h3>
+          <p class="section-subtitle">Sistemdeki tüm moderatör atamaları</p>
+        </div>
+      </div>
 
       <p-table
         [value]="assignments"
@@ -97,13 +143,13 @@
         currentPageReportTemplate="{first} - {last} arası, toplam {totalRecords} atama"
         [rowsPerPageOptions]="[10, 25, 50]"
         [tableStyle]="{ 'min-width': '50rem' }"
-        styleClass="p-datatable-gridlines p-datatable-striped"
+        styleClass="p-datatable-gridlines p-datatable-striped modern-table"
         [loading]="loading">
 
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 5%">#</th>
-            <th pSortableColumn="moderatorName" style="width: 35%">
+            <th pSortableColumn="moderatorName" style="width: 40%">
               Moderatör
               <p-sortIcon field="moderatorName"></p-sortIcon>
             </th>
@@ -111,23 +157,32 @@
               Ocak
               <p-sortIcon field="quarryName"></p-sortIcon>
             </th>
-            <th style="width: 25%">İşlemler</th>
+            <th style="width: 20%">İşlemler</th>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="body" let-assignment let-rowIndex="rowIndex">
           <tr>
-            <td>{{ rowIndex + 1 }}</td>
             <td>
-              <div class="moderator-info">
-                <i class="pi pi-user text-primary me-2"></i>
-                <strong>{{ assignment.moderatorName }}</strong>
+              <span class="row-number">{{ rowIndex + 1 }}</span>
+            </td>
+            <td>
+              <div class="moderator-cell">
+                <div class="moderator-avatar">
+                  <i class="pi pi-user"></i>
+                </div>
+                <div class="moderator-info">
+                  <strong class="moderator-name">{{ assignment.moderatorName }}</strong>
+                  <span class="moderator-badge">Moderatör</span>
+                </div>
               </div>
             </td>
             <td>
-              <div class="quarry-info">
-                <i class="pi pi-map-marker text-success me-2"></i>
-                {{ assignment.quarryName }}
+              <div class="quarry-cell">
+                <div class="quarry-icon">
+                  <i class="pi pi-map-marker"></i>
+                </div>
+                <span class="quarry-name">{{ assignment.quarryName }}</span>
               </div>
             </td>
             <td>
@@ -148,9 +203,12 @@
         <ng-template pTemplate="emptymessage">
           <tr>
             <td colspan="4" class="text-center">
-              <div class="empty-message">
-                <i class="pi pi-info-circle" style="font-size: 3rem; color: var(--text-color-secondary);"></i>
-                <p>Henüz atama bulunmamaktadır.</p>
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <i class="pi pi-info-circle"></i>
+                </div>
+                <h4 class="empty-title">Henüz Atama Bulunmuyor</h4>
+                <p class="empty-text">Yukarıdaki formu kullanarak yeni atama yapabilirsiniz.</p>
               </div>
             </td>
           </tr>
@@ -159,9 +217,9 @@
         <ng-template pTemplate="loadingbody">
           <tr>
             <td colspan="4">
-              <div class="loading-message">
-                <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
-                <p>Yükleniyor...</p>
+              <div class="loading-state">
+                <i class="pi pi-spin pi-spinner"></i>
+                <p>Veriler yükleniyor...</p>
               </div>
             </td>
           </tr>

@@ -13,8 +13,8 @@ import { TableModule } from 'primeng/table';
 import { DividerModule } from 'primeng/divider';
 import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { SelectModule } from 'primeng/select';
 import { ConfirmationService } from 'primeng/api';
-import { Select } from 'primeng/select';
 
 interface ModeratorQuarry {
   moderatorId: string;
@@ -32,7 +32,7 @@ interface ModeratorQuarry {
     CommonModule,
     ReactiveFormsModule,
     CardModule,
-    Select,
+    SelectModule,
     ButtonModule,
     TableModule,
     DividerModule,
@@ -96,12 +96,23 @@ export class ModeratorManagementComponent implements OnInit {
   async loadAssignments(): Promise<void> {
     this.loading = true;
     try {
-      // TODO: Implement backend endpoint to get all assignments
-      // For now, this is a placeholder
-      this.assignments = [];
+      this.quarryModeratorService.getAllAssignments(0, 1000).subscribe({
+        next: (response) => {
+          this.assignments = response.items.map((item: any) => ({
+            moderatorId: item.userId,
+            moderatorName: item.userFullName,
+            quarryId: item.quarryId,
+            quarryName: item.quarryName
+          }));
+          this.loading = false;
+        },
+        error: (error) => {
+          this.toastr.error('Atamalar yüklenirken hata oluştu');
+          this.loading = false;
+        }
+      });
     } catch (error) {
       this.toastr.error('Atamalar yüklenirken hata oluştu');
-    } finally {
       this.loading = false;
     }
   }
