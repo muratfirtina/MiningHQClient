@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { Role } from 'src/app/contracts/enums/role.enum';
+import { SystemRoles } from 'src/app/contracts/enums/role.enum';
 
 export interface LoginRequest {
   email: string;
@@ -77,11 +77,11 @@ export class AuthService {
     return localStorage.getItem('accessToken');
   }
 
-  getUserRoles(): Role[] {
+  getUserRoles(): string[] {
     const rolesJson = localStorage.getItem('userRoles');
     if (rolesJson) {
       try {
-        return JSON.parse(rolesJson) as Role[];
+        return JSON.parse(rolesJson) as string[];
       } catch (error) {
         console.error('Error parsing user roles:', error);
       }
@@ -97,27 +97,27 @@ export class AuthService {
     return true;
   }
 
-  hasRole(role: Role): boolean {
+  hasRole(role: string): boolean {
     const userRoles = this.getUserRoles();
     return userRoles && userRoles.length > 0 && userRoles.includes(role);
   }
 
-  hasAnyRole(roles: Role[]): boolean {
+  hasAnyRole(roles: string[]): boolean {
     if (!roles || roles.length === 0) return true;
     const userRoles = this.getUserRoles();
     return userRoles && userRoles.length > 0 && roles.some(role => userRoles.includes(role));
   }
 
   isAdmin(): boolean {
-    return this.hasRole(Role.Admin);
+    return this.hasRole(SystemRoles.Admin);
   }
 
   isModerator(): boolean {
-    return this.hasRole(Role.Moderator);
+    return this.hasRole(SystemRoles.Moderator);
   }
 
   isHRAssistant(): boolean {
-    return this.hasRole(Role.HRAssistant);
+    return this.hasRole(SystemRoles.HRAssistant);
   }
 
   refreshToken(): Observable<LoginResponse> {

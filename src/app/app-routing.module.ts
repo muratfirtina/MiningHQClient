@@ -9,9 +9,27 @@ import { LoginComponent } from './ui/components/login/login.component';
 import { LoginGuard } from './guards/login.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { RoleGuard } from './guards/role.guard';
-import { Role } from './contracts/enums/role.enum';
+import { Role, SystemRoles } from './contracts/enums/role.enum';
 
-  
+/**
+ * AUTHORIZATION SYSTEM:
+ *
+ * Routes can now use ANY string value for roles - not limited to predefined enums.
+ *
+ * Supported authorization types:
+ * 1. System Roles: 'Admin', 'Moderator', 'HRAssistant'
+ * 2. Dynamic Roles: Any role created via backend (e.g., 'Manager', 'Supervisor', 'deneme1')
+ * 3. Operation Claims: Permission-based (e.g., 'Quarries.Read', 'Quarries.Write', 'users.admin')
+ * 4. Mixed: Combine any of the above
+ *
+ * Examples:
+ *   data: { roles: ['Admin', 'Moderator'] }                    // System roles
+ *   data: { roles: ['Manager', 'Supervisor'] }                 // Dynamic roles
+ *   data: { roles: ['Quarries.Read', 'Quarries.Write'] }     // Operation claims
+ *   data: { roles: ['Admin', 'Quarries.Admin'] }              // Mixed authorization
+ *
+ * Note: Use Role enum or SystemRoles class for system roles to maintain type safety.
+ */
 const routes: Routes = [
   {
     path: 'login',

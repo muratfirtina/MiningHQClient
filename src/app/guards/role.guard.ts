@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { 
-  ActivatedRouteSnapshot, 
-  CanActivate, 
-  Router, 
-  RouterStateSnapshot 
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot
 } from '@angular/router';
 import { AuthService } from '../services/common/auth.service';
-import { Role } from '../contracts/enums/role.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoleGuard implements CanActivate {
-  
+
   constructor(
     private authService: AuthService,
     private router: Router
@@ -22,7 +21,8 @@ export class RoleGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    const requiredRoles = route.data['roles'] as Role[];
+    // Accept any string[] as roles - supports dynamic roles and operation claims
+    const requiredRoles = route.data['roles'] as string[];
 
     if (!requiredRoles || requiredRoles.length === 0) {
       return true;
