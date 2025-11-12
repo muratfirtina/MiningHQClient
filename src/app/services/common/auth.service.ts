@@ -77,24 +77,86 @@ export class AuthService {
     return localStorage.getItem('accessToken');
   }
 
-  getUserRoles(): string[] {
-    const rolesJson = localStorage.getItem('userRoles');
-    if (rolesJson) {
-      try {
-        return JSON.parse(rolesJson) as string[];
-      } catch (error) {
-        console.error('Error parsing user roles:', error);
-      }
+  /**
+   * Decode JWT token and extract payload
+   * @param token JWT token string
+   * @returns Decoded token payload or null
+   */
+  private decodeToken(token: string): any {
+    try {
+      const payload = token.split('.')[1];
+      const decodedPayload = atob(payload);
+      return JSON.parse(decodedPayload);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
     }
-    return [];
+  }
+
+  /**
+   * Get user roles from JWT token
+   * This reads directly from JWT, not localStorage
+   * Supports dynamic roles and operation claims from backend
+   * @returns Array of role names and operation claims
+   */
+  getUserRoles(): string[] {
+    const token = this.getToken();
+    if (!token) {
+      return [];
+    }
+
+    try {
+      const decodedToken = this.decodeToken(token);
+      if (!decodedToken) {
+        return [];
+      }
+
+      // JWT'deki 'role' claim'ini al
+      // Backend hem rol isimlerini hem de operation claim'leri buraya ekler
+      const roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+                 || decodedToken['role'];
+
+      if (!roles) {
+        console.warn('No roles found in JWT token');
+        return [];
+      }
+
+      // Roles can be either a string or an array
+      if (Array.isArray(roles)) {
+        return roles;
+      } else if (typeof roles === 'string') {
+        return [roles];
+      }
+
+      return [];
+    } catch (error) {
+      console.error('Error extracting roles from token:', error);
+      return [];
+    }
   }
 
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;
-    
+
     // Token expiration kontrolü yapılabilir
     return true;
+  }
+
+  /**
+   * DEBUG: Get decoded JWT token for inspection
+   * Use in browser console: authService.getDecodedToken()
+   */
+  getDecodedToken(): any {
+    const token = this.getToken();
+    if (!token) {
+      console.log('No token found');
+      return null;
+    }
+    const decoded = this.decodeToken(token);
+    console.log('Decoded JWT:', decoded);
+    console.log('Roles from JWT:', this.getUserRoles());
+    return decoded;
   }
 
   hasRole(role: string): boolean {
